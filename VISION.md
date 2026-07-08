@@ -53,7 +53,7 @@ The public face and the matchmaker:
 2. **Compact by default.** Announcements, posts, and profiles are structured and short — write once, publish everywhere.
 3. **One source of truth.** An animal exists once in the system; announcements, posts, and hub listings derive from it.
 4. **Trust is earned and protected.** Verification of organizations (RNA/SIRET in France, Registro de Asociaciones in Spain) before reputation of individuals. No dark patterns, no engagement farming.
-5. **Bilingual from day one.** FR + ES as first-class locales; architecture ready for more.
+5. **Bilingual from day one.** FR + ES as first-class UI locales; architecture ready for more. Launch scope is France-first — Spain as an operating country is gated at signup until enabled (see ADR-004) — but no UI or data-model retrofit is needed to turn it on.
 6. **We don't touch the money (yet).** Cagnottes link out to established platforms (HelloAsso, Teaming, GoFundMe…). Payment compliance is not an MVP problem.
 7. **Solo-sized steps.** This is built by one person part-time; every roadmap phase must ship something usable on its own.
 

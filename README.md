@@ -26,7 +26,7 @@
 
 ## Key decisions so far
 
-- **Market:** France + Spain, bilingual FR/ES from day one.
+- **Market:** bilingual FR/ES UI from day one; France-first launch — Spain shown but gated at account creation until enabled.
 - **Stack:** TypeScript end-to-end; Next.js apps; **Convex** shared backend (validated by phase-0 spikes: geo queries, SSR/SEO, EU residency); bun + Turborepo; **Clerk** for auth.
 - **Money:** cagnottes link to external platforms (HelloAsso, Teaming…) — Anima never handles funds in v1.
 - **Social:** composer generates ready-to-paste posts + images; platform APIs come later.

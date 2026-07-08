@@ -20,6 +20,7 @@ Decisions deliberately deferred. Each has a **decide-by** phase (see [ROADMAP.md
 - Adopter accounts: browse without account is settled; can you *inquire* without an account (email-only)? → *phase 2 design.*
 - Do informal groups (no RNA/registry) get full features or a limited unverified tier? Where's the fraud line (fake shelters farming donations)? → *phase 1–2.*
 - Multiple animals per announcement (litters)? → *phase 1, cheap to decide early.*
+- **When to enable Spain** as an operating country (flip the gate from ADR-004): needs Spain-specific verification scheme (Registro de Asociaciones) and org-type vocabulary built first regardless of timing. → *revisit once phase 1 France pilots are stable.*
 - Machine translation of user content (FR↔ES) — labeled auto-translate, on-demand, or never? → *phase 3+.*
 - Should orgs' hub pages support custom domains (becoming their website)? → *phase 5.* Note: phase 2 now ships a basic site editor (shelter-app.md F7) so org pages are themeable/customizable regardless — this question narrows to *pointing the org's own domain* at that page, not whether it can look like a website.
 - **Site editor custom block types** beyond free text (images, embeds, multi-page) — expand iteratively based on what pilot orgs actually ask for, not upfront. → *phase 2+, ongoing.*
@@ -48,7 +49,8 @@ Decisions deliberately deferred. Each has a **decide-by** phase (see [ROADMAP.md
 
 ## Resolved
 
-- **Market**: France + Spain from day 1, bilingual FR/ES. *(user, 2026-07-07 → ADR-004)*
+- **Market**: bilingual FR/ES UI from day 1; France-first launch — Spain shown but gated at account creation until enabled. *(user, 2026-07-07 → ADR-004, refined 2026-07-08)*
+- **i18n strategy**: UI language detected from visitor's browser locale (independent of account country); country is a separate first-class field asked at signup, France enabled/Spain gated. *(user, 2026-07-08 → ADR-004)*
 - **Stack**: TypeScript end-to-end proposed & accepted; Convex as backend with phase-0 validation gates. *(user + ADR-002/003, 2026-07-07)*
 - **Team context**: solo side-project → roadmap shape. *(user, 2026-07-07)*
 - **Payments**: link out to external platforms, no money handling in v1. *(user, 2026-07-07 → ADR-005)*

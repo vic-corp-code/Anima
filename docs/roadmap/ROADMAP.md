@@ -41,7 +41,7 @@ Goal: one real association replaces its spreadsheet.
 - [ ] Minimal news posts.
 - [ ] Manual org verification flow (declare RNA/SIRET/ES-registry, admin marks verified).
 - [ ] Transactional email (invites, inquiry relay groundwork).
-- [ ] **Recruit 1–3 pilot associations** (FR and ideally ES) — product work, not code, and the most important line in this phase.
+- [ ] **Recruit 1–3 pilot associations in France** (Spain is gated at account creation until enabled, see ADR-004) — product work, not code, and the most important line in this phase.
 
 **Exit gate:** ≥1 pilot org manages its real animals in Anima for 4 consecutive weeks; "arrival → announcement live" under 10 min.
 

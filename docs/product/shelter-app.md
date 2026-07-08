@@ -18,7 +18,7 @@ The association manager: usually a volunteer, time-poor, moderately tech-comfort
 ## Feature areas
 
 ### F1. Organization & members
-- Create organization: name, type (SPA / shelter / association loi 1901 / asociación / informal group), country (FR/ES), address, contacts, logo, description.
+- Create organization: name, type (SPA / shelter / association loi 1901 / asociación / informal group), country (FR/ES — Spain shown but gated at signup until enabled, see ADR-004), address, contacts, logo, description.
 - Verification: declare RNA/SIRET (FR) or registry number (ES); manual admin review at first (no API integration in MVP).
 - Invite members by email; roles: **admin** (everything), **editor** (animals, posts, announcements).
 
