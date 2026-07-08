@@ -1,0 +1,10 @@
+{
+  "common": {
+    "appName": "Anima",
+    "languageSwitcher": {
+      "label": "Langue",
+      "fr": "Français",
+      "es": "Español"
+    }
+  }
+}

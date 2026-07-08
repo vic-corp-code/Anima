@@ -1,0 +1,17 @@
+{
+  "name": "@anima/backend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "convex dev",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "convex": "^1.19.0"
+  },
+  "devDependencies": {
+    "@anima/config": "workspace:*",
+    "typescript": "^5.7.2"
+  }
+}

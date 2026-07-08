@@ -1,0 +1,11 @@
+{
+  "extends": "@anima/config/tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2022", "dom"]
+  },
+  "include": ["convex"],
+  "exclude": ["convex/_generated"]
+}
