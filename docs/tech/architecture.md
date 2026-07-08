@@ -25,7 +25,7 @@ anima/
 │   │                     #   types, card formatting) — no framework imports
 │   └── config/           # Shared eslint/ts/tailwind configs
 ├── docs/                 # This documentation
-└── turbo.json / pnpm-workspace.yaml
+└── turbo.json / bun workspaces (package.json)
 ```
 
 Notes:
@@ -36,11 +36,11 @@ Notes:
 
 | Layer | Choice | ADR |
 |---|---|---|
-| Monorepo tooling | pnpm workspaces + Turborepo | [ADR-001](decisions/ADR-001-monorepo-tooling.md) |
+| Monorepo tooling | bun workspaces + Turborepo | [ADR-001](decisions/ADR-001-monorepo-tooling.md) |
 | Language | TypeScript everywhere, strict | [ADR-002](decisions/ADR-002-typescript-nextjs.md) |
 | Frontend | Next.js (App Router) + Tailwind | [ADR-002](decisions/ADR-002-typescript-nextjs.md) |
 | Backend + DB + files + realtime | **Convex** (single deployment, shared by all apps) | [ADR-003](decisions/ADR-003-convex-backend.md) |
-| Auth | Convex Auth or Clerk — decide at phase 0 spike | [ADR-003](decisions/ADR-003-convex-backend.md), open question |
+| Auth | **Clerk** | [ADR-007](decisions/ADR-007-auth-clerk.md) |
 | i18n | FR + ES first-class; library chosen at phase 0 (next-intl likely) | [ADR-004](decisions/ADR-004-i18n-fr-es.md) |
 | Payments | None — external links (HelloAsso, Teaming, …) | [ADR-005](decisions/ADR-005-payments-linkout.md) |
 | Social posting | Generate & copy (text + rendered images); Meta API later | [ADR-006](decisions/ADR-006-social-posting.md) |

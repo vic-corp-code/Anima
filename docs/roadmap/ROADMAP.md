@@ -18,9 +18,9 @@ Foundations  →   Shelter MVP      →   Public Hub       →   Volunteers     
 
 Goal: a running skeleton and answers to the questions that could invalidate the stack.
 
-- [ ] Monorepo scaffold: pnpm + Turborepo, `apps/shelter` + `packages/{backend,ui,i18n,domain,config}` (hub/volunteers apps created in their phases).
+- [ ] Monorepo scaffold: bun workspaces + Turborepo, `apps/shelter` + `packages/{backend,ui,i18n,domain,config}` (hub/volunteers apps created in their phases). Quick spike confirming bun plays well with Convex + Next.js tooling; fall back to pnpm if it fights either (ADR-001).
 - [ ] Convex project + first schema slice (organizations, users, memberships).
-- [ ] Auth spike: Convex Auth vs. Clerk → pick, wire login/signup.
+- [ ] Wire Clerk auth (ADR-007): login/signup, org membership synced to Convex.
 - [ ] i18n wiring (next-intl or chosen lib), FR + ES catalogs, lint rule against hardcoded strings.
 - [ ] **Spike: geo** — store lat/lng, radius query via Convex geospatial component. *Convex validation gate #1 (ADR-003).*
 - [ ] **Spike: SSR/SEO** — server-render a page from Convex data with ISR. *Gate #2.*

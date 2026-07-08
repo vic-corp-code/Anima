@@ -26,7 +26,6 @@ Decisions deliberately deferred. Each has a **decide-by** phase (see [ROADMAP.md
 - Moderation workload: who moderates reports when it's a solo project? Community moderators from pilot orgs? → *before phase 3 (user-generated volunteer content).*
 
 ## Tech
-- **Auth provider**: Convex Auth vs. Clerk (cost, EU data, org/multi-tenant support). → *phase 0 spike.*
 - **i18n library**: next-intl vs. alternatives. → *phase 0.*
 - Geocoding provider (place names → lat/lng; FR + ES coverage; cost): Google vs. Mapbox vs. OSM/Nominatim. → *phase 0 geo spike.*
 - Image pipeline: Convex storage + on-upload resize vs. image CDN. → *phase 1.*
@@ -54,3 +53,5 @@ Decisions deliberately deferred. Each has a **decide-by** phase (see [ROADMAP.md
 - **Team context**: solo side-project → roadmap shape. *(user, 2026-07-07)*
 - **Payments**: link out to external platforms, no money handling in v1. *(user, 2026-07-07 → ADR-005)*
 - **Social posting**: generate & copy in v1, APIs later. *(ADR-006, 2026-07-07)*
+- **Monorepo tooling**: bun workspaces + Turborepo (over pnpm). *(user, 2026-07-08 → ADR-001)*
+- **Auth provider**: Clerk (over Convex Auth) — eases things for users and dev. *(user, 2026-07-08 → ADR-007)*
