@@ -1,6 +1,9 @@
+"use client";
+
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
+import { SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 
 export default function Home() {
   const t = useTranslations("common");
@@ -17,6 +20,11 @@ export default function Home() {
           </Link>
         ))}
       </nav>
+      <div className="flex gap-4">
+        <SignInButton />
+        <SignUpButton />
+        <UserButton />
+      </div>
     </div>
   );
 }
