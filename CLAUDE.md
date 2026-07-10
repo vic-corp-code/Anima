@@ -28,3 +28,7 @@ Two services need accounts you create yourself — see:
 - `packages/domain` has no Convex or React imports — pure logic only (see `docs/tech/architecture.md`).
 - No hardcoded UI strings — copy goes through `packages/i18n` message catalogs (ADR-004). Both `fr` and `es` ship together; France is the only enabled operating country for now, Spain is gated at signup.
 - Next.js 16: use `proxy.ts`, not `middleware.ts` (the convention was renamed; same `(request) => response` shape). See `apps/shelter/proxy.ts` for the Clerk + next-intl composition.
+
+## Toolchain notes
+
+- bun + Turborepo + Next.js + Convex interop verified (A5). No pnpm fallback needed.
