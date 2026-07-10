@@ -22,7 +22,7 @@
 | **Gate 2: SSR/SEO** | ☐ | Next.js server component fetches Convex data and server-renders a page |
 | **Gate 3: EU residency** | ☐ | Convex confirmed to offer EU data residency (or mitigated) |
 
-If Gate 1 or 2 fails hard → switch to Supabase before any real data exists.
+If Gate 1 or 2 fails hard → implement a workaround (department/province buckets for geo; client-side fetch for SSR) and reassess the Convex approach before proceeding.
 
 ---
 
@@ -366,6 +366,7 @@ export default defineSchema({
 - Create Clerk app in Clerk dashboard (or use existing)
 - Get `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY`
 - Enable Clerk webhooks → get `CLERK_WEBHOOK_SECRET`
+- **Google/Gmail only** for sign-up — other providers (email/password, social logins) will be added later
 
 **Step 2: Implement Clerk webhook in Convex**
 ```typescript
@@ -596,7 +597,7 @@ export function cn(...inputs: ClassValue[]) {
 
 **Gate decision:**
 - ✅ Pass → Convex confirmed for geo. Proceed.
-- ❌ Fail (no usable geospatial support) → Implement department/province bucket fallback. If even that's too hacky → open ADR-003 revisit, evaluate Supabase/PostGIS switch.
+- ❌ Fail (no usable geospatial support) → Implement department/province bucket fallback. This is actually sufficient for v1 — reassess with real usage data.
 
 **Commit:** `spike(geo): radius query test with sample org data — Gate 1`
 
@@ -646,7 +647,7 @@ curl -s http://localhost:3001/fr/orgs | grep "<li>"
 
 **Gate decision:**
 - ✅ Pass → Convex SSR pattern confirmed. Proceed.
-- ❌ Fail (hydration errors, no SSR support) → Investigate `convex/nextjs/server` docs deeper or use `convex-helpers/server`. If fundamentally broken → ADR-003 revisit.
+- ❌ Fail (hydration errors, no SSR support) → Investigate `convex/nextjs/server` docs deeper, use `convex-helpers/server`, or adapt the pattern (client-side fetch with ISR).
 
 **Commit:** `spike(ssr): Convex data in Next.js server component — Gate 2`
 
@@ -674,7 +675,7 @@ curl -s http://localhost:3001/fr/orgs | grep "<li>"
 **Deliverable:** A brief written assessment in the plan tracker or repo. Gate decision:
 - ✅ Convex (and Clerk) confirmed EU-resident → proceed
 - ⚠️ No EU region but acceptable for pre-launch with pilot consent → proceed with documented risk
-- ❌ No EU region and unacceptable → evaluate Supabase EU (Amsterdam region) as backend alternative
+- ❌ No EU region and unacceptable → document risk, get explicit consent from pilot orgs, and reassess before public launch
 
 **Commit:** `docs: EU data residency assessment for Convex + Clerk — Gate 3`
 
@@ -776,8 +777,8 @@ See docs/ for full specs — VISION.md, product specs, ADRs, ROADMAP.md.
 | Risk | Impact | Mitigation |
 |---|---|---|
 | bun fights Convex/Next.js toolchain | Medium | A5 mini spike; pnpm fallback documented |
-| Convex geospatial insufficient for radius queries | High | E1 spike; department/province bucket fallback |
-| Convex SSR pattern broken for Next.js server components | High | F1 spike; ADR-003 revisit if needed |
+| Convex geospatial insufficient for radius queries | High | E1 spike; department/province buckets are a proven v1 fallback |
+| Convex SSR pattern broken for Next.js server components | High | F1 spike; adapt pattern or use client-side fetch + ISR |
 | No Convex EU residency | Medium | G1 research; pilot consent as interim mitigation |
 | Clerk EU residency unknown | Low | G1 research alongside Convex |
 
