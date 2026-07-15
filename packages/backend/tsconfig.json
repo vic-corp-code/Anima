@@ -6,6 +6,6 @@
     "moduleResolution": "Bundler",
     "lib": ["ES2022", "dom"]
   },
-  "include": ["convex"],
+  "include": ["convex", "node"],
   "exclude": ["convex/_generated"]
 }
