@@ -1,4 +1,5 @@
-import { query } from "./_generated/server";
+import { v } from "convex/values";
+import { mutation, query } from "./_generated/server";
 
 // Phase-0 SSR/SEO spike (ROADMAP.md validation gate #2): a public, unauth'd
 // list query to prove Convex data can be server-rendered with ISR.
@@ -6,5 +7,65 @@ export const list = query({
   args: {},
   handler: async (ctx) => {
     return await ctx.db.query("organizations").collect();
+  },
+});
+
+export const get = query({
+  args: { organizationId: v.id("organizations") },
+  handler: async (ctx, { organizationId }) => {
+    return await ctx.db.get(organizationId);
+  },
+});
+
+// Phase-0 exit gate (ROADMAP.md): a logged-in user creates an organization.
+// Upserts the Clerk user into `users` on first org creation, then creates
+// the org and an admin membership for that user, all in one mutation.
+export const create = mutation({
+  args: {
+    name: v.string(),
+    type: v.union(
+      v.literal("spa"),
+      v.literal("shelter"),
+      v.literal("association"),
+      v.literal("informal_group"),
+    ),
+    // Spain is shown but gated at signup until enabled — see ADR-004.
+    country: v.literal("FR"),
+    address: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Not authenticated");
+
+    let user = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+
+    if (!user) {
+      const userId = await ctx.db.insert("users", {
+        clerkId: identity.subject,
+        name: identity.name ?? identity.email ?? identity.subject,
+        email: identity.email ?? "",
+      });
+      user = await ctx.db.get(userId);
+    }
+    if (!user) throw new Error("Failed to create user");
+
+    const organizationId = await ctx.db.insert("organizations", {
+      name: args.name,
+      type: args.type,
+      country: args.country,
+      address: args.address,
+      verificationStatus: "unverified",
+    });
+
+    await ctx.db.insert("memberships", {
+      userId: user._id,
+      organizationId,
+      role: "admin",
+    });
+
+    return organizationId;
   },
 });

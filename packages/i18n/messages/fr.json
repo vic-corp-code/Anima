@@ -6,5 +6,33 @@
       "fr": "Français",
       "es": "Español"
     }
+  },
+  "organizations": {
+    "new": {
+      "title": "Créer une organisation",
+      "nameLabel": "Nom de l'organisation",
+      "typeLabel": "Type",
+      "type": {
+        "spa": "SPA",
+        "shelter": "Refuge",
+        "association": "Association",
+        "informal_group": "Groupe informel"
+      },
+      "countryLabel": "Pays",
+      "country": {
+        "FR": "France",
+        "ES": "Espagne (bientôt disponible)"
+      },
+      "addressLabel": "Adresse",
+      "submit": "Créer",
+      "submitting": "Création en cours…",
+      "error": "Une erreur est survenue. Réessayez."
+    },
+    "show": {
+      "createdTitle": "Organisation créée",
+      "typeLabel": "Type",
+      "countryLabel": "Pays",
+      "addressLabel": "Adresse"
+    }
   }
 }
