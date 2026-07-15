@@ -68,7 +68,7 @@ Animal photos are the heaviest asset. Convex file storage for originals; resized
 Email first (transactional provider, e.g. Resend), triggered from Convex. Saved-search alerts for volunteers are a scheduled Convex function scanning new missions. Push/SMS much later.
 
 ### GDPR (FR + ES = full RGPD scope)
-- EU hosting/data residency for user data — **verify Convex region options before phase 1**.
+- **EU hosting/data residency (phase-0 gate #3, checked 2026-07-15):** Convex offers region selection at deployment-creation time — `us` (N. Virginia) or `eu` (Ireland) — but **an existing deployment's region cannot be changed afterward**; moving means creating a new deployment and migrating data. Our personal dev deployment had defaulted to `us` (the CLI default when no `--region` flag is given); recreated it in `eu` via `npx convex deployment create dev/eu --type dev --region eu --select` (now `resilient-mule-266.eu-west-1.convex.cloud`) since there was no real data to migrate yet. **Remember for the prod deployment:** it will also default to `us` unless `--region eu` is passed explicitly (or the team's default region is changed in the dashboard first) — get this right at creation time, since it can't be fixed after.
 - Volunteer capabilities & availability are personal data: consent-based visibility, export, deletion (cascade design in schema from the start: deleting a user must clean applications, profiles, reputation events).
 - Animal data is not personal data, but adopter inquiries and org member info are.
 - Cookie/consent banner only if/when analytics require it; prefer privacy-friendly analytics (Plausible-class).
