@@ -59,6 +59,8 @@ Place-based filtering (radius search, route matching) is core to the product and
 ### SEO on the hub
 Animal/org/cagnotte pages must be server-rendered and indexable. Next.js SSR/ISR fetching from Convex over HTTP; verify the pattern (Convex + Next.js server components) in phase 0. If realtime isn't needed on public pages, plain server-side fetch + revalidation is enough.
 
+**Validated in the phase-0 spike (2026-07-15):** `fetchQuery` from `convex/nextjs` in an App Router server component does server-render Convex data correctly — confirmed the record's content is present in the raw HTML response, not just client-hydrated. **But ISR did not work as planned:** `export const revalidate = N` had no effect — every response came back `Cache-Control: no-store`, i.e. fully dynamic (re-rendered + re-fetched on every request), even on pages with no Convex call at all. Root cause: the shared Clerk + next-intl `proxy.ts` middleware sets cookies (session, `NEXT_LOCALE`) on every request, which opts all routes it covers out of static/ISR caching — this is a Next.js middleware behavior, not specific to Convex. Consequence: the public hub (once built) will need its own route scope that the auth/locale-cookie-setting middleware doesn't cover, or it will silently lose ISR and hit Convex on every page view. Not a phase-0 blocker (SEO-valid HTML is still produced either way, and cost is fine at side-project traffic) but flag when the hub's routing is actually designed.
+
 ### Media
 Animal photos are the heaviest asset. Convex file storage for originals; resized variants generated on upload (Convex action) or via an image CDN. Social composer needs server-side image rendering (announcement card → shareable PNG) — likely satori/resvg in a Convex action or a tiny render endpoint. Spike in phase 2.
 
@@ -80,6 +82,6 @@ Email first (transactional provider, e.g. Resend), triggered from Convex. Saved-
 ## Top technical risks (watch list)
 
 1. **Geo queries on Convex** — validated in phase-0 spike, see Geography section above; fallback if it stops scaling: precomputed region buckets, or (worst case) revisit backend choice before data grows.
-2. **SEO/SSR + Convex** on the hub — spike phase 0.
+2. **SEO/SSR + Convex** on the hub — SSR validated in phase-0 spike; ISR caching currently blocked by shared auth/locale middleware, see SEO section above. Revisit when the hub's route structure is designed.
 3. **Meta API** for direct social posting — treat as its own project; product works without it (ADR-006).
 4. **Convex lock-in** — mitigated by `packages/domain` isolation and regular data exports; accepted consciously (ADR-003).
