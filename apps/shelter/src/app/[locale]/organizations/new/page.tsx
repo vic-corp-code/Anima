@@ -77,7 +77,11 @@ export default function NewOrganizationPage() {
 
         <label className="flex flex-col gap-1">
           {t("countryLabel")}
-          <select value="FR" disabled className="rounded border px-3 py-2">
+          <select
+            value="FR"
+            onChange={() => {}}
+            className="rounded border px-3 py-2"
+          >
             <option value="FR">{t("country.FR")}</option>
             <option value="ES" disabled>
               {t("country.ES")}
