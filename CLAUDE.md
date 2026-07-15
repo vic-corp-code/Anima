@@ -18,9 +18,22 @@ Run a single app: `bun run dev --filter=@anima/shelter` (or `cd apps/shelter && 
 
 ## First-time setup
 
-Two services need accounts you create yourself — see:
+Three services need accounts you create yourself — see:
 - `packages/backend/README.md` for Convex (`bunx convex dev`, interactive login).
 - `apps/shelter/.env.local.example` for Clerk keys (from dashboard.clerk.com) and the Convex URL, once you have both.
+- Vercel — see Deploying below for CLI setup and a gotcha that bites on a fresh clone.
+
+## Deploying
+
+Hosted on Vercel — project `anima-shelter`, team `victorias-projects-10f9308b`, git-connected to the `corp` remote's `main`/`dev` branches (auto-deploys on push). CLI isn't installed globally here; use `npx vercel <cmd>`.
+
+- **Link at the repo root, never from `apps/shelter`**: `packages/backend/vercel-build.sh` assumes it's invoked from root and does relative `cd`s. Linking from the wrong directory doesn't error — it silently creates a new, misconfigured project.
+  ```
+  npx vercel link --scope victorias-projects-10f9308b --project anima-shelter
+  ```
+- Build Command is `bash ../../packages/backend/vercel-build.sh` (Vercel's Build Command field has a 256-char limit, hence the wrapper script). It runs `convex deploy` before `next build`, so `NEXT_PUBLIC_CONVEX_URL` is captured per-branch at build time — never set it as a static Vercel env var.
+- `CLERK_SECRET_KEY`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, and `CONVEX_DEPLOY_KEY` (exact name required) are already set on Vercel for Production/Preview/Development. On a fresh clone, after linking, `vercel env pull apps/shelter/.env.local` gets you the Clerk keys without re-copying from the dashboard — you still need the Convex setup above for `NEXT_PUBLIC_CONVEX_URL`.
+- For any Vercel CLI y/N confirmation (e.g. `vercel project rm`), pipe `printf 'y\n' |`, not `yes |` — the latter spams a broken echo loop in this CLI version instead of submitting.
 
 ## Conventions
 
