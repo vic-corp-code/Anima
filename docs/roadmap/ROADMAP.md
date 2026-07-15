@@ -22,7 +22,7 @@ Goal: a running skeleton and answers to the questions that could invalidate the 
 - [ ] Convex project + first schema slice (organizations, users, memberships).
 - [ ] Wire Clerk auth (ADR-007): login/signup, org membership synced to Convex.
 - [ ] i18n wiring (next-intl or chosen lib), FR + ES catalogs, lint rule against hardcoded strings.
-- [ ] **Spike: geo** — store lat/lng, radius query via Convex geospatial component. *Convex validation gate #1 (ADR-003).*
+- [x] **Spike: geo** — store lat/lng, radius query via Convex geospatial component. *Convex validation gate #1 (ADR-003).* Done 2026-07-15, see `architecture.md`'s Geography section.
 - [ ] **Spike: SSR/SEO** — server-render a page from Convex data with ISR. *Gate #2.*
 - [ ] **Check: Convex EU data residency.** *Gate #3.*
 - [ ] Basic design tokens in `packages/ui` (the three apps must feel like one product later).

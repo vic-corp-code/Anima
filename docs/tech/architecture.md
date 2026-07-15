@@ -52,7 +52,9 @@ Notes:
 One user account across all apps. Authorization is **organization-scoped**: a user has roles per organization (admin/editor) plus an optional volunteer profile. Enforced in Convex functions (every mutation checks org membership), never only in the UI.
 
 ### Geography
-Place-based filtering (radius search, route matching) is core to the product and the **weakest spot of a document DB**. Plan: store lat/lng per org/mission/volunteer-area (geocode via a provider at write time), use Convex's geospatial component for radius queries; route matching (volunteer route ↔ transport mission) starts as coarse origin/destination area overlap, not road-network math. Validate this in a phase-0 spike — it's the top technical risk of the Convex choice.
+Place-based filtering (radius search, route matching) is core to the product and the **weakest spot of a document DB**. Plan: store lat/lng per org/mission/volunteer-area (geocode via a provider at write time), use Convex's geospatial component for radius queries; route matching (volunteer route ↔ transport mission) starts as coarse origin/destination area overlap, not road-network math.
+
+**Validated in the phase-0 spike (2026-07-15):** geocode via Geoapify in a Convex action (`ADR-008`) → store lat/lng on the record → index via `@convex-dev/geospatial` in a mutation → radius query via its `nearest` query with `maxDistance`. Tested with real FR addresses; distance-sorted results and radius filtering both work as expected. One finding: **the geospatial index is separate storage from the source table** — deleting a record does not cascade to its index entry, so any deletion mutation (e.g. removing an organization) must explicitly call the index's `remove` too.
 
 ### SEO on the hub
 Animal/org/cagnotte pages must be server-rendered and indexable. Next.js SSR/ISR fetching from Convex over HTTP; verify the pattern (Convex + Next.js server components) in phase 0. If realtime isn't needed on public pages, plain server-side fetch + revalidation is enough.
@@ -77,7 +79,7 @@ Email first (transactional provider, e.g. Resend), triggered from Convex. Saved-
 
 ## Top technical risks (watch list)
 
-1. **Geo queries on Convex** — spike phase 0; fallback: precomputed region buckets, or (worst case) revisit backend choice before data grows.
+1. **Geo queries on Convex** — validated in phase-0 spike, see Geography section above; fallback if it stops scaling: precomputed region buckets, or (worst case) revisit backend choice before data grows.
 2. **SEO/SSR + Convex** on the hub — spike phase 0.
 3. **Meta API** for direct social posting — treat as its own project; product works without it (ADR-006).
 4. **Convex lock-in** — mitigated by `packages/domain` isolation and regular data exports; accepted consciously (ADR-003).

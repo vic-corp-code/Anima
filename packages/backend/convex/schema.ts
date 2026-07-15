@@ -21,6 +21,9 @@ export default defineSchema({
     // Spain is shown but gated at signup until enabled — see ADR-004.
     country: v.union(v.literal("FR"), v.literal("ES")),
     address: v.string(),
+    // Geocoded from `address` via Geoapify at write time — see ADR-008.
+    latitude: v.optional(v.number()),
+    longitude: v.optional(v.number()),
     description: v.optional(v.string()),
     logoUrl: v.optional(v.string()),
     verificationStatus: v.union(
