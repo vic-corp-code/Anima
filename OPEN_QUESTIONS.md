@@ -29,7 +29,6 @@ Decisions deliberately deferred. Each has a **decide-by** phase (see [ROADMAP.md
 
 ## Tech
 - **i18n library**: next-intl vs. alternatives. → *phase 0.*
-- Geocoding provider (place names → lat/lng; FR + ES coverage; cost): Google vs. Mapbox vs. OSM/Nominatim. → *phase 0 geo spike.*
 - Image pipeline: Convex storage + on-upload resize vs. image CDN. → *phase 1.*
 - Card→image rendering approach (satori/resvg in Convex action vs. render endpoint). → *phase 2.*
 - Email provider (Resend or similar; EU?). → *phase 1.*
@@ -58,3 +57,4 @@ Decisions deliberately deferred. Each has a **decide-by** phase (see [ROADMAP.md
 - **Social posting**: generate & copy in v1, APIs later. *(ADR-006, 2026-07-07)*
 - **Monorepo tooling**: bun workspaces + Turborepo (over pnpm). *(user, 2026-07-08 → ADR-001)*
 - **Auth provider**: Clerk (over Convex Auth) — eases things for users and dev. *(user, 2026-07-08 → ADR-007)*
+- **Geocoding provider**: Geoapify (over Mapbox, Google) — EU-native/GDPR-first, OSM-backed FR+ES coverage. *(user, 2026-07-15 → ADR-008)*
