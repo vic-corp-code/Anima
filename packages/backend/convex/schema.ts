@@ -40,4 +40,80 @@ export default defineSchema({
   })
     .index("by_user", ["userId"])
     .index("by_organization", ["organizationId"]),
+
+  animals: defineTable({
+    // Organization linkage
+    organizationId: v.id("organizations"),
+
+    // Core identification
+    name: v.string(),
+    species: v.union(v.literal("dog"), v.literal("cat")),
+    breed: v.optional(v.string()),
+    sex: v.union(v.literal("male"), v.literal("female"), v.literal("unknown")),
+
+    // Identification (French legal requirements)
+    chipId: v.optional(v.string()), // I-CAD 15-digit code
+    identificationMethod: v.optional(v.union(
+      v.literal("chip"),
+      v.literal("tattoo"),
+      v.literal("none")
+    )),
+
+    // Age
+    birthDate: v.optional(v.string()), // ISO date string or "unknown"
+    estimatedAge: v.optional(v.string()), // e.g., "1 year", "6 months"
+
+    // Status & lifecycle
+    status: v.union(
+      v.literal("in_care"),
+      v.literal("adoptable"),
+      v.literal("adoption_pending"),
+      v.literal("adopted"),
+      v.literal("fostered"),
+      v.literal("transferred"),
+      v.literal("deceased")
+    ),
+
+    // Arrival (French legal requirement)
+    arrivalDate: v.string(), // Required for legal compliance
+
+    // Health & care
+    sterilized: v.boolean(),
+    healthNotes: v.optional(v.string()),
+
+    // Behavior & compatibility
+    characterNotes: v.optional(v.string()),
+    compatibilityKids: v.boolean(),
+    compatibilityCats: v.boolean(),
+    compatibilityDogs: v.boolean(),
+
+    // Media
+    photoUrls: v.array(v.string()), // Convex storage URLs
+    story: v.optional(v.string()), // Public-facing story for adoption
+  })
+    .index("by_organization", ["organizationId"])
+    .index("by_status", ["status"]),
+
+  animalEvents: defineTable({
+    // Event tracking for timeline (French legal requirement for record-keeping)
+    animalId: v.id("animals"),
+    organizationId: v.id("organizations"),
+    eventType: v.union(
+      v.literal("arrived"),
+      v.literal("vet_visit"),
+      v.literal("sterilized"),
+      v.literal("fostered"),
+      v.literal("transferred"),
+      v.literal("adopted"),
+      v.literal("deceased"),
+      v.literal("status_change"),
+      v.literal("other")
+    ),
+    eventDate: v.string(),
+    notes: v.optional(v.string()),
+    // Optional: reference to related records (adoptions, transfers, etc.)
+    relatedId: v.optional(v.id("animals")),
+  })
+    .index("by_animal", ["animalId"])
+    .index("by_organization", ["organizationId"]),
 });

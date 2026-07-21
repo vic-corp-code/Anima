@@ -9,7 +9,8 @@
   },
   "scripts": {
     "dev": "convex dev",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
   },
   "dependencies": {
     "@convex-dev/geospatial": "^0.2.1",
