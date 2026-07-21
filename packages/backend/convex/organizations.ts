@@ -10,6 +10,32 @@ export const list = query({
   },
 });
 
+export const listForUser = query({
+  args: {},
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) return [];
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+
+    if (!user) return [];
+
+    const memberships = await ctx.db
+      .query("memberships")
+      .withIndex("by_user", (q) => q.eq("userId", user._id))
+      .collect();
+
+    const organizations = await Promise.all(
+      memberships.map((m) => ctx.db.get(m.organizationId)),
+    );
+
+    return organizations.filter(Boolean);
+  },
+});
+
 export const get = query({
   args: { organizationId: v.id("organizations") },
   handler: async (ctx, { organizationId }) => {

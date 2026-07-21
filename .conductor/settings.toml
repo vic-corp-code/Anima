@@ -1,0 +1,7 @@
+[settings]
+files_to_copy = [
+  "apps/shelter/.env.local",
+]
+
+[scripts]
+setup = "bun install && cd packages/backend && npx convex dev --once"

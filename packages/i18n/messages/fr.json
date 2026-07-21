@@ -5,9 +5,22 @@
       "label": "Langue",
       "fr": "Français",
       "es": "Español"
-    }
+    },
+    "goToOrganizations": "Mes organisations"
   },
   "organizations": {
+    "index": {
+      "title": "Mes organisations",
+      "loading": "Chargement…",
+      "empty": "Vous n'avez pas encore d'organisation.",
+      "createFirst": "Créer une organisation",
+      "type": {
+        "spa": "SPA",
+        "shelter": "Refuge",
+        "association": "Association",
+        "informal_group": "Groupe informel"
+      }
+    },
     "new": {
       "title": "Créer une organisation",
       "nameLabel": "Nom de l'organisation",
