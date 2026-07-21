@@ -9,7 +9,7 @@
     "allowJs": true,
     "noEmit": true,
     "isolatedModules": true,
-    "types": ["node"]
+    "types": []
   },
   "include": ["./**/*"],
   "exclude": ["./_generated"]
