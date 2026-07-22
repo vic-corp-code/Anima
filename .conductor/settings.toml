@@ -1,6 +1,7 @@
 [settings]
 files_to_copy = [
   "apps/shelter/.env.local",
+  "packages/backend/.env.local",
 ]
 
 [scripts]

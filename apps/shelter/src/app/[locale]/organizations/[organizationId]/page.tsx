@@ -3,16 +3,17 @@ import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { api } from "@anima/backend/convex/_generated/api";
 import { Id } from "@anima/backend/convex/_generated/dataModel";
+import { Link } from "@/i18n/navigation";
 
 export default async function OrganizationPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ organizationId: string }>;
 }) {
-  const { id } = await params;
+  const { organizationId } = await params;
   const t = await getTranslations("organizations.show");
   const organization = await fetchQuery(api.organizations.get, {
-    organizationId: id as Id<"organizations">,
+    organizationId: organizationId as Id<"organizations">,
   });
 
   if (!organization) notFound();
@@ -30,6 +31,12 @@ export default async function OrganizationPage({
         <dt className="font-medium">{t("addressLabel")}</dt>
         <dd>{organization.address}</dd>
       </dl>
+      <Link
+        href={`/organizations/${organizationId}/animals`}
+        className="rounded bg-black px-4 py-2 text-white dark:bg-zinc-50 dark:text-black"
+      >
+        {t("manageAnimalsLink")}
+      </Link>
     </div>
   );
 }

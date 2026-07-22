@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery, useMutation } from "convex/react";
+import { useConvexAuth, useQuery, useMutation } from "convex/react";
 import { api } from "@anima/backend/convex/_generated/api";
 import { Id } from "@anima/backend/convex/_generated/dataModel";
 import { useParams } from "next/navigation.js";
@@ -48,10 +48,11 @@ const EVENT_COLORS = {
 export default function AnimalDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const animalId = params.id as Id<"animals">;
+  const animalId = params.animalId as Id<"animals">;
+  const { isAuthenticated } = useConvexAuth();
 
-  const animal = useQuery(api.animals.get, { animalId });
-  const timeline = useQuery(api.animals.getTimeline, { animalId });
+  const animal = useQuery(api.animals.get, isAuthenticated ? { animalId } : "skip");
+  const timeline = useQuery(api.animals.getTimeline, isAuthenticated ? { animalId } : "skip");
 
   const updateAnimal = useMutation(api.animals.update);
 

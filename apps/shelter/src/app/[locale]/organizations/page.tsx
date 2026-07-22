@@ -1,13 +1,14 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useQuery } from "convex/react";
+import { useConvexAuth, useQuery } from "convex/react";
 import { Link } from "@/i18n/navigation";
 import { api } from "@anima/backend/convex/_generated/api";
 
 export default function OrganizationsPage() {
   const t = useTranslations("organizations.index");
-  const organizations = useQuery(api.organizations.listForUser);
+  const { isAuthenticated } = useConvexAuth();
+  const organizations = useQuery(api.organizations.listForUser, isAuthenticated ? {} : "skip");
 
   return (
     <div className="flex flex-1 flex-col items-center gap-6 bg-zinc-50 font-sans dark:bg-black p-8">

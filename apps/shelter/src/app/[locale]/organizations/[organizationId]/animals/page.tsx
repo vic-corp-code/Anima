@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useQuery } from "convex/react";
+import { useParams } from "next/navigation";
+import { useConvexAuth, useQuery } from "convex/react";
 import { api } from "@anima/backend/convex/_generated/api";
+import { Id } from "@anima/backend/convex/_generated/dataModel";
 import { useRouter } from "@/i18n/navigation";
 import { Button } from "@anima/ui";
 import { Card, CardContent, CardHeader, CardTitle } from "@anima/ui";
@@ -26,22 +28,20 @@ const SPECIES_OPTIONS = [
 
 export default function AnimalsListPage() {
   const router = useRouter();
+  const params = useParams();
+  const organizationId = params.organizationId as Id<"organizations">;
+  const { isAuthenticated } = useConvexAuth();
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
   const [speciesFilter, setSpeciesFilter] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Get the first available organization for demo purposes
-  // In production, this would come from user context/route
-  const organizations = useQuery(api.organizations.list);
-  const organizationId = organizations?.[0]?._id;
-
   const animals = useQuery(
     api.animals.list,
-    organizationId && statusFilter
+    !isAuthenticated
+      ? "skip"
+      : statusFilter
       ? { organizationId, status: statusFilter as AnimalStatus }
-      : organizationId
-      ? { organizationId }
-      : "skip"
+      : { organizationId }
   );
 
   const filteredAnimals = animals?.filter((animal) => {
@@ -126,7 +126,7 @@ export default function AnimalsListPage() {
             <div className="flex items-end">
               <Button
                 className="w-full"
-                onClick={() => router.push("/animals/new")}
+                onClick={() => router.push(`/organizations/${organizationId}/animals/new`)}
               >
                 + Ajouter un animal
               </Button>
@@ -150,7 +150,7 @@ export default function AnimalsListPage() {
             <Card
               key={animal._id}
               className="hover:shadow-lg transition-shadow cursor-pointer"
-              onClick={() => router.push(`/animals/${animal._id}`)}
+              onClick={() => router.push(`/organizations/${organizationId}/animals/${animal._id}`)}
             >
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">

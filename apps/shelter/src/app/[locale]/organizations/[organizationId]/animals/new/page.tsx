@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { useAction, useMutation, useQuery } from "convex/react";
+import { useParams } from "next/navigation";
+import { useAction, useMutation } from "convex/react";
 import { useRouter } from "@/i18n/navigation";
 import { api } from "@anima/backend/convex/_generated/api";
+import { Id } from "@anima/backend/convex/_generated/dataModel";
 import { AnimalChat, AnimalForm, Button } from "@anima/ui";
 import type { Animal } from "@anima/domain";
 
@@ -14,54 +16,26 @@ type AnimalFormData = Omit<Animal, "organizationId" | "status">;
 
 export default function NewAnimalPage() {
   const router = useRouter();
+  const params = useParams();
+  const organizationId = params.organizationId as Id<"organizations">;
   const extractAnimalData = useAction(api.ai.extractAnimalData);
   const createAnimal = useMutation(api.animals.create);
 
   const [inputMode, setInputMode] = useState<InputMode>("ai");
 
-  // Get the first available organization for demo purposes
-  const organizations = useQuery(api.organizations.list);
-  const organizationId = organizations?.[0]?._id;
-
   const handleComplete = (animals: Animal[]) => {
     // Redirect to animal list or show success
     console.log("Created animals:", animals);
-    router.push("/animals");
+    router.push(`/organizations/${organizationId}/animals`);
   };
 
   const handleManualSubmit = async (data: AnimalFormData) => {
-    if (!organizationId) {
-      console.error("No organization available");
-      return;
-    }
     await createAnimal({
       organizationId,
       ...data,
     });
-    router.push("/animals");
+    router.push(`/organizations/${organizationId}/animals`);
   };
-
-  // Show loading state while organizations are being fetched
-  if (organizations === undefined) {
-    return (
-      <div className="container mx-auto p-4">
-        <div className="text-center py-12 text-muted-foreground">
-          Chargement...
-        </div>
-      </div>
-    );
-  }
-
-  // Show error if no organizations available
-  if (!organizationId) {
-    return (
-      <div className="container mx-auto p-4">
-        <div className="text-center py-12 text-red-500">
-          Aucune organisation disponible. Veuillez d&apos;abord créer une organisation.
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="container mx-auto p-4">

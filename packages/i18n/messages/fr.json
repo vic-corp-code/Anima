@@ -45,7 +45,8 @@
       "createdTitle": "Organisation créée",
       "typeLabel": "Type",
       "countryLabel": "Pays",
-      "addressLabel": "Adresse"
+      "addressLabel": "Adresse",
+      "manageAnimalsLink": "Gérer les animaux"
     }
   }
 }
