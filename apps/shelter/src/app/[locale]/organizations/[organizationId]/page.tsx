@@ -36,12 +36,20 @@ export default async function OrganizationPage({
         <dt className="font-medium">{t("addressLabel")}</dt>
         <dd>{organization.address}</dd>
       </dl>
-      <Link
-        href={`/organizations/${organizationId}/animals`}
-        className="rounded bg-black px-4 py-2 text-white dark:bg-zinc-50 dark:text-black"
-      >
-        {t("manageAnimalsLink")}
-      </Link>
+      <div className="flex gap-3">
+        <Link
+          href={`/organizations/${organizationId}/animals`}
+          className="rounded bg-black px-4 py-2 text-white dark:bg-zinc-50 dark:text-black"
+        >
+          {t("manageAnimalsLink")}
+        </Link>
+        <Link
+          href={`/organizations/${organizationId}/members`}
+          className="rounded border border-zinc-300 px-4 py-2 dark:border-zinc-700"
+        >
+          {t("manageMembersLink")}
+        </Link>
+      </div>
     </div>
   );
 }

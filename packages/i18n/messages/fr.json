@@ -46,7 +46,39 @@
       "typeLabel": "Type",
       "countryLabel": "Pays",
       "addressLabel": "Adresse",
-      "manageAnimalsLink": "Gérer les animaux"
+      "manageAnimalsLink": "Gérer les animaux",
+      "manageMembersLink": "Gérer les membres"
     }
+  },
+  "members": {
+    "title": "Membres",
+    "loading": "Chargement…",
+    "error": "Une erreur est survenue.",
+    "roleLabel": "Rôle",
+    "role": {
+      "admin": "Admin",
+      "editor": "Éditeur"
+    },
+    "remove": "Retirer",
+    "removeConfirm": "Retirer ce membre ?",
+    "generateInvite": "Générer un lien d'invitation",
+    "inviteRoleLabel": "Rôle pour l'invité",
+    "inviteLinkLabel": "Lien d'invitation",
+    "copy": "Copier",
+    "copied": "Copié !"
+  },
+  "invite": {
+    "title": "Invitation",
+    "loading": "Chargement…",
+    "invalid": "Cette invitation n'est plus valide.",
+    "invitedTo": "Vous êtes invité(e) à rejoindre",
+    "asRole": "en tant que",
+    "role": {
+      "admin": "Admin",
+      "editor": "Éditeur"
+    },
+    "accept": "Accepter l'invitation",
+    "accepting": "Acceptation en cours…",
+    "signInToAccept": "Se connecter pour accepter"
   }
 }

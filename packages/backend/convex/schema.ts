@@ -41,6 +41,17 @@ export default defineSchema({
     .index("by_user", ["userId"])
     .index("by_organization", ["organizationId"]),
 
+  invites: defineTable({
+    organizationId: v.id("organizations"),
+    role: v.union(v.literal("admin"), v.literal("editor")),
+    token: v.string(),
+    createdBy: v.id("users"),
+    usedBy: v.optional(v.id("users")),
+    usedAt: v.optional(v.number()),
+  })
+    .index("by_token", ["token"])
+    .index("by_organization", ["organizationId"]),
+
   animals: defineTable({
     // Organization linkage
     organizationId: v.id("organizations"),
