@@ -1,6 +1,7 @@
 import { fetchQuery } from "convex/nextjs";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { auth } from "@clerk/nextjs/server";
 import { api } from "@anima/backend/convex/_generated/api";
 import { Id } from "@anima/backend/convex/_generated/dataModel";
 import { Link } from "@/i18n/navigation";
@@ -12,9 +13,13 @@ export default async function OrganizationPage({
 }) {
   const { organizationId } = await params;
   const t = await getTranslations("organizations.show");
-  const organization = await fetchQuery(api.organizations.get, {
-    organizationId: organizationId as Id<"organizations">,
-  });
+  const { getToken } = await auth();
+  const token = (await getToken()) ?? undefined;
+  const organization = await fetchQuery(
+    api.organizations.get,
+    { organizationId: organizationId as Id<"organizations"> },
+    { token },
+  );
 
   if (!organization) notFound();
 

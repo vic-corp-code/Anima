@@ -39,6 +39,22 @@ export const listForUser = query({
 export const get = query({
   args: { organizationId: v.id("organizations") },
   handler: async (ctx, { organizationId }) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) return null;
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+    if (!user) return null;
+
+    const membership = await ctx.db
+      .query("memberships")
+      .withIndex("by_user", (q) => q.eq("userId", user._id))
+      .filter((q) => q.eq(q.field("organizationId"), organizationId))
+      .first();
+    if (!membership) return null;
+
     return await ctx.db.get(organizationId);
   },
 });
