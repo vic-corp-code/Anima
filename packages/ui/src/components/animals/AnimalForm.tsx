@@ -134,12 +134,11 @@ export function AnimalForm({
       }
     }
 
-    // Arrival date validation
+    // Arrival date validation (string comparison avoids UTC-vs-local
+    // timezone drift between the date-only input value and `new Date()`)
     if (formData.arrivalDate) {
-      const arrivalDate = new Date(formData.arrivalDate);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      if (arrivalDate > today) {
+      const todayStr = new Date().toISOString().split("T")[0] as string;
+      if (formData.arrivalDate > todayStr) {
         newErrors["arrivalDate"] = t(
           "La date d'arrivée ne peut pas être dans le futur",
           "La fecha de llegada no puede estar en el futuro"
