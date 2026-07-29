@@ -15,7 +15,10 @@ export const extractAnimalData = action({
       throw new Error("OPENROUTER_API_KEY not configured");
     }
 
-    // JSON schema for structured output
+    // JSON schema for structured output. Every optional field is expressed
+    // as a nullable type AND listed in `required` — OpenRouter's strict
+    // json_schema mode (see response_format below) requires this; a plain
+    // omitted-if-absent property isn't supported under `strict: true`.
     const schema = {
       type: "object",
       properties: {
@@ -30,27 +33,27 @@ export const extractAnimalData = action({
                 enum: ["dog", "cat"],
                 description: "Species (dog or cat only)"
               },
-              breed: { type: "string", description: "Breed if specified" },
+              breed: { type: ["string", "null"], description: "Breed if specified" },
               sex: {
                 type: "string",
                 enum: ["male", "female", "unknown"],
                 description: "Sex"
               },
               chipId: {
-                type: "string",
+                type: ["string", "null"],
                 description: "I-CAD identification number (15-digit code) if mentioned"
               },
               identificationMethod: {
-                type: "string",
-                enum: ["chip", "tattoo", "none"],
+                type: ["string", "null"],
+                enum: ["chip", "tattoo", "none", null],
                 description: "Identification method"
               },
               birthDate: {
-                type: "string",
+                type: ["string", "null"],
                 description: "Birth date in ISO format (YYYY-MM-DD) if known"
               },
               estimatedAge: {
-                type: "string",
+                type: ["string", "null"],
                 description: "Estimated age if birth date unknown (e.g., '1 year', '6 months')"
               },
               sterilized: {
@@ -58,11 +61,11 @@ export const extractAnimalData = action({
                 description: "Whether the animal is sterilized"
               },
               healthNotes: {
-                type: "string",
+                type: ["string", "null"],
                 description: "Health conditions or observations"
               },
               characterNotes: {
-                type: "string",
+                type: ["string", "null"],
                 description: "Behavior or temperament notes"
               },
               arrivalDate: {
@@ -72,10 +75,16 @@ export const extractAnimalData = action({
               colors: {
                 type: "array",
                 items: { type: "string" },
-                description: "Color descriptions"
+                description: "Color descriptions, empty array if none mentioned"
               }
             },
-            required: ["name", "species", "sex", "arrivalDate", "sterilized"]
+            required: [
+              "name", "species", "breed", "sex", "chipId",
+              "identificationMethod", "birthDate", "estimatedAge",
+              "sterilized", "healthNotes", "characterNotes", "arrivalDate",
+              "colors"
+            ],
+            additionalProperties: false
           }
         },
         confidence: {
@@ -84,20 +93,19 @@ export const extractAnimalData = action({
             overall: {
               type: "number",
               description: "Overall confidence score (0-100)"
-            },
-            fields: {
-              type: "object",
-              description: "Confidence score per field (0-100)"
             }
-          }
+          },
+          required: ["overall"],
+          additionalProperties: false
         },
         clarifications: {
           type: "array",
           items: { type: "string" },
-          description: "Any information that needs clarification from the user"
+          description: "Any information that needs clarification from the user, empty array if none"
         }
       },
-      required: ["animals", "confidence"]
+      required: ["animals", "confidence", "clarifications"],
+      additionalProperties: false
     };
 
     try {
@@ -121,7 +129,7 @@ Rules:
 - If multiple animals are mentioned, create separate records for each
 - Use ISO date format (YYYY-MM-DD)
 - For arrival date, use today's date if not specified
-- Provide confidence scores (0-100) for each field
+- Provide an overall confidence score as an integer from 0 to 100 (not a 0-1 fraction)
 - Flag information that needs clarification
 - ${locale === 'fr' ? 'Respond in French when possible' : 'Respond in Spanish when possible'}
 
@@ -132,7 +140,14 @@ ${locale === 'fr' ? 'French legal requirements: Keep in mind that identification
               content: userInput
             }
           ],
-          response_format: { type: "json_object", schema }
+          response_format: {
+            type: "json_schema",
+            json_schema: {
+              name: "animal_extraction",
+              strict: true,
+              schema,
+            },
+          }
         }),
       });
 
@@ -148,6 +163,17 @@ ${locale === 'fr' ? 'French legal requirements: Keep in mind that identification
       }
 
       const extracted = JSON.parse(data.choices[0].message.content);
+
+      // Models tend to return a 0-1 fraction for "confidence" regardless of
+      // the prompt asking for 0-100 — normalize so the frontend's 0-100
+      // display/color thresholds are meaningful either way.
+      if (
+        typeof extracted?.confidence?.overall === "number" &&
+        extracted.confidence.overall > 0 &&
+        extracted.confidence.overall <= 1
+      ) {
+        extracted.confidence.overall = Math.round(extracted.confidence.overall * 100);
+      }
 
       return {
         success: true,
