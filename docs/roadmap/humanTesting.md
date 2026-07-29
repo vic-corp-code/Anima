@@ -1,0 +1,5 @@
+-add anmial identification I-CAD (UI displays verification number of numbers added correct or not) + Add option iD is not ready yet ( Marks animal )
+- AI form add animal
+-Navigation bits
+- Invitation should generate a new user
+- -annonces we cannot add no button
