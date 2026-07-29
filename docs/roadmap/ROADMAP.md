@@ -38,9 +38,9 @@ Goal: one real association replaces its spreadsheet.
 - [x] Members & roles (admin/editor). Done 2026-07-22 — **shipped as shareable invite links, not email** (transactional email infra doesn't exist yet; revisit if/when it's built).
 - [x] Adoption announcements: auto-draft from animal record, compact card format (the reusable component), publish/close lifecycle. Done 2026-07-29.
 - [x] Cagnottes: create with external link (ADR-005), manual progress, list. Done 2026-07-29.
-- [ ] Minimal news posts. *(in progress)*
-- [ ] Manual org verification flow (declare RNA/SIRET/ES-registry, admin marks verified).
-- [ ] Transactional email (invites, inquiry relay groundwork).
+- [x] Minimal news posts. Done 2026-07-29 — title/text/photos, optional links to animals and a cagnotte, no lifecycle (per the MVP-cut note).
+- [ ] Manual org verification flow (declare RNA/SIRET/ES-registry, admin marks verified). *(in progress)*
+- [ ] Transactional email (invites, inquiry relay groundwork). **Not blocking Phase 1** — invites already ship as shareable links (see Members & roles above); only revisit this if/when a real need for outbound email (e.g. phase-2 inquiry relay) makes it worth building.
 
 **Recruit 1–3 pilot associations in France** (Spain is gated at account creation until enabled, see ADR-004) — **deferred for now (2026-07-29)**, moved out of the active checklist. Rationale: the workspace doesn't feel pilot-ready yet even once the feature list above is checked off — revisit once cagnottes/news/org-verification land and a pass is done for a non-technical volunteer's actual first-week experience (polish, error handling, remaining hardcoded-French debt on the animal pages), not just feature completeness.
 
