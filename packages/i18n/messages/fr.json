@@ -48,8 +48,41 @@
       "addressLabel": "Adresse",
       "manageAnimalsLink": "Gérer les animaux",
       "manageMembersLink": "Gérer les membres",
-      "manageAnnouncementsLink": "Gérer les annonces"
+      "manageAnnouncementsLink": "Gérer les annonces",
+      "manageCagnottesLink": "Gérer les cagnottes"
     }
+  },
+  "cagnottes": {
+    "title": "Cagnottes",
+    "subtitle": "Gérez les cagnottes de votre organisation",
+    "loading": "Chargement…",
+    "error": "Une erreur est survenue.",
+    "empty": "Aucune cagnotte pour le moment.",
+    "create": "Créer une cagnotte",
+    "creating": "Création en cours…",
+    "statusFilterLabel": "Statut",
+    "allStatuses": "Tous les statuts",
+    "status": {
+      "active": "Active",
+      "closed": "Fermée"
+    },
+    "titleLabel": "Titre",
+    "goalDescriptionLabel": "Objectif concret",
+    "goalDescriptionPlaceholder": "ex : Nous avons besoin de 5 nouvelles cages",
+    "targetAmountLabel": "Montant cible (informatif)",
+    "externalUrlLabel": "Lien vers la cagnotte externe",
+    "externalUrlPlaceholder": "https://www.helloasso.com/...",
+    "photoUrlLabel": "Photo (URL)",
+    "deadlineLabel": "Date limite (optionnel)",
+    "externalLinkLabel": "Voir la cagnotte",
+    "currentAmountLabel": "Montant actuel",
+    "updateProgress": "Mettre à jour la progression",
+    "save": "Enregistrer",
+    "saving": "Enregistrement…",
+    "close": "Clôturer",
+    "reopen": "Réouvrir",
+    "backToList": "Retour aux cagnottes",
+    "notFound": "Cagnotte non trouvée"
   },
   "announcements": {
     "title": "Annonces",

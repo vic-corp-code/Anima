@@ -121,6 +121,18 @@ export default defineSchema({
     .index("by_organization", ["organizationId"])
     .index("by_animal", ["animalId"]),
 
+  cagnottes: defineTable({
+    organizationId: v.id("organizations"),
+    title: v.string(),
+    goalDescription: v.string(),
+    targetAmount: v.optional(v.number()),
+    currentAmount: v.number(),
+    externalUrl: v.string(),
+    photoUrl: v.optional(v.string()),
+    deadline: v.optional(v.string()),
+    status: v.union(v.literal("active"), v.literal("closed")),
+  }).index("by_organization", ["organizationId"]),
+
   animalEvents: defineTable({
     // Event tracking for timeline (French legal requirement for record-keeping)
     animalId: v.id("animals"),

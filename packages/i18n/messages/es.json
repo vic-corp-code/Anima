@@ -48,8 +48,41 @@
       "addressLabel": "Dirección",
       "manageAnimalsLink": "Gestionar animales",
       "manageMembersLink": "Gestionar miembros",
-      "manageAnnouncementsLink": "Gestionar anuncios"
+      "manageAnnouncementsLink": "Gestionar anuncios",
+      "manageCagnottesLink": "Gestionar recaudaciones"
     }
+  },
+  "cagnottes": {
+    "title": "Recaudaciones",
+    "subtitle": "Gestiona las recaudaciones de tu organización",
+    "loading": "Cargando…",
+    "error": "Se produjo un error.",
+    "empty": "Todavía no hay recaudaciones.",
+    "create": "Crear una recaudación",
+    "creating": "Creando…",
+    "statusFilterLabel": "Estado",
+    "allStatuses": "Todos los estados",
+    "status": {
+      "active": "Activa",
+      "closed": "Cerrada"
+    },
+    "titleLabel": "Título",
+    "goalDescriptionLabel": "Objetivo concreto",
+    "goalDescriptionPlaceholder": "ej.: Necesitamos 5 jaulas nuevas",
+    "targetAmountLabel": "Monto objetivo (informativo)",
+    "externalUrlLabel": "Enlace a la recaudación externa",
+    "externalUrlPlaceholder": "https://www.helloasso.com/...",
+    "photoUrlLabel": "Foto (URL)",
+    "deadlineLabel": "Fecha límite (opcional)",
+    "externalLinkLabel": "Ver la recaudación",
+    "currentAmountLabel": "Monto actual",
+    "updateProgress": "Actualizar el progreso",
+    "save": "Guardar",
+    "saving": "Guardando…",
+    "close": "Cerrar",
+    "reopen": "Reabrir",
+    "backToList": "Volver a las recaudaciones",
+    "notFound": "Recaudación no encontrada"
   },
   "announcements": {
     "title": "Anuncios",
