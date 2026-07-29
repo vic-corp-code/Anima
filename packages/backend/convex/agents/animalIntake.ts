@@ -1,7 +1,7 @@
 import { Agent, createTool, stepCountIs, type ToolCtx } from "@convex-dev/agent";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { z } from "zod/v3";
-import { components, api } from "../_generated/api";
+import { components, internal } from "../_generated/api";
 import { Id } from "../_generated/dataModel";
 
 // Extra context every tool call needs beyond what ToolCtx provides — see
@@ -56,7 +56,7 @@ const createAnimalTool = createTool<
   inputSchema: createAnimalInputSchema,
   needsApproval: () => true,
   execute: async (ctx, input): Promise<{ animalId: string; name: string }> => {
-    const animalId: Id<"animals"> = await ctx.runMutation(api.animals.create, {
+    const animalId: Id<"animals"> = await ctx.runMutation(internal.animals.createInternal, {
       organizationId: ctx.organizationId,
       ...input,
       compatibilityKids: false,

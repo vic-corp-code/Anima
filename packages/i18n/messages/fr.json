@@ -255,6 +255,42 @@
       "submitLabel": "Enregistrer les modifications"
     }
   },
+  "animalChat": {
+    "greeting": "Décrivez les animaux qui viennent d'arriver, je m'occupe du reste.",
+    "inputPlaceholder": "ex: un chat noir arrivé aujourd'hui, femelle, stérilisée...",
+    "send": "Envoyer",
+    "sending": "Envoi…",
+    "waitingForApproval": "Répondez à la proposition ci-dessus avant de continuer.",
+    "error": "Une erreur est survenue. Réessayez.",
+    "loadingThread": "Démarrage de la conversation…",
+    "loadMore": "Charger plus",
+    "proposal": {
+      "title": "Proposition d'enregistrement",
+      "approve": "Valider",
+      "deny": "Refuser",
+      "denyReasonPlaceholder": "Motif du refus (optionnel)…",
+      "cancelDeny": "Annuler",
+      "approving": "Validation…",
+      "created": "Enregistré",
+      "viewAnimal": "Voir la fiche",
+      "denied": "Proposition refusée",
+      "denialFailed": "Échec de l'enregistrement"
+    },
+    "field": {
+      "name": "Nom",
+      "species": "Espèce",
+      "sex": "Sexe",
+      "breed": "Race",
+      "sterilized": "Stérilisé",
+      "arrivalDate": "Arrivée",
+      "chipId": "N° I-CAD",
+      "identificationMethod": "Identification",
+      "birthDate": "Naissance",
+      "estimatedAge": "Âge estimé",
+      "healthNotes": "Santé",
+      "characterNotes": "Caractère"
+    }
+  },
   "members": {
     "title": "Membres",
     "loading": "Chargement…",

@@ -255,6 +255,42 @@
       "submitLabel": "Guardar los cambios"
     }
   },
+  "animalChat": {
+    "greeting": "Describe los animales que acaban de llegar, yo me encargo del resto.",
+    "inputPlaceholder": "ej: una gata negra llegada hoy, hembra, esterilizada...",
+    "send": "Enviar",
+    "sending": "Enviando…",
+    "waitingForApproval": "Responde a la propuesta de arriba antes de continuar.",
+    "error": "Se produjo un error. Inténtalo de nuevo.",
+    "loadingThread": "Iniciando la conversación…",
+    "loadMore": "Cargar más",
+    "proposal": {
+      "title": "Propuesta de registro",
+      "approve": "Aprobar",
+      "deny": "Rechazar",
+      "denyReasonPlaceholder": "Motivo del rechazo (opcional)…",
+      "cancelDeny": "Cancelar",
+      "approving": "Aprobando…",
+      "created": "Registrado",
+      "viewAnimal": "Ver la ficha",
+      "denied": "Propuesta rechazada",
+      "denialFailed": "Fallo al registrar"
+    },
+    "field": {
+      "name": "Nombre",
+      "species": "Especie",
+      "sex": "Sexo",
+      "breed": "Raza",
+      "sterilized": "Esterilizado",
+      "arrivalDate": "Llegada",
+      "chipId": "N.º I-CAD",
+      "identificationMethod": "Identificación",
+      "birthDate": "Nacimiento",
+      "estimatedAge": "Edad estimada",
+      "healthNotes": "Salud",
+      "characterNotes": "Carácter"
+    }
+  },
   "members": {
     "title": "Miembros",
     "loading": "Cargando…",

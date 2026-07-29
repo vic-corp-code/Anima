@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 import { useParams } from "next/navigation";
-import { useAction, useMutation } from "convex/react";
+import { useMutation } from "convex/react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { useUploadPhoto } from "@/lib/useUploadPhoto";
 import { api } from "@anima/backend/convex/_generated/api";
 import { Id } from "@anima/backend/convex/_generated/dataModel";
-import { AnimalChat, AnimalForm, Button } from "@anima/ui";
+import { AnimalForm, Button } from "@anima/ui";
+import { AnimalChat } from "@/components/animals/AnimalChat";
 import type { Animal } from "@anima/domain";
 
 type InputMode = "ai" | "manual";
@@ -22,17 +23,10 @@ export default function NewAnimalPage() {
   const router = useRouter();
   const params = useParams();
   const organizationId = params.organizationId as Id<"organizations">;
-  const extractAnimalData = useAction(api.ai.extractAnimalData);
   const createAnimal = useMutation(api.animals.create);
   const uploadFile = useUploadPhoto();
 
   const [inputMode, setInputMode] = useState<InputMode>("ai");
-
-  const handleComplete = (animals: Animal[]) => {
-    // Redirect to animal list or show success
-    console.log("Created animals:", animals);
-    router.push(`/organizations/${organizationId}/animals`);
-  };
 
   const handleManualSubmit = async (data: AnimalFormData) => {
     await createAnimal({
@@ -68,13 +62,7 @@ export default function NewAnimalPage() {
       {/* Content */}
       {inputMode === "ai" ? (
         <div className="h-[calc(100vh-200px)] border rounded-lg overflow-hidden">
-          <AnimalChat
-            extractAnimalData={extractAnimalData}
-            createAnimal={createAnimal}
-            organizationId={organizationId}
-            locale={locale}
-            onComplete={handleComplete}
-          />
+          <AnimalChat organizationId={organizationId} />
         </div>
       ) : (
         <div className="max-w-2xl mx-auto">

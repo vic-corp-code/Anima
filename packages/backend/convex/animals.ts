@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { mutation, query, QueryCtx } from "./_generated/server";
+import { internalMutation, mutation, query, MutationCtx, QueryCtx } from "./_generated/server";
 import { Id } from "./_generated/dataModel";
 
 // Organization-scoped authorization check
@@ -45,65 +45,106 @@ async function assertAdminAccess(
   return membership;
 }
 
+const createAnimalArgs = {
+  organizationId: v.id("organizations"),
+  name: v.string(),
+  species: v.union(v.literal("dog"), v.literal("cat")),
+  breed: v.optional(v.string()),
+  sex: v.union(v.literal("male"), v.literal("female"), v.literal("unknown")),
+  chipId: v.optional(v.string()),
+  identificationMethod: v.optional(
+    v.union(v.literal("chip"), v.literal("tattoo"), v.literal("none"))
+  ),
+  birthDate: v.optional(v.string()),
+  estimatedAge: v.optional(v.string()),
+  arrivalDate: v.string(),
+  sterilized: v.boolean(),
+  healthNotes: v.optional(v.string()),
+  characterNotes: v.optional(v.string()),
+  compatibilityKids: v.boolean(),
+  compatibilityCats: v.boolean(),
+  compatibilityDogs: v.boolean(),
+  photoUrls: v.optional(v.array(v.string())),
+  story: v.optional(v.string()),
+};
+
+async function insertAnimal(
+  ctx: MutationCtx,
+  args: {
+    organizationId: Id<"organizations">;
+    name: string;
+    species: "dog" | "cat";
+    breed?: string;
+    sex: "male" | "female" | "unknown";
+    chipId?: string;
+    identificationMethod?: "chip" | "tattoo" | "none";
+    birthDate?: string;
+    estimatedAge?: string;
+    arrivalDate: string;
+    sterilized: boolean;
+    healthNotes?: string;
+    characterNotes?: string;
+    compatibilityKids: boolean;
+    compatibilityCats: boolean;
+    compatibilityDogs: boolean;
+    photoUrls?: string[];
+    story?: string;
+  }
+) {
+  const animalId = await ctx.db.insert("animals", {
+    organizationId: args.organizationId,
+    name: args.name,
+    species: args.species,
+    breed: args.breed,
+    sex: args.sex,
+    chipId: args.chipId,
+    identificationMethod: args.identificationMethod,
+    birthDate: args.birthDate,
+    estimatedAge: args.estimatedAge,
+    status: "in_care", // Default status for new arrivals
+    arrivalDate: args.arrivalDate,
+    sterilized: args.sterilized,
+    healthNotes: args.healthNotes,
+    characterNotes: args.characterNotes,
+    compatibilityKids: args.compatibilityKids,
+    compatibilityCats: args.compatibilityCats,
+    compatibilityDogs: args.compatibilityDogs,
+    photoUrls: args.photoUrls ?? [],
+    story: args.story,
+  });
+
+  // Create arrival event for timeline
+  await ctx.db.insert("animalEvents", {
+    animalId,
+    organizationId: args.organizationId,
+    eventType: "arrived",
+    eventDate: args.arrivalDate,
+    notes: `Animal arrived at ${args.organizationId}`,
+  });
+
+  return animalId;
+}
+
 // Create a new animal
 export const create = mutation({
-  args: {
-    organizationId: v.id("organizations"),
-    name: v.string(),
-    species: v.union(v.literal("dog"), v.literal("cat")),
-    breed: v.optional(v.string()),
-    sex: v.union(v.literal("male"), v.literal("female"), v.literal("unknown")),
-    chipId: v.optional(v.string()),
-    identificationMethod: v.optional(
-      v.union(v.literal("chip"), v.literal("tattoo"), v.literal("none"))
-    ),
-    birthDate: v.optional(v.string()),
-    estimatedAge: v.optional(v.string()),
-    arrivalDate: v.string(),
-    sterilized: v.boolean(),
-    healthNotes: v.optional(v.string()),
-    characterNotes: v.optional(v.string()),
-    compatibilityKids: v.boolean(),
-    compatibilityCats: v.boolean(),
-    compatibilityDogs: v.boolean(),
-    photoUrls: v.optional(v.array(v.string())),
-    story: v.optional(v.string()),
-  },
+  args: createAnimalArgs,
   handler: async (ctx, args) => {
     await assertOrgAccess(ctx, args.organizationId);
+    return await insertAnimal(ctx, args);
+  },
+});
 
-    const animalId = await ctx.db.insert("animals", {
-      organizationId: args.organizationId,
-      name: args.name,
-      species: args.species,
-      breed: args.breed,
-      sex: args.sex,
-      chipId: args.chipId,
-      identificationMethod: args.identificationMethod,
-      birthDate: args.birthDate,
-      estimatedAge: args.estimatedAge,
-      status: "in_care", // Default status for new arrivals
-      arrivalDate: args.arrivalDate,
-      sterilized: args.sterilized,
-      healthNotes: args.healthNotes,
-      characterNotes: args.characterNotes,
-      compatibilityKids: args.compatibilityKids,
-      compatibilityCats: args.compatibilityCats,
-      compatibilityDogs: args.compatibilityDogs,
-      photoUrls: args.photoUrls ?? [],
-      story: args.story,
-    });
-
-    // Create arrival event for timeline
-    await ctx.db.insert("animalEvents", {
-      animalId,
-      organizationId: args.organizationId,
-      eventType: "arrived",
-      eventDate: args.arrivalDate,
-      notes: `Animal arrived at ${args.organizationId}`,
-    });
-
-    return animalId;
+// Same as `create`, but skips the auth check — for trusted internal callers
+// that have already verified org membership earlier in their own call chain
+// (e.g. the animal-intake chat agent's create_animal tool: `ctx.auth` isn't
+// available inside a scheduled action, so `assertOrgAccess` would always
+// throw "Not authenticated" there even for a legitimately authorized user —
+// see animalChat.ts, where authorizeThreadAccess already checked membership
+// before the action was ever scheduled).
+export const createInternal = internalMutation({
+  args: createAnimalArgs,
+  handler: async (ctx, args) => {
+    return await insertAnimal(ctx, args);
   },
 });
 
