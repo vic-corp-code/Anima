@@ -5,6 +5,7 @@ import { api } from "@anima/backend/convex/_generated/api";
 import { Id } from "@anima/backend/convex/_generated/dataModel";
 import { useParams } from "next/navigation";
 import { useRouter } from "@/i18n/navigation";
+import { useUploadPhoto } from "@/lib/useUploadPhoto";
 import { AnimalForm } from "@anima/ui";
 import type { Animal } from "@anima/domain";
 
@@ -21,6 +22,7 @@ export default function EditAnimalPage() {
 
   const animal = useQuery(api.animals.get, isAuthenticated ? { animalId } : "skip");
   const updateAnimal = useMutation(api.animals.update);
+  const uploadFile = useUploadPhoto();
 
   const handleSubmit = async (data: AnimalFormData) => {
     await updateAnimal({ animalId, ...data });
@@ -44,6 +46,7 @@ export default function EditAnimalPage() {
           onCancel={() => router.push(`/organizations/${organizationId}/animals/${animalId}`)}
           submitLabel="Enregistrer les modifications"
           locale="fr"
+          uploadFile={uploadFile}
         />
       </div>
     </div>

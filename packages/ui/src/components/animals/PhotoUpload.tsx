@@ -6,6 +6,11 @@ import { Card, CardContent } from "../ui/card";
 
 interface PhotoUploadProps {
   onPhotosChange: (urls: string[]) => void;
+  // Uploads a single file to storage and resolves to its permanent,
+  // servable URL. Injected so this component doesn't depend on Convex
+  // directly (same pattern as AnimalChat's injected extractAnimalData/
+  // createAnimal props) — the caller wires in the actual backend call.
+  uploadFile: (file: File) => Promise<string>;
   initialPhotos?: string[];
   maxPhotos?: number;
   maxSizeMB?: number;
@@ -14,6 +19,7 @@ interface PhotoUploadProps {
 
 export function PhotoUpload({
   onPhotosChange,
+  uploadFile,
   initialPhotos = [],
   maxPhotos = 10,
   maxSizeMB = 5,
@@ -59,9 +65,7 @@ export function PhotoUpload({
     setError(null);
 
     try {
-      // This would use the Convex upload functionality
-      // For now, we'll create object URLs as a placeholder
-      const newPhotos = files.map((file) => URL.createObjectURL(file));
+      const newPhotos = await Promise.all(files.map((file) => uploadFile(file)));
       const updatedPhotos = [...photos, ...newPhotos];
 
       setPhotos(updatedPhotos);

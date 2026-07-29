@@ -1,4 +1,4 @@
-import { mutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
 /**
@@ -8,6 +8,18 @@ import { v } from "convex/values";
 export const generateUploadUrl = mutation({
   handler: async (ctx) => {
     return await ctx.storage.generateUploadUrl();
+  },
+});
+
+/**
+ * Resolve a storage ID (returned after uploading to a `generateUploadUrl`
+ * URL) to a servable URL. Doesn't require an animal to already exist, so it
+ * works for the "creating a new animal" flow, not just editing one.
+ */
+export const getUrl = query({
+  args: { storageId: v.id("_storage") },
+  handler: async (ctx, { storageId }) => {
+    return await ctx.storage.getUrl(storageId);
   },
 });
 

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useParams } from "next/navigation";
 import { useAction, useMutation } from "convex/react";
 import { useRouter } from "@/i18n/navigation";
+import { useUploadPhoto } from "@/lib/useUploadPhoto";
 import { api } from "@anima/backend/convex/_generated/api";
 import { Id } from "@anima/backend/convex/_generated/dataModel";
 import { AnimalChat, AnimalForm, Button } from "@anima/ui";
@@ -20,6 +21,7 @@ export default function NewAnimalPage() {
   const organizationId = params.organizationId as Id<"organizations">;
   const extractAnimalData = useAction(api.ai.extractAnimalData);
   const createAnimal = useMutation(api.animals.create);
+  const uploadFile = useUploadPhoto();
 
   const [inputMode, setInputMode] = useState<InputMode>("ai");
 
@@ -80,6 +82,7 @@ export default function NewAnimalPage() {
             onCancel={() => router.back()}
             submitLabel="Créer l'animal"
             locale="fr"
+            uploadFile={uploadFile}
           />
         </div>
       )}

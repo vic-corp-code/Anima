@@ -33,6 +33,8 @@ interface AnimalFormProps {
   onCancel?: () => void;
   submitLabel?: string;
   locale?: "fr" | "es";
+  // Forwarded to PhotoUpload — see its own prop comment.
+  uploadFile: (file: File) => Promise<string>;
 }
 
 const SPECIES_OPTIONS = [
@@ -58,6 +60,7 @@ export function AnimalForm({
   onCancel,
   submitLabel,
   locale = "fr",
+  uploadFile,
 }: AnimalFormProps) {
   const [formData, setFormData] = useState<AnimalFormData>({
     name: initialData?.name || "",
@@ -476,6 +479,7 @@ export function AnimalForm({
       {/* Photos */}
       <PhotoUpload
         onPhotosChange={(urls) => setFormData((prev) => ({ ...prev, photoUrls: urls }))}
+        uploadFile={uploadFile}
         initialPhotos={formData.photoUrls}
         maxPhotos={10}
         maxSizeMB={5}
