@@ -50,7 +50,19 @@
       "manageMembersLink": "Gestionar miembros",
       "manageAnnouncementsLink": "Gestionar anuncios",
       "manageCagnottesLink": "Gestionar recaudaciones",
-      "manageNewsLink": "Gestionar noticias"
+      "manageNewsLink": "Gestionar noticias",
+      "verificationTitle": "Verificación",
+      "verificationStatus": {
+        "unverified": "No verificada",
+        "email_verified": "Email verificado",
+        "registry_verified": "Organización verificada"
+      },
+      "registryNumberLabel": "Número de registro",
+      "registryNumberSave": "Guardar",
+      "registryNumberSaving": "Guardando…",
+      "markVerified": "Marcar como verificada",
+      "unmarkVerified": "Anular la verificación",
+      "markVerifiedRequiresNumber": "Introduce un número de registro antes de marcar la organización como verificada."
     }
   },
   "cagnottes": {

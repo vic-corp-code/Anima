@@ -31,6 +31,9 @@ export default defineSchema({
       v.literal("email_verified"),
       v.literal("registry_verified"),
     ),
+    // RNA/SIRET (FR) or registry number (ES), self-declared by the org's
+    // admin — see docs/product/shelter-app.md F1. No API verification.
+    registryNumber: v.optional(v.string()),
   }),
 
   memberships: defineTable({

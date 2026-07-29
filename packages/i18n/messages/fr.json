@@ -50,7 +50,19 @@
       "manageMembersLink": "Gérer les membres",
       "manageAnnouncementsLink": "Gérer les annonces",
       "manageCagnottesLink": "Gérer les cagnottes",
-      "manageNewsLink": "Gérer les actualités"
+      "manageNewsLink": "Gérer les actualités",
+      "verificationTitle": "Vérification",
+      "verificationStatus": {
+        "unverified": "Non vérifiée",
+        "email_verified": "Email vérifié",
+        "registry_verified": "Organisation vérifiée"
+      },
+      "registryNumberLabel": "Numéro de registre (RNA/SIRET)",
+      "registryNumberSave": "Enregistrer",
+      "registryNumberSaving": "Enregistrement…",
+      "markVerified": "Marquer comme vérifiée",
+      "unmarkVerified": "Annuler la vérification",
+      "markVerifiedRequiresNumber": "Renseignez un numéro de registre avant de marquer l'organisation comme vérifiée."
     }
   },
   "cagnottes": {

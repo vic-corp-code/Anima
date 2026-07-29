@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { assertAdminAccess } from "./access";
 
 // Phase-0 SSR/SEO spike (ROADMAP.md validation gate #2): a public, unauth'd
 // list query to prove Convex data can be server-rendered with ISR.
@@ -109,5 +110,45 @@ export const create = mutation({
     });
 
     return organizationId;
+  },
+});
+
+// Declare the org's registry number (RNA/SIRET for FR, registry number for
+// ES) — self-attested, no API check. Admin-only; doesn't change
+// verificationStatus on its own.
+export const updateRegistryNumber = mutation({
+  args: {
+    organizationId: v.id("organizations"),
+    registryNumber: v.string(),
+  },
+  handler: async (ctx, { organizationId, registryNumber }) => {
+    await assertAdminAccess(ctx, organizationId);
+    await ctx.db.patch(organizationId, { registryNumber });
+  },
+});
+
+// Admin self-declares the org as verified. Requires a registry number to
+// already be on file — no external check performed (MVP, see
+// docs/product/shelter-app.md F1).
+export const markVerified = mutation({
+  args: { organizationId: v.id("organizations") },
+  handler: async (ctx, { organizationId }) => {
+    await assertAdminAccess(ctx, organizationId);
+
+    const organization = await ctx.db.get(organizationId);
+    if (!organization?.registryNumber) {
+      throw new Error("Declare a registry number before marking as verified");
+    }
+
+    await ctx.db.patch(organizationId, { verificationStatus: "registry_verified" });
+  },
+});
+
+// Reverts a mistaken verification back to unverified.
+export const unmarkVerified = mutation({
+  args: { organizationId: v.id("organizations") },
+  handler: async (ctx, { organizationId }) => {
+    await assertAdminAccess(ctx, organizationId);
+    await ctx.db.patch(organizationId, { verificationStatus: "unverified" });
   },
 });

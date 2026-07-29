@@ -5,6 +5,7 @@ import { auth } from "@clerk/nextjs/server";
 import { api } from "@anima/backend/convex/_generated/api";
 import { Id } from "@anima/backend/convex/_generated/dataModel";
 import { Link } from "@/i18n/navigation";
+import { VerificationCard } from "./VerificationCard";
 
 export default async function OrganizationPage({
   params,
@@ -36,6 +37,11 @@ export default async function OrganizationPage({
         <dt className="font-medium">{t("addressLabel")}</dt>
         <dd>{organization.address}</dd>
       </dl>
+      <VerificationCard
+        organizationId={organizationId as Id<"organizations">}
+        verificationStatus={organization.verificationStatus}
+        registryNumber={organization.registryNumber}
+      />
       <div className="flex gap-3">
         <Link
           href={`/organizations/${organizationId}/animals`}
