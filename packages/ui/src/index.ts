@@ -17,3 +17,5 @@ export {
 export { AnimalChat } from "./components/animals/AnimalChat"
 export { AnimalForm } from "./components/animals/AnimalForm"
 export { PhotoUpload } from "./components/animals/PhotoUpload"
+export { AnnouncementCard } from "./components/announcements/AnnouncementCard"
+export type { AnnouncementCardProps } from "./components/announcements/AnnouncementCard"

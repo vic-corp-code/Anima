@@ -47,8 +47,43 @@
       "countryLabel": "País",
       "addressLabel": "Dirección",
       "manageAnimalsLink": "Gestionar animales",
-      "manageMembersLink": "Gestionar miembros"
+      "manageMembersLink": "Gestionar miembros",
+      "manageAnnouncementsLink": "Gestionar anuncios"
     }
+  },
+  "announcements": {
+    "title": "Anuncios",
+    "subtitle": "Gestiona los anuncios de adopción de tu organización",
+    "loading": "Cargando…",
+    "error": "Se produjo un error.",
+    "empty": "Todavía no hay anuncios.",
+    "createDraft": "Crear un borrador",
+    "statusFilterLabel": "Estado",
+    "allStatuses": "Todos los estados",
+    "status": {
+      "draft": "Borrador",
+      "published": "Publicado",
+      "closed": "Cerrado"
+    },
+    "species": {
+      "dog": "Perro",
+      "cat": "Gato"
+    },
+    "titleLabel": "Título",
+    "descriptionLabel": "Descripción",
+    "save": "Guardar",
+    "saving": "Guardando…",
+    "publish": "Publicar",
+    "close": "Cerrar",
+    "publishedAt": "Publicado el",
+    "closedAt": "Cerrado el",
+    "backToAnimal": "Volver al animal",
+    "forAnimal": {
+      "title": "Anuncios de {name}",
+      "empty": "No hay anuncios para este animal.",
+      "viewAll": "Ver anuncios"
+    },
+    "notFound": "Anuncio no encontrado"
   },
   "members": {
     "title": "Miembros",

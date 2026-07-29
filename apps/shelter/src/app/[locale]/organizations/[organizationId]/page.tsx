@@ -49,6 +49,12 @@ export default async function OrganizationPage({
         >
           {t("manageMembersLink")}
         </Link>
+        <Link
+          href={`/organizations/${organizationId}/announcements`}
+          className="rounded border border-zinc-300 px-4 py-2 dark:border-zinc-700"
+        >
+          {t("manageAnnouncementsLink")}
+        </Link>
       </div>
     </div>
   );

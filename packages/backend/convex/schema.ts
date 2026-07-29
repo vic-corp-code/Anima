@@ -105,6 +105,22 @@ export default defineSchema({
     .index("by_organization", ["organizationId"])
     .index("by_status", ["status"]),
 
+  announcements: defineTable({
+    organizationId: v.id("organizations"),
+    animalId: v.id("animals"),
+    title: v.string(),
+    description: v.string(),
+    status: v.union(
+      v.literal("draft"),
+      v.literal("published"),
+      v.literal("closed"),
+    ),
+    publishedAt: v.optional(v.number()),
+    closedAt: v.optional(v.number()),
+  })
+    .index("by_organization", ["organizationId"])
+    .index("by_animal", ["animalId"]),
+
   animalEvents: defineTable({
     // Event tracking for timeline (French legal requirement for record-keeping)
     animalId: v.id("animals"),

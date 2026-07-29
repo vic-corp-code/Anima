@@ -47,8 +47,43 @@
       "countryLabel": "Pays",
       "addressLabel": "Adresse",
       "manageAnimalsLink": "Gérer les animaux",
-      "manageMembersLink": "Gérer les membres"
+      "manageMembersLink": "Gérer les membres",
+      "manageAnnouncementsLink": "Gérer les annonces"
     }
+  },
+  "announcements": {
+    "title": "Annonces",
+    "subtitle": "Gérez les annonces d'adoption de votre organisation",
+    "loading": "Chargement…",
+    "error": "Une erreur est survenue.",
+    "empty": "Aucune annonce pour le moment.",
+    "createDraft": "Créer un brouillon",
+    "statusFilterLabel": "Statut",
+    "allStatuses": "Tous les statuts",
+    "status": {
+      "draft": "Brouillon",
+      "published": "Publiée",
+      "closed": "Fermée"
+    },
+    "species": {
+      "dog": "Chien",
+      "cat": "Chat"
+    },
+    "titleLabel": "Titre",
+    "descriptionLabel": "Description",
+    "save": "Enregistrer",
+    "saving": "Enregistrement…",
+    "publish": "Publier",
+    "close": "Clôturer",
+    "publishedAt": "Publiée le",
+    "closedAt": "Clôturée le",
+    "backToAnimal": "Retour à l'animal",
+    "forAnimal": {
+      "title": "Annonces pour {name}",
+      "empty": "Aucune annonce pour cet animal.",
+      "viewAll": "Voir les annonces"
+    },
+    "notFound": "Annonce non trouvée"
   },
   "members": {
     "title": "Membres",

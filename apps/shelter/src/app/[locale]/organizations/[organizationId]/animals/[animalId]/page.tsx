@@ -128,6 +128,12 @@ export default function AnimalDetailPage() {
           <div className="flex gap-2">
             <Button
               variant="outline"
+              onClick={() => router.push(`/organizations/${organizationId}/animals/${animalId}/announcements`)}
+            >
+              Annonces
+            </Button>
+            <Button
+              variant="outline"
               onClick={() => router.push(`/organizations/${organizationId}/animals/${animalId}/edit`)}
             >
               Modifier
