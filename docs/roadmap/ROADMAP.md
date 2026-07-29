@@ -39,10 +39,10 @@ Goal: one real association replaces its spreadsheet.
 - [x] Adoption announcements: auto-draft from animal record, compact card format (the reusable component), publish/close lifecycle. Done 2026-07-29.
 - [x] Cagnottes: create with external link (ADR-005), manual progress, list. Done 2026-07-29.
 - [x] Minimal news posts. Done 2026-07-29 — title/text/photos, optional links to animals and a cagnotte, no lifecycle (per the MVP-cut note).
-- [ ] Manual org verification flow (declare RNA/SIRET/ES-registry, admin marks verified). *(in progress)*
+- [x] Manual org verification flow (declare RNA/SIRET/ES-registry, admin marks verified). Done 2026-07-29 — self-attested, no external API check, org's own admin declares + toggles (per shelter-app.md F1's MVP cut).
 - [ ] Transactional email (invites, inquiry relay groundwork). **Not blocking Phase 1** — invites already ship as shareable links (see Members & roles above); only revisit this if/when a real need for outbound email (e.g. phase-2 inquiry relay) makes it worth building.
 
-**Recruit 1–3 pilot associations in France** (Spain is gated at account creation until enabled, see ADR-004) — **deferred for now (2026-07-29)**, moved out of the active checklist. Rationale: the workspace doesn't feel pilot-ready yet even once the feature list above is checked off — revisit once cagnottes/news/org-verification land and a pass is done for a non-technical volunteer's actual first-week experience (polish, error handling, remaining hardcoded-French debt on the animal pages), not just feature completeness.
+**Recruit 1–3 pilot associations in France** (Spain is gated at account creation until enabled, see ADR-004) — **deferred for now (2026-07-29)**, moved out of the active checklist. Rationale: the workspace doesn't feel pilot-ready yet even with every feature above now checked off (2026-07-29) — this was a deliberate call, not a checklist gate: revisit only after a real polish/reliability pass for a non-technical volunteer's actual first-week experience (error handling, remaining hardcoded-French debt on the animal pages, general "does this survive contact with a real user" testing), not automatically just because the boxes above are ticked.
 
 **Exit gate:** ≥1 pilot org manages its real animals in Anima for 4 consecutive weeks; "arrival → announcement live" under 10 min. *(Gate itself unchanged — only the timing of when to start recruiting toward it has moved.)*
 
