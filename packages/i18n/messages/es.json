@@ -49,7 +49,8 @@
       "manageAnimalsLink": "Gestionar animales",
       "manageMembersLink": "Gestionar miembros",
       "manageAnnouncementsLink": "Gestionar anuncios",
-      "manageCagnottesLink": "Gestionar recaudaciones"
+      "manageCagnottesLink": "Gestionar recaudaciones",
+      "manageNewsLink": "Gestionar noticias"
     }
   },
   "cagnottes": {
@@ -83,6 +84,29 @@
     "reopen": "Reabrir",
     "backToList": "Volver a las recaudaciones",
     "notFound": "Recaudación no encontrada"
+  },
+  "news": {
+    "title": "Noticias",
+    "subtitle": "Gestiona las noticias de tu organización",
+    "loading": "Cargando…",
+    "error": "Se produjo un error.",
+    "empty": "Todavía no hay noticias.",
+    "create": "Publicar una noticia",
+    "creating": "Publicando…",
+    "titleLabel": "Título",
+    "textLabel": "Texto",
+    "photoUrlsLabel": "Fotos (una URL por línea)",
+    "linkedAnimalsLabel": "Animales vinculados (opcional)",
+    "linkedCagnotteLabel": "Recaudación vinculada (opcional)",
+    "noCagnotte": "Ninguna",
+    "save": "Guardar",
+    "saving": "Guardando…",
+    "delete": "Eliminar",
+    "deleteConfirm": "¿Eliminar esta noticia? Esta acción es irreversible.",
+    "backToList": "Volver a las noticias",
+    "notFound": "Noticia no encontrada",
+    "linkedAnimalsIndicator": "{count} animal(es) vinculado(s)",
+    "linkedCagnotteIndicator": "Recaudación vinculada"
   },
   "announcements": {
     "title": "Anuncios",

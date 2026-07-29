@@ -133,6 +133,15 @@ export default defineSchema({
     status: v.union(v.literal("active"), v.literal("closed")),
   }).index("by_organization", ["organizationId"]),
 
+  newsPosts: defineTable({
+    organizationId: v.id("organizations"),
+    title: v.string(),
+    text: v.string(),
+    photoUrls: v.array(v.string()),
+    linkedAnimalIds: v.optional(v.array(v.id("animals"))),
+    linkedCagnotteId: v.optional(v.id("cagnottes")),
+  }).index("by_organization", ["organizationId"]),
+
   animalEvents: defineTable({
     // Event tracking for timeline (French legal requirement for record-keeping)
     animalId: v.id("animals"),

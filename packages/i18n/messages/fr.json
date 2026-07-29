@@ -49,7 +49,8 @@
       "manageAnimalsLink": "Gérer les animaux",
       "manageMembersLink": "Gérer les membres",
       "manageAnnouncementsLink": "Gérer les annonces",
-      "manageCagnottesLink": "Gérer les cagnottes"
+      "manageCagnottesLink": "Gérer les cagnottes",
+      "manageNewsLink": "Gérer les actualités"
     }
   },
   "cagnottes": {
@@ -83,6 +84,29 @@
     "reopen": "Réouvrir",
     "backToList": "Retour aux cagnottes",
     "notFound": "Cagnotte non trouvée"
+  },
+  "news": {
+    "title": "Actualités",
+    "subtitle": "Gérez les actualités de votre organisation",
+    "loading": "Chargement…",
+    "error": "Une erreur est survenue.",
+    "empty": "Aucune actualité pour le moment.",
+    "create": "Publier une actualité",
+    "creating": "Publication en cours…",
+    "titleLabel": "Titre",
+    "textLabel": "Texte",
+    "photoUrlsLabel": "Photos (une URL par ligne)",
+    "linkedAnimalsLabel": "Animaux liés (optionnel)",
+    "linkedCagnotteLabel": "Cagnotte liée (optionnel)",
+    "noCagnotte": "Aucune",
+    "save": "Enregistrer",
+    "saving": "Enregistrement…",
+    "delete": "Supprimer",
+    "deleteConfirm": "Supprimer cette actualité ? Cette action est irréversible.",
+    "backToList": "Retour aux actualités",
+    "notFound": "Actualité non trouvée",
+    "linkedAnimalsIndicator": "{count} animal(aux) lié(s)",
+    "linkedCagnotteIndicator": "Cagnotte liée"
   },
   "announcements": {
     "title": "Annonces",
