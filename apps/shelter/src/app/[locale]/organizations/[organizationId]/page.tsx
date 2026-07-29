@@ -42,7 +42,7 @@ export default async function OrganizationPage({
         verificationStatus={organization.verificationStatus}
         registryNumber={organization.registryNumber}
       />
-      <div className="flex gap-3">
+      <div className="flex flex-wrap gap-3">
         <Link
           href={`/organizations/${organizationId}/animals`}
           className="rounded bg-black px-4 py-2 text-white dark:bg-zinc-50 dark:text-black"

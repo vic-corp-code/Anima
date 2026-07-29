@@ -28,11 +28,38 @@ export default function MembersPage() {
   const [inviteRole, setInviteRole] = useState<Role>("editor");
   const [inviteLink, setInviteLink] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [roleError, setRoleError] = useState<string | null>(null);
+  const [removeError, setRemoveError] = useState<string | null>(null);
+  const [inviteError, setInviteError] = useState<string | null>(null);
+
+  const handleRoleChange = async (membershipId: Id<"memberships">, role: Role) => {
+    setRoleError(null);
+    try {
+      await updateRole({ membershipId, role });
+    } catch {
+      setRoleError(t("error"));
+    }
+  };
+
+  const handleRemove = async (membershipId: Id<"memberships">) => {
+    if (!window.confirm(t("removeConfirm"))) return;
+    setRemoveError(null);
+    try {
+      await removeMember({ membershipId });
+    } catch {
+      setRemoveError(t("error"));
+    }
+  };
 
   const handleGenerateInvite = async () => {
-    const token = await createInvite({ organizationId, role: inviteRole });
-    setInviteLink(`${window.location.origin}/invite/${token}`);
-    setCopied(false);
+    setInviteError(null);
+    try {
+      const token = await createInvite({ organizationId, role: inviteRole });
+      setInviteLink(`${window.location.origin}/invite/${token}`);
+      setCopied(false);
+    } catch {
+      setInviteError(t("error"));
+    }
   };
 
   const handleCopy = async () => {
@@ -66,10 +93,7 @@ export default function MembersPage() {
                       <select
                         value={member.role}
                         onChange={(e) =>
-                          updateRole({
-                            membershipId: member.membershipId,
-                            role: e.target.value as Role,
-                          })
+                          handleRoleChange(member.membershipId, e.target.value as Role)
                         }
                         className="rounded border px-2 py-1"
                       >
@@ -88,11 +112,7 @@ export default function MembersPage() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => {
-                          if (window.confirm(t("removeConfirm"))) {
-                            removeMember({ membershipId: member.membershipId });
-                          }
-                        }}
+                        onClick={() => handleRemove(member.membershipId)}
                       >
                         {t("remove")}
                       </Button>
@@ -102,6 +122,8 @@ export default function MembersPage() {
               ))}
             </tbody>
           </table>
+          {roleError && <p className="text-sm text-red-600 mt-2">{roleError}</p>}
+          {removeError && <p className="text-sm text-red-600 mt-2">{removeError}</p>}
         </CardContent>
       </Card>
 
@@ -126,6 +148,7 @@ export default function MembersPage() {
               </select>
               <Button onClick={handleGenerateInvite}>{t("generateInvite")}</Button>
             </div>
+            {inviteError && <p className="text-sm text-red-600">{inviteError}</p>}
             {inviteLink && (
               <div className="flex items-center gap-2">
                 <Input value={inviteLink} readOnly className="flex-1" />

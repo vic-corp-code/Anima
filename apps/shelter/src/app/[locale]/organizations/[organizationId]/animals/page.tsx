@@ -129,10 +129,12 @@ export default function AnimalsListPage() {
       </Card>
 
       {/* Animals list */}
-      {filteredAnimals.length === 0 ? (
+      {animals === undefined ? (
+        <p className="text-muted-foreground">{t("loading")}</p>
+      ) : filteredAnimals.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center text-muted-foreground">
-            {animals?.length === 0 ? t("list.emptyNone") : t("list.emptyFiltered")}
+            {animals.length === 0 ? t("list.emptyNone") : t("list.emptyFiltered")}
           </CardContent>
         </Card>
       ) : (

@@ -155,6 +155,8 @@
     "notFound": "Anuncio no encontrado"
   },
   "animals": {
+    "loading": "Cargando…",
+    "error": "Se produjo un error.",
     "yes": "Sí",
     "no": "No",
     "sexLabel": "Sexo:",

@@ -55,6 +55,8 @@ export default function AnimalDetailPage() {
 
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [statusError, setStatusError] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   if (!animal) {
     return (
@@ -69,6 +71,7 @@ export default function AnimalDetailPage() {
   }
 
   const handleStatusChange = async (newStatus: AnimalStatus) => {
+    setStatusError(null);
     setIsUpdating(true);
     try {
       await updateAnimal({
@@ -77,6 +80,7 @@ export default function AnimalDetailPage() {
       });
     } catch (error) {
       console.error("Failed to update status:", error);
+      setStatusError(t("error"));
     } finally {
       setIsUpdating(false);
     }
@@ -86,12 +90,14 @@ export default function AnimalDetailPage() {
     if (!window.confirm(t("detail.deleteConfirm", { name: animal.name }))) {
       return;
     }
+    setDeleteError(null);
     setIsDeleting(true);
     try {
       await removeAnimal({ animalId });
       router.push(`/organizations/${organizationId}/animals`);
     } catch (error) {
       console.error("Failed to delete animal:", error);
+      setDeleteError(t("error"));
       setIsDeleting(false);
     }
   };
@@ -107,7 +113,7 @@ export default function AnimalDetailPage() {
         >
           ← {t("detail.back")}
         </Button>
-        <div className="flex items-start justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <h1 className="text-2xl font-bold">{animal.name}</h1>
             <p className="text-muted-foreground">
@@ -115,7 +121,7 @@ export default function AnimalDetailPage() {
               {animal.breed && ` • ${animal.breed}`}
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button
               variant="outline"
               onClick={() => router.push(`/organizations/${organizationId}/animals/${animalId}/announcements`)}
@@ -140,6 +146,7 @@ export default function AnimalDetailPage() {
             )}
           </div>
         </div>
+        {deleteError && <p className="text-sm text-red-600 mt-2">{deleteError}</p>}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -169,6 +176,7 @@ export default function AnimalDetailPage() {
                   </Button>
                 ))}
               </div>
+              {statusError && <p className="text-sm text-red-600 mt-2">{statusError}</p>}
             </CardContent>
           </Card>
 

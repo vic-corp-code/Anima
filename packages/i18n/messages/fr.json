@@ -155,6 +155,8 @@
     "notFound": "Annonce non trouvée"
   },
   "animals": {
+    "loading": "Chargement…",
+    "error": "Une erreur est survenue.",
     "yes": "Oui",
     "no": "Non",
     "sexLabel": "Sexe:",

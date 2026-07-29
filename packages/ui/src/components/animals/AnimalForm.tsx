@@ -85,6 +85,7 @@ export function AnimalForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [warnings, setWarnings] = useState<string[]>([]);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const t = (fr: string, es: string) => (locale === "fr" ? fr : es);
 
@@ -162,11 +163,18 @@ export function AnimalForm({
       return;
     }
 
+    setSubmitError(null);
     setIsSubmitting(true);
     try {
       await onSubmit(formData);
     } catch (error) {
       console.error("Failed to submit form:", error);
+      setSubmitError(
+        t(
+          "Une erreur est survenue. Réessayez.",
+          "Se produjo un error. Inténtalo de nuevo."
+        )
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -568,6 +576,11 @@ export function AnimalForm({
             </div>
           </CardContent>
         </Card>
+      )}
+
+      {/* Submit error */}
+      {submitError && (
+        <p className="text-sm text-red-500">{submitError}</p>
       )}
 
       {/* Actions */}
