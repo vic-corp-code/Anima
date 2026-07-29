@@ -37,8 +37,8 @@ Goal: one real association replaces its spreadsheet.
 - [x] Animal registry: CRUD, photos (Convex file storage + resizing), status lifecycle, event timeline, mobile-friendly list with filters. Done 2026-07-29 — full CRUD including edit/delete UI, status lifecycle + event timeline, search/status/species filters.
 - [x] Members & roles (admin/editor). Done 2026-07-22 — **shipped as shareable invite links, not email** (transactional email infra doesn't exist yet; revisit if/when it's built).
 - [x] Adoption announcements: auto-draft from animal record, compact card format (the reusable component), publish/close lifecycle. Done 2026-07-29.
-- [ ] Cagnottes: create with external link (ADR-005), manual progress, list. *(in progress)*
-- [ ] Minimal news posts.
+- [x] Cagnottes: create with external link (ADR-005), manual progress, list. Done 2026-07-29.
+- [ ] Minimal news posts. *(in progress)*
 - [ ] Manual org verification flow (declare RNA/SIRET/ES-registry, admin marks verified).
 - [ ] Transactional email (invites, inquiry relay groundwork).
 
