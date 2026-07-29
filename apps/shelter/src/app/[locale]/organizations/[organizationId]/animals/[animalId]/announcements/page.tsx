@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useParams } from "next/navigation";
 import { useConvexAuth, useMutation, useQuery } from "convex/react";
 import { useTranslations } from "next-intl";
@@ -22,10 +23,16 @@ export default function AnimalAnnouncementsPage() {
     isAuthenticated ? { animalId } : "skip"
   );
   const createAnnouncement = useMutation(api.announcements.create);
+  const [createError, setCreateError] = useState<string | null>(null);
 
   const handleCreateDraft = async () => {
-    const announcementId = await createAnnouncement({ animalId });
-    router.push(`/organizations/${organizationId}/announcements/${announcementId}`);
+    setCreateError(null);
+    try {
+      const announcementId = await createAnnouncement({ animalId });
+      router.push(`/organizations/${organizationId}/announcements/${announcementId}`);
+    } catch {
+      setCreateError(t("error"));
+    }
   };
 
   return (
@@ -38,6 +45,8 @@ export default function AnimalAnnouncementsPage() {
         </div>
         <Button onClick={handleCreateDraft}>{t("createDraft")}</Button>
       </div>
+
+      {createError && <p className="text-sm text-red-600 mb-4">{createError}</p>}
 
       {announcements === undefined ? (
         <p className="text-muted-foreground">{t("loading")}</p>

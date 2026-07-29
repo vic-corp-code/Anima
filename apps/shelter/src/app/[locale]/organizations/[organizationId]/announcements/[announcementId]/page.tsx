@@ -39,6 +39,8 @@ export default function AnnouncementDetailPage() {
   const [descriptionEdit, setDescriptionEdit] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [transitionError, setTransitionError] = useState<string | null>(null);
 
   if (announcement === undefined) {
     return <div className="container mx-auto p-4">{t("loading")}</div>;
@@ -61,27 +63,36 @@ export default function AnnouncementDetailPage() {
   const description = descriptionEdit ?? announcement.description;
 
   const handleSave = async () => {
+    setSaveError(null);
     setIsSaving(true);
     try {
       await updateAnnouncement({ announcementId, title, description });
+    } catch {
+      setSaveError(t("error"));
     } finally {
       setIsSaving(false);
     }
   };
 
   const handlePublish = async () => {
+    setTransitionError(null);
     setIsTransitioning(true);
     try {
       await publishAnnouncement({ announcementId });
+    } catch {
+      setTransitionError(t("error"));
     } finally {
       setIsTransitioning(false);
     }
   };
 
   const handleClose = async () => {
+    setTransitionError(null);
     setIsTransitioning(true);
     try {
       await closeAnnouncement({ announcementId });
+    } catch {
+      setTransitionError(t("error"));
     } finally {
       setIsTransitioning(false);
     }
@@ -152,6 +163,8 @@ export default function AnnouncementDetailPage() {
             />
           </div>
 
+          {saveError && <p className="text-sm text-red-600">{saveError}</p>}
+          {transitionError && <p className="text-sm text-red-600">{transitionError}</p>}
           <div className="flex gap-2">
             {!isClosed && (
               <Button onClick={handleSave} disabled={isSaving}>

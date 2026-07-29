@@ -41,6 +41,9 @@ export default function CagnotteDetailPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [isSavingProgress, setIsSavingProgress] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [progressError, setProgressError] = useState<string | null>(null);
+  const [transitionError, setTransitionError] = useState<string | null>(null);
 
   if (cagnotte === undefined) {
     return <div className="container mx-auto p-4">{t("loading")}</div>;
@@ -66,6 +69,7 @@ export default function CagnotteDetailPage() {
   const progress = progressEdit ?? cagnotte.currentAmount.toString();
 
   const handleSave = async () => {
+    setSaveError(null);
     setIsSaving(true);
     try {
       await updateCagnotte({
@@ -77,21 +81,27 @@ export default function CagnotteDetailPage() {
         photoUrl: photoUrl || undefined,
         deadline: deadline || undefined,
       });
+    } catch {
+      setSaveError(t("error"));
     } finally {
       setIsSaving(false);
     }
   };
 
   const handleSaveProgress = async () => {
+    setProgressError(null);
     setIsSavingProgress(true);
     try {
       await updateProgress({ cagnotteId, currentAmount: Number(progress) || 0 });
+    } catch {
+      setProgressError(t("error"));
     } finally {
       setIsSavingProgress(false);
     }
   };
 
   const handleToggleStatus = async () => {
+    setTransitionError(null);
     setIsTransitioning(true);
     try {
       if (isClosed) {
@@ -99,6 +109,8 @@ export default function CagnotteDetailPage() {
       } else {
         await closeCagnotte({ cagnotteId });
       }
+    } catch {
+      setTransitionError(t("error"));
     } finally {
       setIsTransitioning(false);
     }
@@ -183,6 +195,8 @@ export default function CagnotteDetailPage() {
               />
             </div>
 
+            {saveError && <p className="text-sm text-red-600">{saveError}</p>}
+            {transitionError && <p className="text-sm text-red-600">{transitionError}</p>}
             <div className="flex gap-2">
               {!isClosed && (
                 <Button onClick={handleSave} disabled={isSaving}>
@@ -210,6 +224,7 @@ export default function CagnotteDetailPage() {
             <Button onClick={handleSaveProgress} disabled={isSavingProgress} className="w-full">
               {isSavingProgress ? t("saving") : t("updateProgress")}
             </Button>
+            {progressError && <p className="text-sm text-red-600">{progressError}</p>}
           </CardContent>
         </Card>
       </div>

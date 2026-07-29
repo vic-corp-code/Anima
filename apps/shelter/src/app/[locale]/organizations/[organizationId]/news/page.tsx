@@ -37,6 +37,7 @@ export default function NewsListPage() {
   const [linkedAnimalIds, setLinkedAnimalIds] = useState<Id<"animals">[]>([]);
   const [linkedCagnotteId, setLinkedCagnotteId] = useState<Id<"cagnottes"> | "">("");
   const [isCreating, setIsCreating] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
 
   const resetForm = () => {
     setTitle("");
@@ -54,6 +55,7 @@ export default function NewsListPage() {
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
+    setCreateError(null);
     setIsCreating(true);
     try {
       const photoUrls = photoUrlsText
@@ -71,6 +73,8 @@ export default function NewsListPage() {
       });
       resetForm();
       setShowForm(false);
+    } catch {
+      setCreateError(t("error"));
     } finally {
       setIsCreating(false);
     }
@@ -148,6 +152,7 @@ export default function NewsListPage() {
                   </select>
                 </div>
               )}
+              {createError && <p className="text-sm text-red-600">{createError}</p>}
               <Button type="submit" disabled={isCreating}>
                 {isCreating ? t("creating") : t("create")}
               </Button>

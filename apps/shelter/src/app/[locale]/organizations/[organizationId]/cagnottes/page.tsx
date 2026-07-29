@@ -38,6 +38,7 @@ export default function CagnottesListPage() {
   const [photoUrl, setPhotoUrl] = useState("");
   const [deadline, setDeadline] = useState("");
   const [isCreating, setIsCreating] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
 
   const resetForm = () => {
     setTitle("");
@@ -50,6 +51,7 @@ export default function CagnottesListPage() {
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
+    setCreateError(null);
     setIsCreating(true);
     try {
       await createCagnotte({
@@ -63,6 +65,8 @@ export default function CagnottesListPage() {
       });
       resetForm();
       setShowForm(false);
+    } catch {
+      setCreateError(t("error"));
     } finally {
       setIsCreating(false);
     }
@@ -128,6 +132,7 @@ export default function CagnottesListPage() {
                   onChange={(e) => setDeadline((e.target as HTMLInputElement).value)}
                 />
               </div>
+              {createError && <p className="text-sm text-red-600">{createError}</p>}
               <Button type="submit" disabled={isCreating}>
                 {isCreating ? t("creating") : t("create")}
               </Button>

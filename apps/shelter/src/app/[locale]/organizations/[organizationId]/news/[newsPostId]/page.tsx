@@ -29,6 +29,8 @@ export default function NewsPostDetailPage() {
 
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   if (post === undefined) {
     return <div className="container mx-auto p-4">{t("loading")}</div>;
@@ -49,6 +51,7 @@ export default function NewsPostDetailPage() {
   const photoUrlsText = photoUrlsEdit ?? post.photoUrls.join("\n");
 
   const handleSave = async () => {
+    setSaveError(null);
     setIsSaving(true);
     try {
       const photoUrls = photoUrlsText
@@ -56,6 +59,8 @@ export default function NewsPostDetailPage() {
         .map((url) => url.trim())
         .filter(Boolean);
       await updateNewsPost({ newsPostId, title, text, photoUrls });
+    } catch {
+      setSaveError(t("error"));
     } finally {
       setIsSaving(false);
     }
@@ -63,11 +68,13 @@ export default function NewsPostDetailPage() {
 
   const handleDelete = async () => {
     if (!window.confirm(t("deleteConfirm"))) return;
+    setDeleteError(null);
     setIsDeleting(true);
     try {
       await removeNewsPost({ newsPostId });
       router.push(`/organizations/${organizationId}/news`);
-    } finally {
+    } catch {
+      setDeleteError(t("error"));
       setIsDeleting(false);
     }
   };
@@ -134,6 +141,8 @@ export default function NewsPostDetailPage() {
             </div>
           )}
 
+          {saveError && <p className="text-sm text-red-600">{saveError}</p>}
+          {deleteError && <p className="text-sm text-red-600">{deleteError}</p>}
           <div className="flex gap-2">
             <Button onClick={handleSave} disabled={isSaving}>
               {isSaving ? t("saving") : t("save")}
