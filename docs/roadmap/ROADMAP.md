@@ -34,16 +34,17 @@ Goal: a running skeleton and answers to the questions that could invalidate the 
 
 Goal: one real association replaces its spreadsheet.
 
-- [ ] Animal registry: CRUD, photos (Convex file storage + resizing), status lifecycle, event timeline, mobile-friendly list with filters.
-- [ ] Members & roles (admin/editor), email invites.
-- [ ] Adoption announcements: auto-draft from animal record, compact card format (the reusable component), publish/close lifecycle.
-- [ ] Cagnottes: create with external link (ADR-005), manual progress, list.
+- [x] Animal registry: CRUD, photos (Convex file storage + resizing), status lifecycle, event timeline, mobile-friendly list with filters. Done 2026-07-29 — full CRUD including edit/delete UI, status lifecycle + event timeline, search/status/species filters.
+- [x] Members & roles (admin/editor). Done 2026-07-22 — **shipped as shareable invite links, not email** (transactional email infra doesn't exist yet; revisit if/when it's built).
+- [x] Adoption announcements: auto-draft from animal record, compact card format (the reusable component), publish/close lifecycle. Done 2026-07-29.
+- [ ] Cagnottes: create with external link (ADR-005), manual progress, list. *(in progress)*
 - [ ] Minimal news posts.
 - [ ] Manual org verification flow (declare RNA/SIRET/ES-registry, admin marks verified).
 - [ ] Transactional email (invites, inquiry relay groundwork).
-- [ ] **Recruit 1–3 pilot associations in France** (Spain is gated at account creation until enabled, see ADR-004) — product work, not code, and the most important line in this phase.
 
-**Exit gate:** ≥1 pilot org manages its real animals in Anima for 4 consecutive weeks; "arrival → announcement live" under 10 min.
+**Recruit 1–3 pilot associations in France** (Spain is gated at account creation until enabled, see ADR-004) — **deferred for now (2026-07-29)**, moved out of the active checklist. Rationale: the workspace doesn't feel pilot-ready yet even once the feature list above is checked off — revisit once cagnottes/news/org-verification land and a pass is done for a non-technical volunteer's actual first-week experience (polish, error handling, remaining hardcoded-French debt on the animal pages), not just feature completeness.
+
+**Exit gate:** ≥1 pilot org manages its real animals in Anima for 4 consecutive weeks; "arrival → announcement live" under 10 min. *(Gate itself unchanged — only the timing of when to start recruiting toward it has moved.)*
 
 ## Phase 2 — Public hub, read-only (~1–2 months)
 
