@@ -145,6 +145,17 @@ export default defineSchema({
     linkedCagnotteId: v.optional(v.id("cagnottes")),
   }).index("by_organization", ["organizationId"]),
 
+  // The @convex-dev/agent component's own `threads` table has no room for
+  // app-specific fields, so org-scoping for the animal-intake assistant's
+  // threads lives here instead, keyed by the component's threadId.
+  animalIntakeThreads: defineTable({
+    threadId: v.string(),
+    organizationId: v.id("organizations"),
+    createdBy: v.id("users"),
+  })
+    .index("by_thread", ["threadId"])
+    .index("by_organization", ["organizationId"]),
+
   animalEvents: defineTable({
     // Event tracking for timeline (French legal requirement for record-keeping)
     animalId: v.id("animals"),
