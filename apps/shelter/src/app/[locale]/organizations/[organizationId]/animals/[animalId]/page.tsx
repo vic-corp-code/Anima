@@ -53,10 +53,18 @@ export default function AnimalDetailPage() {
 
   const animal = useQuery(api.animals.get, isAuthenticated ? { animalId } : "skip");
   const timeline = useQuery(api.animals.getTimeline, isAuthenticated ? { animalId } : "skip");
+  const organizationId = params.organizationId as Id<"organizations">;
+  const membership = useQuery(
+    api.memberships.listForOrg,
+    isAuthenticated ? { organizationId } : "skip"
+  );
+  const isAdmin = membership?.callerRole === "admin";
 
   const updateAnimal = useMutation(api.animals.update);
+  const removeAnimal = useMutation(api.animals.remove);
 
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   if (!animal) {
     return (
@@ -84,6 +92,20 @@ export default function AnimalDetailPage() {
     }
   };
 
+  const handleDelete = async () => {
+    if (!window.confirm(`Supprimer ${animal.name} ? Cette action est irréversible.`)) {
+      return;
+    }
+    setIsDeleting(true);
+    try {
+      await removeAnimal({ animalId });
+      router.push(`/organizations/${organizationId}/animals`);
+    } catch (error) {
+      console.error("Failed to delete animal:", error);
+      setIsDeleting(false);
+    }
+  };
+
   return (
     <div className="container mx-auto p-4">
       {/* Header */}
@@ -103,9 +125,24 @@ export default function AnimalDetailPage() {
               {animal.breed && ` • ${animal.breed}`}
             </p>
           </div>
-          <Button onClick={() => {/* TODO: Edit modal */}}>
-            Modifier
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => router.push(`/organizations/${organizationId}/animals/${animalId}/edit`)}
+            >
+              Modifier
+            </Button>
+            {isAdmin && (
+              <Button
+                variant="outline"
+                className="text-red-600 hover:bg-red-50"
+                disabled={isDeleting}
+                onClick={handleDelete}
+              >
+                {isDeleting ? "Suppression..." : "Supprimer"}
+              </Button>
+            )}
+          </div>
         </div>
       </div>
 
