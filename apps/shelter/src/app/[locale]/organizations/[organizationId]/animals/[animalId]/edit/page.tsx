@@ -1,6 +1,7 @@
 "use client";
 
 import { useConvexAuth, useMutation, useQuery } from "convex/react";
+import { useLocale, useTranslations } from "next-intl";
 import { api } from "@anima/backend/convex/_generated/api";
 import { Id } from "@anima/backend/convex/_generated/dataModel";
 import { useParams } from "next/navigation";
@@ -14,6 +15,8 @@ import type { Animal } from "@anima/domain";
 type AnimalFormData = Omit<Animal, "organizationId" | "status">;
 
 export default function EditAnimalPage() {
+  const t = useTranslations("animals");
+  const locale = useLocale() as "fr" | "es";
   const router = useRouter();
   const params = useParams();
   const organizationId = params.organizationId as Id<"organizations">;
@@ -30,13 +33,13 @@ export default function EditAnimalPage() {
   };
 
   if (!animal) {
-    return <div className="container mx-auto p-4">Chargement...</div>;
+    return <div className="container mx-auto p-4">{t("edit.loading")}</div>;
   }
 
   return (
     <div className="container mx-auto p-4">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold">Modifier {animal.name}</h1>
+        <h1 className="text-2xl font-bold">{t("edit.title", { name: animal.name })}</h1>
       </div>
 
       <div className="max-w-2xl mx-auto">
@@ -44,8 +47,8 @@ export default function EditAnimalPage() {
           initialData={animal}
           onSubmit={handleSubmit}
           onCancel={() => router.push(`/organizations/${organizationId}/animals/${animalId}`)}
-          submitLabel="Enregistrer les modifications"
-          locale="fr"
+          submitLabel={t("edit.submitLabel")}
+          locale={locale}
           uploadFile={uploadFile}
         />
       </div>

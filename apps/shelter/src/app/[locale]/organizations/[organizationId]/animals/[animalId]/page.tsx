@@ -1,6 +1,7 @@
 "use client";
 
 import { useConvexAuth, useQuery, useMutation } from "convex/react";
+import { useTranslations } from "next-intl";
 import { api } from "@anima/backend/convex/_generated/api";
 import { Id } from "@anima/backend/convex/_generated/dataModel";
 import { useParams } from "next/navigation.js";
@@ -11,27 +12,15 @@ import { useState } from "react";
 import Image from "next/image";
 import type { AnimalStatus } from "@anima/domain";
 
-const STATUS_LABELS = {
-  in_care: "En soins",
-  adoptable: "Adoptable",
-  adoption_pending: "Adoption en cours",
-  adopted: "Adopté",
-  fostered: "En famille d'accueil",
-  transferred: "Transféré",
-  deceased: "Décédé",
-} as const;
-
-const EVENT_TYPE_LABELS = {
-  arrived: "Arrivée",
-  vet_visit: "Visite vétérinaire",
-  sterilized: "Stérilisation",
-  fostered: "Famille d'accueil",
-  transferred: "Transfert",
-  adopted: "Adoption",
-  deceased: "Décès",
-  status_change: "Changement de statut",
-  other: "Autre",
-} as const;
+const STATUS_VALUES: AnimalStatus[] = [
+  "in_care",
+  "adoptable",
+  "adoption_pending",
+  "adopted",
+  "fostered",
+  "transferred",
+  "deceased",
+];
 
 const EVENT_COLORS = {
   arrived: "bg-blue-100 text-blue-800 border-blue-200",
@@ -46,6 +35,7 @@ const EVENT_COLORS = {
 } as const;
 
 export default function AnimalDetailPage() {
+  const t = useTranslations("animals");
   const params = useParams();
   const router = useRouter();
   const animalId = params.animalId as Id<"animals">;
@@ -71,7 +61,7 @@ export default function AnimalDetailPage() {
       <div className="container mx-auto p-4">
         <Card>
           <CardContent className="py-12 text-center text-muted-foreground">
-            Animal non trouvé
+            {t("detail.notFound")}
           </CardContent>
         </Card>
       </div>
@@ -93,7 +83,7 @@ export default function AnimalDetailPage() {
   };
 
   const handleDelete = async () => {
-    if (!window.confirm(`Supprimer ${animal.name} ? Cette action est irréversible.`)) {
+    if (!window.confirm(t("detail.deleteConfirm", { name: animal.name }))) {
       return;
     }
     setIsDeleting(true);
@@ -115,13 +105,13 @@ export default function AnimalDetailPage() {
           onClick={() => router.back()}
           className="mb-4"
         >
-          ← Retour
+          ← {t("detail.back")}
         </Button>
         <div className="flex items-start justify-between">
           <div>
             <h1 className="text-2xl font-bold">{animal.name}</h1>
             <p className="text-muted-foreground">
-              {animal.species === "dog" ? "Chien" : "Chat"}
+              {t(`species.${animal.species}`)}
               {animal.breed && ` • ${animal.breed}`}
             </p>
           </div>
@@ -130,13 +120,13 @@ export default function AnimalDetailPage() {
               variant="outline"
               onClick={() => router.push(`/organizations/${organizationId}/animals/${animalId}/announcements`)}
             >
-              Annonces
+              {t("detail.announcementsButton")}
             </Button>
             <Button
               variant="outline"
               onClick={() => router.push(`/organizations/${organizationId}/animals/${animalId}/edit`)}
             >
-              Modifier
+              {t("detail.edit")}
             </Button>
             {isAdmin && (
               <Button
@@ -145,7 +135,7 @@ export default function AnimalDetailPage() {
                 disabled={isDeleting}
                 onClick={handleDelete}
               >
-                {isDeleting ? "Suppression..." : "Supprimer"}
+                {isDeleting ? t("detail.deleting") : t("detail.delete")}
               </Button>
             )}
           </div>
@@ -158,16 +148,16 @@ export default function AnimalDetailPage() {
           {/* Status card */}
           <Card>
             <CardHeader>
-              <CardTitle>Statut actuel</CardTitle>
+              <CardTitle>{t("detail.statusTitle")}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="mb-4">
                 <span className="px-3 py-1 rounded-full bg-primary/10 text-primary font-medium">
-                  {STATUS_LABELS[animal.status]}
+                  {t(`status.${animal.status}`)}
                 </span>
               </div>
               <div className="flex flex-wrap gap-2">
-                {(Object.keys(STATUS_LABELS) as AnimalStatus[]).map((value) => (
+                {STATUS_VALUES.map((value) => (
                   <Button
                     key={value}
                     variant={animal.status === value ? "default" : "outline"}
@@ -175,7 +165,7 @@ export default function AnimalDetailPage() {
                     disabled={isUpdating || animal.status === value}
                     onClick={() => handleStatusChange(value)}
                   >
-                    {STATUS_LABELS[value]}
+                    {t(`status.${value}`)}
                   </Button>
                 ))}
               </div>
@@ -185,48 +175,46 @@ export default function AnimalDetailPage() {
           {/* Identification */}
           <Card>
             <CardHeader>
-              <CardTitle>Identification</CardTitle>
+              <CardTitle>{t("detail.identificationTitle")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <span className="text-sm text-muted-foreground">Sexe:</span>
-                  <p className="font-medium">
-                    {animal.sex === "male" ? "Mâle" : animal.sex === "female" ? "Femelle" : "Inconnu"}
-                  </p>
+                  <span className="text-sm text-muted-foreground">{t("sexLabel")}</span>
+                  <p className="font-medium">{t(`sex.${animal.sex}`)}</p>
                 </div>
                 <div>
-                  <span className="text-sm text-muted-foreground">Stérilisé:</span>
-                  <p className="font-medium">{animal.sterilized ? "Oui" : "Non"}</p>
+                  <span className="text-sm text-muted-foreground">{t("sterilizedLabel")}</span>
+                  <p className="font-medium">{animal.sterilized ? t("yes") : t("no")}</p>
                 </div>
                 {animal.chipId && (
                   <div>
-                    <span className="text-sm text-muted-foreground">N° I-CAD:</span>
+                    <span className="text-sm text-muted-foreground">{t("detail.chipIdLabel")}</span>
                     <p className="font-medium">{animal.chipId}</p>
                   </div>
                 )}
                 {animal.identificationMethod && (
                   <div>
-                    <span className="text-sm text-muted-foreground">Méthode:</span>
+                    <span className="text-sm text-muted-foreground">{t("detail.methodLabel")}</span>
                     <p className="font-medium">
-                      {animal.identificationMethod === "chip" ? "Puce" : animal.identificationMethod === "tattoo" ? "Tatouage" : "Aucune"}
+                      {t(`identificationMethod.${animal.identificationMethod}`)}
                     </p>
                   </div>
                 )}
                 {animal.birthDate && (
                   <div>
-                    <span className="text-sm text-muted-foreground">Date de naissance:</span>
+                    <span className="text-sm text-muted-foreground">{t("detail.birthDateLabel")}</span>
                     <p className="font-medium">{new Date(animal.birthDate).toLocaleDateString("fr-FR")}</p>
                   </div>
                 )}
                 {animal.estimatedAge && (
                   <div>
-                    <span className="text-sm text-muted-foreground">Âge estimé:</span>
+                    <span className="text-sm text-muted-foreground">{t("estimatedAgeLabel")}</span>
                     <p className="font-medium">{animal.estimatedAge}</p>
                   </div>
                 )}
                 <div>
-                  <span className="text-sm text-muted-foreground">Date d&apos;arrivée:</span>
+                  <span className="text-sm text-muted-foreground">{t("detail.arrivalDateLabel")}</span>
                   <p className="font-medium">{new Date(animal.arrivalDate).toLocaleDateString("fr-FR")}</p>
                 </div>
               </div>
@@ -236,34 +224,34 @@ export default function AnimalDetailPage() {
           {/* Health & character */}
           <Card>
             <CardHeader>
-              <CardTitle>Santé et caractère</CardTitle>
+              <CardTitle>{t("detail.healthTitle")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <span className="text-sm text-muted-foreground">Notes de santé:</span>
-                <p className="mt-1">{animal.healthNotes || "Aucune note"}</p>
+                <span className="text-sm text-muted-foreground">{t("detail.healthNotesLabel")}</span>
+                <p className="mt-1">{animal.healthNotes || t("detail.noNote")}</p>
               </div>
               <div>
-                <span className="text-sm text-muted-foreground">Caractère:</span>
-                <p className="mt-1">{animal.characterNotes || "Aucune note"}</p>
+                <span className="text-sm text-muted-foreground">{t("detail.characterLabel")}</span>
+                <p className="mt-1">{animal.characterNotes || t("detail.noNote")}</p>
               </div>
               <div>
-                <span className="text-sm text-muted-foreground">Compatibilité:</span>
+                <span className="text-sm text-muted-foreground">{t("detail.compatibilityLabel")}</span>
                 <div className="mt-1 flex gap-2">
                   <span className={`px-2 py-1 rounded text-xs ${animal.compatibilityKids ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-600"}`}>
-                    Enfants
+                    {t("detail.compatibilityKids")}
                   </span>
                   <span className={`px-2 py-1 rounded text-xs ${animal.compatibilityCats ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-600"}`}>
-                    Chats
+                    {t("detail.compatibilityCats")}
                   </span>
                   <span className={`px-2 py-1 rounded text-xs ${animal.compatibilityDogs ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-600"}`}>
-                    Chiens
+                    {t("detail.compatibilityDogs")}
                   </span>
                 </div>
               </div>
               {animal.story && (
                 <div>
-                  <span className="text-sm text-muted-foreground">Histoire:</span>
+                  <span className="text-sm text-muted-foreground">{t("detail.storyLabel")}</span>
                   <p className="mt-1 text-sm italic">{animal.story}</p>
                 </div>
               )}
@@ -274,7 +262,7 @@ export default function AnimalDetailPage() {
           {animal.photoUrls && animal.photoUrls.length > 0 && (
             <Card>
               <CardHeader>
-                <CardTitle>Photos</CardTitle>
+                <CardTitle>{t("detail.photosTitle")}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -282,7 +270,7 @@ export default function AnimalDetailPage() {
                     <div key={index} className="relative w-full h-32">
                       <Image
                         src={url}
-                        alt={`${animal.name} - Photo ${index + 1}`}
+                        alt={t("detail.photoAlt", { name: animal.name, index: index + 1 })}
                         fill
                         className="rounded-lg object-cover"
                       />
@@ -298,7 +286,7 @@ export default function AnimalDetailPage() {
         <div className="lg:col-span-1">
           <Card className="sticky top-4">
             <CardHeader>
-              <CardTitle>Historique</CardTitle>
+              <CardTitle>{t("detail.historyTitle")}</CardTitle>
             </CardHeader>
             <CardContent>
               {timeline && timeline.length > 0 ? (
@@ -316,7 +304,7 @@ export default function AnimalDetailPage() {
                         </div>
                         <div className="flex-1 pb-4">
                           <div className={`inline-block px-2 py-1 rounded text-xs font-medium border ${EVENT_COLORS[event.eventType]}`}>
-                            {EVENT_TYPE_LABELS[event.eventType]}
+                            {t(`eventType.${event.eventType}`)}
                           </div>
                           <p className="text-xs text-muted-foreground mt-1">
                             {new Date(event.eventDate).toLocaleDateString("fr-FR")}
@@ -330,7 +318,7 @@ export default function AnimalDetailPage() {
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-muted-foreground">Aucun événement enregistré</p>
+                <p className="text-sm text-muted-foreground">{t("detail.noEvents")}</p>
               )}
             </CardContent>
           </Card>

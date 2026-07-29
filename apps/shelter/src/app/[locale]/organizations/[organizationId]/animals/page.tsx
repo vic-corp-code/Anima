@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import { useConvexAuth, useQuery } from "convex/react";
+import { useTranslations } from "next-intl";
 import { api } from "@anima/backend/convex/_generated/api";
 import { Id } from "@anima/backend/convex/_generated/dataModel";
 import { useRouter } from "@/i18n/navigation";
@@ -12,21 +13,19 @@ import { Input } from "@anima/ui";
 import type { AnimalStatus } from "@anima/domain";
 
 const STATUS_OPTIONS = [
-  { value: "in_care", label: "En soins", color: "bg-yellow-100 text-yellow-800" },
-  { value: "adoptable", label: "Adoptable", color: "bg-green-100 text-green-800" },
-  { value: "adoption_pending", label: "Adoption en cours", color: "bg-blue-100 text-blue-800" },
-  { value: "adopted", label: "Adopté", color: "bg-purple-100 text-purple-800" },
-  { value: "fostered", label: "En famille d'accueil", color: "bg-orange-100 text-orange-800" },
-  { value: "transferred", label: "Transféré", color: "bg-yellow-100 text-yellow-800" },
-  { value: "deceased", label: "Décédé", color: "bg-gray-100 text-gray-800" },
+  { value: "in_care", color: "bg-yellow-100 text-yellow-800" },
+  { value: "adoptable", color: "bg-green-100 text-green-800" },
+  { value: "adoption_pending", color: "bg-blue-100 text-blue-800" },
+  { value: "adopted", color: "bg-purple-100 text-purple-800" },
+  { value: "fostered", color: "bg-orange-100 text-orange-800" },
+  { value: "transferred", color: "bg-yellow-100 text-yellow-800" },
+  { value: "deceased", color: "bg-gray-100 text-gray-800" },
 ] as const;
 
-const SPECIES_OPTIONS = [
-  { value: "dog", label: "Chiens" },
-  { value: "cat", label: "Chats" },
-] as const;
+const SPECIES_OPTIONS = ["dog", "cat"] as const;
 
 export default function AnimalsListPage() {
+  const t = useTranslations("animals");
   const router = useRouter();
   const params = useParams();
   const organizationId = params.organizationId as Id<"organizations">;
@@ -61,17 +60,11 @@ export default function AnimalsListPage() {
     return STATUS_OPTIONS.find((s) => s.value === status)?.color || "bg-gray-100 text-gray-800";
   };
 
-  const getStatusLabel = (status: string) => {
-    return STATUS_OPTIONS.find((s) => s.value === status)?.label || status;
-  };
-
   return (
     <div className="container mx-auto p-4">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold">Animaux</h1>
-        <p className="text-muted-foreground">
-          Gérez le registre des animaux de votre organisation
-        </p>
+        <h1 className="text-2xl font-bold">{t("list.title")}</h1>
+        <p className="text-muted-foreground">{t("list.subtitle")}</p>
       </div>
 
       {/* Filters */}
@@ -80,9 +73,9 @@ export default function AnimalsListPage() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {/* Search */}
             <div>
-              <label className="block text-sm font-medium mb-1">Rechercher</label>
+              <label className="block text-sm font-medium mb-1">{t("list.searchLabel")}</label>
               <Input
-                placeholder="Nom, race, notes..."
+                placeholder={t("list.searchPlaceholder")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery((e.target as HTMLInputElement).value)}
               />
@@ -90,16 +83,16 @@ export default function AnimalsListPage() {
 
             {/* Status filter */}
             <div>
-              <label className="block text-sm font-medium mb-1">Statut</label>
+              <label className="block text-sm font-medium mb-1">{t("list.statusFilterLabel")}</label>
               <select
                 value={statusFilter ?? ""}
                 onChange={(e) => setStatusFilter((e.target as HTMLSelectElement).value || null)}
                 className="w-full rounded border px-3 py-2"
               >
-                <option value="">Tous les statuts</option>
+                <option value="">{t("list.allStatuses")}</option>
                 {STATUS_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>
-                    {option.label}
+                    {t(`status.${option.value}`)}
                   </option>
                 ))}
               </select>
@@ -107,16 +100,16 @@ export default function AnimalsListPage() {
 
             {/* Species filter */}
             <div>
-              <label className="block text-sm font-medium mb-1">Espèce</label>
+              <label className="block text-sm font-medium mb-1">{t("list.speciesFilterLabel")}</label>
               <select
                 value={speciesFilter ?? ""}
                 onChange={(e) => setSpeciesFilter((e.target as HTMLSelectElement).value || null)}
                 className="w-full rounded border px-3 py-2"
               >
-                <option value="">Toutes les espèces</option>
+                <option value="">{t("list.allSpecies")}</option>
                 {SPECIES_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
+                  <option key={option} value={option}>
+                    {t(`list.speciesFilterOption.${option}`)}
                   </option>
                 ))}
               </select>
@@ -128,7 +121,7 @@ export default function AnimalsListPage() {
                 className="w-full"
                 onClick={() => router.push(`/organizations/${organizationId}/animals/new`)}
               >
-                + Ajouter un animal
+                {t("list.addAnimal")}
               </Button>
             </div>
           </div>
@@ -139,9 +132,7 @@ export default function AnimalsListPage() {
       {filteredAnimals.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center text-muted-foreground">
-            {animals?.length === 0
-              ? "Aucun animal enregistré. Commencez par en ajouter un !"
-              : "Aucun animal ne correspond aux filtres."}
+            {animals?.length === 0 ? t("list.emptyNone") : t("list.emptyFiltered")}
           </CardContent>
         </Card>
       ) : (
@@ -157,36 +148,34 @@ export default function AnimalsListPage() {
                   <div>
                     <CardTitle className="text-lg">{animal.name}</CardTitle>
                     <p className="text-sm text-muted-foreground">
-                      {animal.species === "dog" ? "Chien" : "Chat"}
+                      {t(`species.${animal.species}`)}
                       {animal.breed && ` • ${animal.breed}`}
                     </p>
                   </div>
                   <span className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(animal.status)}`}>
-                    {getStatusLabel(animal.status)}
+                    {t(`status.${animal.status}`)}
                   </span>
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Sexe:</span>
-                    <span>
-                      {animal.sex === "male" ? "Mâle" : animal.sex === "female" ? "Femelle" : "Inconnu"}
-                    </span>
+                    <span className="text-muted-foreground">{t("sexLabel")}</span>
+                    <span>{t(`sex.${animal.sex}`)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Stérilisé:</span>
-                    <span>{animal.sterilized ? "Oui" : "Non"}</span>
+                    <span className="text-muted-foreground">{t("sterilizedLabel")}</span>
+                    <span>{animal.sterilized ? t("yes") : t("no")}</span>
                   </div>
                   {animal.estimatedAge && (
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Âge estimé:</span>
+                      <span className="text-muted-foreground">{t("estimatedAgeLabel")}</span>
                       <span>{animal.estimatedAge}</span>
                     </div>
                   )}
                   {animal.arrivalDate && (
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Arrivée:</span>
+                      <span className="text-muted-foreground">{t("list.arrivalLabel")}</span>
                       <span>{new Date(animal.arrivalDate).toLocaleDateString("fr-FR")}</span>
                     </div>
                   )}

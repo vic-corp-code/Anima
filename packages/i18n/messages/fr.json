@@ -154,6 +154,105 @@
     },
     "notFound": "Annonce non trouvée"
   },
+  "animals": {
+    "yes": "Oui",
+    "no": "Non",
+    "sexLabel": "Sexe:",
+    "sterilizedLabel": "Stérilisé:",
+    "estimatedAgeLabel": "Âge estimé:",
+    "sex": {
+      "male": "Mâle",
+      "female": "Femelle",
+      "unknown": "Inconnu"
+    },
+    "species": {
+      "dog": "Chien",
+      "cat": "Chat"
+    },
+    "status": {
+      "in_care": "En soins",
+      "adoptable": "Adoptable",
+      "adoption_pending": "Adoption en cours",
+      "adopted": "Adopté",
+      "fostered": "En famille d'accueil",
+      "transferred": "Transféré",
+      "deceased": "Décédé"
+    },
+    "identificationMethod": {
+      "chip": "Puce",
+      "tattoo": "Tatouage",
+      "none": "Aucune"
+    },
+    "eventType": {
+      "arrived": "Arrivée",
+      "vet_visit": "Visite vétérinaire",
+      "sterilized": "Stérilisation",
+      "fostered": "Famille d'accueil",
+      "transferred": "Transfert",
+      "adopted": "Adoption",
+      "deceased": "Décès",
+      "status_change": "Changement de statut",
+      "other": "Autre"
+    },
+    "list": {
+      "title": "Animaux",
+      "subtitle": "Gérez le registre des animaux de votre organisation",
+      "searchLabel": "Rechercher",
+      "searchPlaceholder": "Nom, race, notes...",
+      "statusFilterLabel": "Statut",
+      "allStatuses": "Tous les statuts",
+      "speciesFilterLabel": "Espèce",
+      "allSpecies": "Toutes les espèces",
+      "speciesFilterOption": {
+        "dog": "Chiens",
+        "cat": "Chats"
+      },
+      "addAnimal": "+ Ajouter un animal",
+      "emptyNone": "Aucun animal enregistré. Commencez par en ajouter un !",
+      "emptyFiltered": "Aucun animal ne correspond aux filtres.",
+      "arrivalLabel": "Arrivée:"
+    },
+    "detail": {
+      "notFound": "Animal non trouvé",
+      "back": "Retour",
+      "announcementsButton": "Annonces",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "deleting": "Suppression…",
+      "deleteConfirm": "Supprimer {name} ? Cette action est irréversible.",
+      "statusTitle": "Statut actuel",
+      "identificationTitle": "Identification",
+      "chipIdLabel": "N° I-CAD:",
+      "methodLabel": "Méthode:",
+      "birthDateLabel": "Date de naissance:",
+      "arrivalDateLabel": "Date d'arrivée:",
+      "healthTitle": "Santé et caractère",
+      "healthNotesLabel": "Notes de santé:",
+      "noNote": "Aucune note",
+      "characterLabel": "Caractère:",
+      "compatibilityLabel": "Compatibilité:",
+      "compatibilityKids": "Enfants",
+      "compatibilityCats": "Chats",
+      "compatibilityDogs": "Chiens",
+      "storyLabel": "Histoire:",
+      "photosTitle": "Photos",
+      "photoAlt": "{name} - Photo {index}",
+      "historyTitle": "Historique",
+      "noEvents": "Aucun événement enregistré"
+    },
+    "new": {
+      "title": "Ajouter un animal",
+      "subtitle": "Choisissez votre mode de saisie : IA pour une entrée rapide, ou formulaire manuel pour plus de précision",
+      "aiMode": "🤖 Entrée IA",
+      "manualMode": "📝 Formulaire manuel",
+      "submitLabel": "Créer l'animal"
+    },
+    "edit": {
+      "loading": "Chargement…",
+      "title": "Modifier {name}",
+      "submitLabel": "Enregistrer les modifications"
+    }
+  },
   "members": {
     "title": "Membres",
     "loading": "Chargement…",

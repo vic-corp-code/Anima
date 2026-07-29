@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import { useAction, useMutation } from "convex/react";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { useUploadPhoto } from "@/lib/useUploadPhoto";
 import { api } from "@anima/backend/convex/_generated/api";
@@ -16,6 +17,8 @@ type InputMode = "ai" | "manual";
 type AnimalFormData = Omit<Animal, "organizationId" | "status">;
 
 export default function NewAnimalPage() {
+  const t = useTranslations("animals");
+  const locale = useLocale() as "fr" | "es";
   const router = useRouter();
   const params = useParams();
   const organizationId = params.organizationId as Id<"organizations">;
@@ -42,10 +45,8 @@ export default function NewAnimalPage() {
   return (
     <div className="container mx-auto p-4">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold">Ajouter un animal</h1>
-        <p className="text-muted-foreground">
-          Choisissez votre mode de saisie : IA pour une entrée rapide, ou formulaire manuel pour plus de précision
-        </p>
+        <h1 className="text-2xl font-bold">{t("new.title")}</h1>
+        <p className="text-muted-foreground">{t("new.subtitle")}</p>
       </div>
 
       {/* Mode selector */}
@@ -54,13 +55,13 @@ export default function NewAnimalPage() {
           variant={inputMode === "ai" ? "default" : "outline"}
           onClick={() => setInputMode("ai")}
         >
-          🤖 Entrée IA
+          {t("new.aiMode")}
         </Button>
         <Button
           variant={inputMode === "manual" ? "default" : "outline"}
           onClick={() => setInputMode("manual")}
         >
-          📝 Formulaire manuel
+          {t("new.manualMode")}
         </Button>
       </div>
 
@@ -71,7 +72,7 @@ export default function NewAnimalPage() {
             extractAnimalData={extractAnimalData}
             createAnimal={createAnimal}
             organizationId={organizationId}
-            locale="fr"
+            locale={locale}
             onComplete={handleComplete}
           />
         </div>
@@ -80,8 +81,8 @@ export default function NewAnimalPage() {
           <AnimalForm
             onSubmit={handleManualSubmit}
             onCancel={() => router.back()}
-            submitLabel="Créer l'animal"
-            locale="fr"
+            submitLabel={t("new.submitLabel")}
+            locale={locale}
             uploadFile={uploadFile}
           />
         </div>
