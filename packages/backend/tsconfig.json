@@ -4,7 +4,8 @@
     "noEmit": true,
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "lib": ["ES2022", "dom"]
+    "lib": ["ES2022", "dom"],
+    "types": ["node"]
   },
   "include": ["convex", "node"],
   "exclude": ["convex/_generated"]

@@ -7,9 +7,15 @@
 set -e
 cd "$(dirname "$0")"
 
+# --check-build-environment disable: this project intentionally uses one
+# Production-type CONVEX_DEPLOY_KEY across every Vercel environment (no
+# per-branch preview deployments) — without this flag, a recent Convex CLI
+# version refuses to deploy with a prod key on a non-production (preview)
+# Vercel build, which is exactly what every non-main branch build is here.
 bunx convex deploy \
   --cmd-url-env-var-name NEXT_PUBLIC_CONVEX_URL \
-  --cmd 'echo "$NEXT_PUBLIC_CONVEX_URL" > .preview-convex-url'
+  --cmd 'echo "$NEXT_PUBLIC_CONVEX_URL" > .preview-convex-url' \
+  --check-build-environment disable
 
 cd ../../apps/shelter
 export NEXT_PUBLIC_CONVEX_URL="$(cat ../../packages/backend/.preview-convex-url)"

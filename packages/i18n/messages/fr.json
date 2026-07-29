@@ -5,9 +5,22 @@
       "label": "Langue",
       "fr": "Français",
       "es": "Español"
-    }
+    },
+    "goToOrganizations": "Mes organisations"
   },
   "organizations": {
+    "index": {
+      "title": "Mes organisations",
+      "loading": "Chargement…",
+      "empty": "Vous n'avez pas encore d'organisation.",
+      "createFirst": "Créer une organisation",
+      "type": {
+        "spa": "SPA",
+        "shelter": "Refuge",
+        "association": "Association",
+        "informal_group": "Groupe informel"
+      }
+    },
     "new": {
       "title": "Créer une organisation",
       "nameLabel": "Nom de l'organisation",
@@ -32,7 +45,281 @@
       "createdTitle": "Organisation créée",
       "typeLabel": "Type",
       "countryLabel": "Pays",
-      "addressLabel": "Adresse"
+      "addressLabel": "Adresse",
+      "manageAnimalsLink": "Gérer les animaux",
+      "manageMembersLink": "Gérer les membres",
+      "manageAnnouncementsLink": "Gérer les annonces",
+      "manageCagnottesLink": "Gérer les cagnottes",
+      "manageNewsLink": "Gérer les actualités",
+      "verificationTitle": "Vérification",
+      "verificationStatus": {
+        "unverified": "Non vérifiée",
+        "email_verified": "Email vérifié",
+        "registry_verified": "Organisation vérifiée"
+      },
+      "registryNumberLabel": "Numéro de registre (RNA/SIRET)",
+      "registryNumberSave": "Enregistrer",
+      "registryNumberSaving": "Enregistrement…",
+      "markVerified": "Marquer comme vérifiée",
+      "unmarkVerified": "Annuler la vérification",
+      "markVerifiedRequiresNumber": "Renseignez un numéro de registre avant de marquer l'organisation comme vérifiée."
     }
+  },
+  "cagnottes": {
+    "title": "Cagnottes",
+    "subtitle": "Gérez les cagnottes de votre organisation",
+    "loading": "Chargement…",
+    "error": "Une erreur est survenue.",
+    "empty": "Aucune cagnotte pour le moment.",
+    "create": "Créer une cagnotte",
+    "creating": "Création en cours…",
+    "statusFilterLabel": "Statut",
+    "allStatuses": "Tous les statuts",
+    "status": {
+      "active": "Active",
+      "closed": "Fermée"
+    },
+    "titleLabel": "Titre",
+    "goalDescriptionLabel": "Objectif concret",
+    "goalDescriptionPlaceholder": "ex : Nous avons besoin de 5 nouvelles cages",
+    "targetAmountLabel": "Montant cible (informatif)",
+    "externalUrlLabel": "Lien vers la cagnotte externe",
+    "externalUrlPlaceholder": "https://www.helloasso.com/...",
+    "photoUrlLabel": "Photo (URL)",
+    "deadlineLabel": "Date limite (optionnel)",
+    "externalLinkLabel": "Voir la cagnotte",
+    "currentAmountLabel": "Montant actuel",
+    "updateProgress": "Mettre à jour la progression",
+    "save": "Enregistrer",
+    "saving": "Enregistrement…",
+    "close": "Clôturer",
+    "reopen": "Réouvrir",
+    "backToList": "Retour aux cagnottes",
+    "notFound": "Cagnotte non trouvée"
+  },
+  "news": {
+    "title": "Actualités",
+    "subtitle": "Gérez les actualités de votre organisation",
+    "loading": "Chargement…",
+    "error": "Une erreur est survenue.",
+    "empty": "Aucune actualité pour le moment.",
+    "create": "Publier une actualité",
+    "creating": "Publication en cours…",
+    "titleLabel": "Titre",
+    "textLabel": "Texte",
+    "photoUrlsLabel": "Photos (une URL par ligne)",
+    "linkedAnimalsLabel": "Animaux liés (optionnel)",
+    "linkedCagnotteLabel": "Cagnotte liée (optionnel)",
+    "noCagnotte": "Aucune",
+    "save": "Enregistrer",
+    "saving": "Enregistrement…",
+    "delete": "Supprimer",
+    "deleteConfirm": "Supprimer cette actualité ? Cette action est irréversible.",
+    "backToList": "Retour aux actualités",
+    "notFound": "Actualité non trouvée",
+    "linkedAnimalsIndicator": "{count} animal(aux) lié(s)",
+    "linkedCagnotteIndicator": "Cagnotte liée"
+  },
+  "announcements": {
+    "title": "Annonces",
+    "subtitle": "Gérez les annonces d'adoption de votre organisation",
+    "loading": "Chargement…",
+    "error": "Une erreur est survenue.",
+    "empty": "Aucune annonce pour le moment.",
+    "createDraft": "Créer un brouillon",
+    "statusFilterLabel": "Statut",
+    "allStatuses": "Tous les statuts",
+    "status": {
+      "draft": "Brouillon",
+      "published": "Publiée",
+      "closed": "Fermée"
+    },
+    "species": {
+      "dog": "Chien",
+      "cat": "Chat"
+    },
+    "titleLabel": "Titre",
+    "descriptionLabel": "Description",
+    "save": "Enregistrer",
+    "saving": "Enregistrement…",
+    "publish": "Publier",
+    "close": "Clôturer",
+    "publishedAt": "Publiée le",
+    "closedAt": "Clôturée le",
+    "backToAnimal": "Retour à l'animal",
+    "forAnimal": {
+      "title": "Annonces pour {name}",
+      "empty": "Aucune annonce pour cet animal.",
+      "viewAll": "Voir les annonces"
+    },
+    "notFound": "Annonce non trouvée"
+  },
+  "animals": {
+    "loading": "Chargement…",
+    "error": "Une erreur est survenue.",
+    "yes": "Oui",
+    "no": "Non",
+    "sexLabel": "Sexe:",
+    "sterilizedLabel": "Stérilisé:",
+    "estimatedAgeLabel": "Âge estimé:",
+    "sex": {
+      "male": "Mâle",
+      "female": "Femelle",
+      "unknown": "Inconnu"
+    },
+    "species": {
+      "dog": "Chien",
+      "cat": "Chat"
+    },
+    "status": {
+      "in_care": "En soins",
+      "adoptable": "Adoptable",
+      "adoption_pending": "Adoption en cours",
+      "adopted": "Adopté",
+      "fostered": "En famille d'accueil",
+      "transferred": "Transféré",
+      "deceased": "Décédé"
+    },
+    "identificationMethod": {
+      "chip": "Puce",
+      "tattoo": "Tatouage",
+      "none": "Aucune"
+    },
+    "eventType": {
+      "arrived": "Arrivée",
+      "vet_visit": "Visite vétérinaire",
+      "sterilized": "Stérilisation",
+      "fostered": "Famille d'accueil",
+      "transferred": "Transfert",
+      "adopted": "Adoption",
+      "deceased": "Décès",
+      "status_change": "Changement de statut",
+      "other": "Autre"
+    },
+    "list": {
+      "title": "Animaux",
+      "subtitle": "Gérez le registre des animaux de votre organisation",
+      "searchLabel": "Rechercher",
+      "searchPlaceholder": "Nom, race, notes...",
+      "statusFilterLabel": "Statut",
+      "allStatuses": "Tous les statuts",
+      "speciesFilterLabel": "Espèce",
+      "allSpecies": "Toutes les espèces",
+      "speciesFilterOption": {
+        "dog": "Chiens",
+        "cat": "Chats"
+      },
+      "addAnimal": "+ Ajouter un animal",
+      "emptyNone": "Aucun animal enregistré. Commencez par en ajouter un !",
+      "emptyFiltered": "Aucun animal ne correspond aux filtres.",
+      "arrivalLabel": "Arrivée:"
+    },
+    "detail": {
+      "notFound": "Animal non trouvé",
+      "back": "Retour",
+      "announcementsButton": "Annonces",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "deleting": "Suppression…",
+      "deleteConfirm": "Supprimer {name} ? Cette action est irréversible.",
+      "statusTitle": "Statut actuel",
+      "identificationTitle": "Identification",
+      "chipIdLabel": "N° I-CAD:",
+      "methodLabel": "Méthode:",
+      "birthDateLabel": "Date de naissance:",
+      "arrivalDateLabel": "Date d'arrivée:",
+      "healthTitle": "Santé et caractère",
+      "healthNotesLabel": "Notes de santé:",
+      "noNote": "Aucune note",
+      "characterLabel": "Caractère:",
+      "compatibilityLabel": "Compatibilité:",
+      "compatibilityKids": "Enfants",
+      "compatibilityCats": "Chats",
+      "compatibilityDogs": "Chiens",
+      "storyLabel": "Histoire:",
+      "photosTitle": "Photos",
+      "photoAlt": "{name} - Photo {index}",
+      "historyTitle": "Historique",
+      "noEvents": "Aucun événement enregistré"
+    },
+    "new": {
+      "title": "Ajouter un animal",
+      "subtitle": "Choisissez votre mode de saisie : IA pour une entrée rapide, ou formulaire manuel pour plus de précision",
+      "aiMode": "🤖 Entrée IA",
+      "manualMode": "📝 Formulaire manuel",
+      "submitLabel": "Créer l'animal"
+    },
+    "edit": {
+      "loading": "Chargement…",
+      "title": "Modifier {name}",
+      "submitLabel": "Enregistrer les modifications"
+    }
+  },
+  "animalChat": {
+    "greeting": "Décrivez les animaux qui viennent d'arriver, je m'occupe du reste.",
+    "inputPlaceholder": "ex: un chat noir arrivé aujourd'hui, femelle, stérilisée...",
+    "send": "Envoyer",
+    "sending": "Envoi…",
+    "waitingForApproval": "Répondez à la proposition ci-dessus avant de continuer.",
+    "error": "Une erreur est survenue. Réessayez.",
+    "loadingThread": "Démarrage de la conversation…",
+    "loadMore": "Charger plus",
+    "proposal": {
+      "title": "Proposition d'enregistrement",
+      "approve": "Valider",
+      "deny": "Refuser",
+      "denyReasonPlaceholder": "Motif du refus (optionnel)…",
+      "cancelDeny": "Annuler",
+      "approving": "Validation…",
+      "created": "Enregistré",
+      "viewAnimal": "Voir la fiche",
+      "denied": "Proposition refusée",
+      "denialFailed": "Échec de l'enregistrement"
+    },
+    "field": {
+      "name": "Nom",
+      "species": "Espèce",
+      "sex": "Sexe",
+      "breed": "Race",
+      "sterilized": "Stérilisé",
+      "arrivalDate": "Arrivée",
+      "chipId": "N° I-CAD",
+      "identificationMethod": "Identification",
+      "birthDate": "Naissance",
+      "estimatedAge": "Âge estimé",
+      "healthNotes": "Santé",
+      "characterNotes": "Caractère"
+    }
+  },
+  "members": {
+    "title": "Membres",
+    "loading": "Chargement…",
+    "error": "Une erreur est survenue.",
+    "roleLabel": "Rôle",
+    "role": {
+      "admin": "Admin",
+      "editor": "Éditeur"
+    },
+    "remove": "Retirer",
+    "removeConfirm": "Retirer ce membre ?",
+    "generateInvite": "Générer un lien d'invitation",
+    "inviteRoleLabel": "Rôle pour l'invité",
+    "inviteLinkLabel": "Lien d'invitation",
+    "copy": "Copier",
+    "copied": "Copié !"
+  },
+  "invite": {
+    "title": "Invitation",
+    "loading": "Chargement…",
+    "invalid": "Cette invitation n'est plus valide.",
+    "invitedTo": "Vous êtes invité(e) à rejoindre",
+    "asRole": "en tant que",
+    "role": {
+      "admin": "Admin",
+      "editor": "Éditeur"
+    },
+    "accept": "Accepter l'invitation",
+    "accepting": "Acceptation en cours…",
+    "signInToAccept": "Se connecter pour accepter"
   }
 }

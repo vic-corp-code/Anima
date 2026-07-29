@@ -34,6 +34,7 @@ Hosted on Vercel — project `anima-shelter`, team `victorias-projects-10f9308b`
 - Build Command is `bash ../../packages/backend/vercel-build.sh` (Vercel's Build Command field has a 256-char limit, hence the wrapper script). It runs `convex deploy` before `next build`, so `NEXT_PUBLIC_CONVEX_URL` is captured per-branch at build time — never set it as a static Vercel env var.
 - `CLERK_SECRET_KEY`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, and `CONVEX_DEPLOY_KEY` (exact name required) are already set on Vercel for Production/Preview/Development. On a fresh clone, after linking, `vercel env pull apps/shelter/.env.local` gets you the Clerk keys without re-copying from the dashboard — you still need the Convex setup above for `NEXT_PUBLIC_CONVEX_URL`.
 - For any Vercel CLI y/N confirmation (e.g. `vercel project rm`), pipe `printf 'y\n' |`, not `yes |` — the latter spams a broken echo loop in this CLI version instead of submitting.
+- `vercel-build.sh` passes `--check-build-environment disable` to `convex deploy`. Newer Convex CLI versions refuse to deploy with a Production-type `CONVEX_DEPLOY_KEY` on a non-production Vercel build (`VERCEL_ENV !== "production"`) unless told otherwise — which is every branch except `main` here, since this project deliberately uses one Production deploy key across all Vercel environments (see the `CONVEX_DEPLOY_KEY` bullet above). Without that flag, every `dev`-branch (and any other non-`main`) deploy fails immediately with "Detected a non-production build environment... This is probably unintentional." Don't remove the flag without also changing that deploy-key strategy.
 
 ## Conventions
 
@@ -41,3 +42,17 @@ Hosted on Vercel — project `anima-shelter`, team `victorias-projects-10f9308b`
 - `packages/domain` has no Convex or React imports — pure logic only (see `docs/tech/architecture.md`).
 - No hardcoded UI strings — copy goes through `packages/i18n` message catalogs (ADR-004). Both `fr` and `es` ship together; France is the only enabled operating country for now, Spain is gated at signup.
 - Next.js 16: use `proxy.ts`, not `middleware.ts` (the convention was renamed; same `(request) => response` shape). See `apps/shelter/proxy.ts` for the Clerk + next-intl composition.
+
+<!-- convex-ai-start -->
+
+This project uses [Convex](https://convex.dev) as its backend.
+
+When working on Convex code, **always read
+`convex/_generated/ai/guidelines.md` first** for important guidelines on
+how to correctly use Convex APIs and patterns. The file contains rules that
+override what you may have learned about Convex from training data.
+
+Convex agent skills for common tasks can be installed by running
+`npx convex ai-files install`.
+
+<!-- convex-ai-end -->

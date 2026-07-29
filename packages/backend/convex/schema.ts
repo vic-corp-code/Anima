@@ -31,6 +31,9 @@ export default defineSchema({
       v.literal("email_verified"),
       v.literal("registry_verified"),
     ),
+    // RNA/SIRET (FR) or registry number (ES), self-declared by the org's
+    // admin — see docs/product/shelter-app.md F1. No API verification.
+    registryNumber: v.optional(v.string()),
   }),
 
   memberships: defineTable({
@@ -39,5 +42,140 @@ export default defineSchema({
     role: v.union(v.literal("admin"), v.literal("editor")),
   })
     .index("by_user", ["userId"])
+    .index("by_organization", ["organizationId"]),
+
+  invites: defineTable({
+    organizationId: v.id("organizations"),
+    role: v.union(v.literal("admin"), v.literal("editor")),
+    token: v.string(),
+    createdBy: v.id("users"),
+    usedBy: v.optional(v.id("users")),
+    usedAt: v.optional(v.number()),
+  })
+    .index("by_token", ["token"])
+    .index("by_organization", ["organizationId"]),
+
+  animals: defineTable({
+    // Organization linkage
+    organizationId: v.id("organizations"),
+
+    // Core identification
+    name: v.string(),
+    species: v.union(v.literal("dog"), v.literal("cat")),
+    breed: v.optional(v.string()),
+    sex: v.union(v.literal("male"), v.literal("female"), v.literal("unknown")),
+
+    // Identification (French legal requirements)
+    chipId: v.optional(v.string()), // I-CAD 15-digit code
+    identificationMethod: v.optional(v.union(
+      v.literal("chip"),
+      v.literal("tattoo"),
+      v.literal("none")
+    )),
+
+    // Age
+    birthDate: v.optional(v.string()), // ISO date string or "unknown"
+    estimatedAge: v.optional(v.string()), // e.g., "1 year", "6 months"
+
+    // Status & lifecycle
+    status: v.union(
+      v.literal("in_care"),
+      v.literal("adoptable"),
+      v.literal("adoption_pending"),
+      v.literal("adopted"),
+      v.literal("fostered"),
+      v.literal("transferred"),
+      v.literal("deceased")
+    ),
+
+    // Arrival (French legal requirement)
+    arrivalDate: v.string(), // Required for legal compliance
+
+    // Health & care
+    sterilized: v.boolean(),
+    healthNotes: v.optional(v.string()),
+
+    // Behavior & compatibility
+    characterNotes: v.optional(v.string()),
+    compatibilityKids: v.boolean(),
+    compatibilityCats: v.boolean(),
+    compatibilityDogs: v.boolean(),
+
+    // Media
+    photoUrls: v.array(v.string()), // Convex storage URLs
+    story: v.optional(v.string()), // Public-facing story for adoption
+  })
+    .index("by_organization", ["organizationId"])
+    .index("by_status", ["status"]),
+
+  announcements: defineTable({
+    organizationId: v.id("organizations"),
+    animalId: v.id("animals"),
+    title: v.string(),
+    description: v.string(),
+    status: v.union(
+      v.literal("draft"),
+      v.literal("published"),
+      v.literal("closed"),
+    ),
+    publishedAt: v.optional(v.number()),
+    closedAt: v.optional(v.number()),
+  })
+    .index("by_organization", ["organizationId"])
+    .index("by_animal", ["animalId"]),
+
+  cagnottes: defineTable({
+    organizationId: v.id("organizations"),
+    title: v.string(),
+    goalDescription: v.string(),
+    targetAmount: v.optional(v.number()),
+    currentAmount: v.number(),
+    externalUrl: v.string(),
+    photoUrl: v.optional(v.string()),
+    deadline: v.optional(v.string()),
+    status: v.union(v.literal("active"), v.literal("closed")),
+  }).index("by_organization", ["organizationId"]),
+
+  newsPosts: defineTable({
+    organizationId: v.id("organizations"),
+    title: v.string(),
+    text: v.string(),
+    photoUrls: v.array(v.string()),
+    linkedAnimalIds: v.optional(v.array(v.id("animals"))),
+    linkedCagnotteId: v.optional(v.id("cagnottes")),
+  }).index("by_organization", ["organizationId"]),
+
+  // The @convex-dev/agent component's own `threads` table has no room for
+  // app-specific fields, so org-scoping for the animal-intake assistant's
+  // threads lives here instead, keyed by the component's threadId.
+  animalIntakeThreads: defineTable({
+    threadId: v.string(),
+    organizationId: v.id("organizations"),
+    createdBy: v.id("users"),
+  })
+    .index("by_thread", ["threadId"])
+    .index("by_organization", ["organizationId"]),
+
+  animalEvents: defineTable({
+    // Event tracking for timeline (French legal requirement for record-keeping)
+    animalId: v.id("animals"),
+    organizationId: v.id("organizations"),
+    eventType: v.union(
+      v.literal("arrived"),
+      v.literal("vet_visit"),
+      v.literal("sterilized"),
+      v.literal("fostered"),
+      v.literal("transferred"),
+      v.literal("adopted"),
+      v.literal("deceased"),
+      v.literal("status_change"),
+      v.literal("other")
+    ),
+    eventDate: v.string(),
+    notes: v.optional(v.string()),
+    // Optional: reference to related records (adoptions, transfers, etc.)
+    relatedId: v.optional(v.id("animals")),
+  })
+    .index("by_animal", ["animalId"])
     .index("by_organization", ["organizationId"]),
 });
