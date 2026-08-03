@@ -9,7 +9,7 @@ import { Id } from "@anima/backend/convex/_generated/dataModel";
 import { useRouter } from "@/i18n/navigation";
 import { Button, CagnotteCard, Card, CardContent, Input } from "@anima/ui";
 
-const STATUS_OPTIONS = ["active", "closed"] as const;
+const STATUS_OPTIONS = ["active", "closed", "archived"] as const;
 type Status = (typeof STATUS_OPTIONS)[number];
 
 export default function CagnottesListPage() {

@@ -10,7 +10,7 @@ import { useRouter } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
 import { AnnouncementCard, Button, Card, CardContent } from "@anima/ui";
 
-const STATUS_OPTIONS = ["draft", "published", "closed"] as const;
+const STATUS_OPTIONS = ["draft", "published", "closed", "archived"] as const;
 type Status = (typeof STATUS_OPTIONS)[number];
 
 export default function AnnouncementsListPage() {

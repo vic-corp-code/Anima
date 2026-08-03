@@ -85,7 +85,8 @@
     "allStatuses": "Tous les statuts",
     "status": {
       "active": "Active",
-      "closed": "Fermée"
+      "closed": "Fermée",
+      "archived": "Archivée"
     },
     "titleLabel": "Titre",
     "goalDescriptionLabel": "Objectif concret",
@@ -140,7 +141,8 @@
     "status": {
       "draft": "Brouillon",
       "published": "Publiée",
-      "closed": "Fermée"
+      "closed": "Fermée",
+      "archived": "Archivée"
     },
     "species": {
       "dog": "Chien",
@@ -201,6 +203,7 @@
       "none": "Aucune",
       "identificationPending": "ID en attente"
     },
+    "identificationPending": "ID en attente",
     "eventType": {
       "arrived": "Arrivée",
       "vet_visit": "Visite vétérinaire",

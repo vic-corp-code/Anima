@@ -162,7 +162,7 @@ const archiveAnimalTool = createTool<
   { animalId: string },
   AnimalIntakeCtx
 >({
-  description: "Archive un animal (passe le statut à 'deceased'). Action irréversible.",
+  description: "Enregistre le décès d'un animal (passe le statut à 'deceased'). Action irréversible — n'est PAS un simple archivage, ne l'appelle que si le décès est confirmé.",
   inputSchema: z.object({ animalId: z.string() }),
   needsApproval: () => true,
   execute: async (ctx, args) => {
@@ -524,7 +524,7 @@ export function animalIntakeAgent(): Agent<{ organizationId: Id<"organizations">
       list_animals: listAnimalsTool,
       get_animal: getAnimalTool,
       update_animal: updateAnimalTool,
-      archive_animal: archiveAnimalTool,
+      mark_animal_deceased: archiveAnimalTool,
       // Events
       get_timeline: getTimelineTool,
       add_event: addEventTool,
@@ -569,7 +569,7 @@ Nous sommes le ${today}. Utilise cette date comme défaut si l'utilisateur ne pr
 Animaux :
 - Si l'utilisateur décrit un ou plusieurs animaux, appelle "create_animal" une fois par animal dès que tu as au minimum l'espèce, le sexe et une date d'arrivée — ne pose pas dix questions avant d'agir, la validation humaine se fait après ton appel d'outil.
 - Utilise "list_animals" pour chercher des animaux existants, "get_animal" pour les détails, "update_animal" pour les modifier.
-- "archive_animal" archive un animal (statut décédé) — action irréversible nécessitant validation.
+- "mark_animal_deceased" enregistre le décès d'un animal (statut décédé) — action irréversible nécessitant validation. Ce n'est PAS un simple "archivage" : ne l'utilise que si le décès est confirmé.
 
 Événements (timeline) :
 - "get_timeline" pour voir l'historique, "add_event" pour ajouter (visite vétérinaire, stérilisation, etc.), "update_event" pour modifier, "remove_event" pour supprimer un événement manuel.

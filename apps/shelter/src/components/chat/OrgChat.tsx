@@ -21,7 +21,7 @@ interface OrgChatProps {
 const TOOL_LABELS: Record<string, Record<string, string>> = {
   create_animal: { name: "name", species: "species", sex: "sex", breed: "breed", sterilized: "sterilized", arrivalDate: "arrivalDate", chipId: "chipId", identificationMethod: "identificationMethod", birthDate: "birthDate", estimatedAge: "estimatedAge", healthNotes: "healthNotes", characterNotes: "characterNotes" },
   update_animal: { animalId: "animalId", name: "name", status: "status", breed: "breed" },
-  archive_animal: { animalId: "animalId" },
+  mark_animal_deceased: { animalId: "animalId" },
   add_event: { animalId: "animalId", eventType: "eventType", eventDate: "eventDate", notes: "notes" },
   update_event: { eventId: "eventId", eventType: "eventType", eventDate: "eventDate", notes: "notes" },
   remove_event: { eventId: "eventId" },
@@ -43,7 +43,7 @@ const TOOL_LABELS: Record<string, Record<string, string>> = {
 const TOOL_DISPLAY_NAMES: Record<string, string> = {
   create_animal: "Enregistrer un animal",
   update_animal: "Modifier un animal",
-  archive_animal: "Archiver un animal",
+  mark_animal_deceased: "Marquer l'animal comme décédé",
   add_event: "Ajouter un événement",
   update_event: "Modifier un événement",
   remove_event: "Supprimer un événement",
@@ -379,11 +379,14 @@ function ToolProposal({
         <p className="mt-1 text-xs text-red-600">{t("proposal.denied")}</p>
       )}
 
-      {tool.state === "output-available" && (
-        <div className="mt-1 flex items-center gap-2 text-xs text-green-700">
-          <span>&#10003; {t("proposal.done")}</span>
-        </div>
-      )}
+      {tool.state === "output-available" &&
+        (isToolOutputError(tool) ? (
+          <p className="mt-1 text-xs text-red-600">{String(getToolOutput(tool))}</p>
+        ) : (
+          <div className="mt-1 flex items-center gap-2 text-xs text-green-700">
+            <span>&#10003; {t("proposal.done")}</span>
+          </div>
+        ))}
 
       {tool.state === "output-error" && (
         <p className="mt-1 text-xs text-red-600">
@@ -397,4 +400,17 @@ function ToolProposal({
 function getApprovalId(tool: ToolUIPart): string | undefined {
   if (tool.state !== "approval-requested" || !("approval" in tool)) return undefined;
   return tool.approval?.id;
+}
+
+function getToolOutput(tool: ToolUIPart): unknown {
+  if (tool.state !== "output-available") return undefined;
+  return (tool as { output?: unknown }).output;
+}
+
+// A thrown error inside a tool's execute() can surface as a normal
+// "output-available" state with the output being just the error's string
+// form, rather than as "output-error" — every real tool here returns an
+// object (an id, a list, etc.) on success, never a bare string.
+function isToolOutputError(tool: ToolUIPart): boolean {
+  return typeof getToolOutput(tool) === "string";
 }

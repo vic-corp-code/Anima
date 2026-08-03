@@ -131,7 +131,12 @@ export const list = query({
   args: {
     organizationId: v.id("organizations"),
     status: v.optional(
-      v.union(v.literal("draft"), v.literal("published"), v.literal("closed")),
+      v.union(
+        v.literal("draft"),
+        v.literal("published"),
+        v.literal("closed"),
+        v.literal("archived"),
+      ),
     ),
   },
   handler: async (ctx, { organizationId, status }) => {
@@ -143,6 +148,9 @@ export const list = query({
 
     if (status) {
       query = query.filter((q) => q.eq(q.field("status"), status));
+    } else {
+      // Archived is a soft-delete — hide it from the default (unfiltered) view.
+      query = query.filter((q) => q.neq(q.field("status"), "archived"));
     }
 
     return await query.collect();

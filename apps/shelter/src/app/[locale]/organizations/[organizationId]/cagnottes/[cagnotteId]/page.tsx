@@ -12,6 +12,7 @@ import { Button, Card, CardContent, CardHeader, CardTitle, Input } from "@anima/
 const STATUS_COLORS = {
   active: "bg-green-100 text-green-800",
   closed: "bg-slate-200 text-slate-700",
+  archived: "bg-slate-100 text-slate-500",
 } as const;
 
 export default function CagnotteDetailPage() {

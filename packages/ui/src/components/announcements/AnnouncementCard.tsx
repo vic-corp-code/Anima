@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 export interface AnnouncementCardProps {
   title: string;
   description: string;
-  status: "draft" | "published" | "closed";
+  status: "draft" | "published" | "closed" | "archived";
   statusLabel: string;
   animalName: string;
   animalSpeciesLabel: string;
@@ -17,6 +17,7 @@ const STATUS_COLORS = {
   draft: "bg-gray-100 text-gray-800",
   published: "bg-green-100 text-green-800",
   closed: "bg-slate-200 text-slate-700",
+  archived: "bg-slate-100 text-slate-500",
 } as const;
 
 export function AnnouncementCard({

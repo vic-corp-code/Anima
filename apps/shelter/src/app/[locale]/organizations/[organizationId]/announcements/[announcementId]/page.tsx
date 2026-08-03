@@ -13,6 +13,7 @@ const STATUS_COLORS = {
   draft: "bg-gray-100 text-gray-800",
   published: "bg-green-100 text-green-800",
   closed: "bg-slate-200 text-slate-700",
+  archived: "bg-slate-100 text-slate-500",
 } as const;
 
 export default function AnnouncementDetailPage() {

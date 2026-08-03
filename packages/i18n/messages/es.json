@@ -85,7 +85,8 @@
     "allStatuses": "Todos los estados",
     "status": {
       "active": "Activa",
-      "closed": "Cerrada"
+      "closed": "Cerrada",
+      "archived": "Archivada"
     },
     "titleLabel": "Título",
     "goalDescriptionLabel": "Objetivo concreto",
@@ -140,7 +141,8 @@
     "status": {
       "draft": "Borrador",
       "published": "Publicado",
-      "closed": "Cerrado"
+      "closed": "Cerrado",
+      "archived": "Archivada"
     },
     "species": {
       "dog": "Perro",
@@ -201,6 +203,7 @@
       "none": "Ninguno",
       "identificationPending": "ID pendiente"
     },
+    "identificationPending": "ID pendiente",
     "eventType": {
       "arrived": "Llegada",
       "vet_visit": "Visita veterinaria",

@@ -7,7 +7,7 @@ export interface CagnotteCardProps {
   goalDescription: string;
   currentAmount: number;
   targetAmount?: number;
-  status: "active" | "closed";
+  status: "active" | "closed" | "archived";
   statusLabel: string;
   externalUrl: string;
   externalLinkLabel: string;
@@ -18,6 +18,7 @@ export interface CagnotteCardProps {
 const STATUS_COLORS = {
   active: "bg-green-100 text-green-800",
   closed: "bg-slate-200 text-slate-700",
+  archived: "bg-slate-100 text-slate-500",
 } as const;
 
 export function CagnotteCard({
