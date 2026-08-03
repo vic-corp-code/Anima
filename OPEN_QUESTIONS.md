@@ -29,12 +29,8 @@ Decisions deliberately deferred. Each has a **decide-by** phase (see [ROADMAP.md
 
 ## Tech
 - **i18n library**: next-intl vs. alternatives. → *phase 0.*
-- Image pipeline: Convex storage + on-upload resize vs. image CDN. → *phase 1.*
 - Card→image rendering approach (satori/resvg in Convex action vs. render endpoint). → *phase 2.*
-- Email provider (Resend or similar; EU?). → *phase 1.*
 - Analytics choice (Plausible-class). → *phase 2.*
-- Data export/backup routine for Convex (lock-in mitigation, ADR-003). → *phase 1.*
-- Testing strategy depth: convex-test coverage targets, when Playwright enters. → *phase 1.*
 
 ## Ecosystem & partnerships
 - Curated list of supported cagnotte platforms per country (FR: HelloAsso, Leetchi…; ES: Teaming, GoFundMe, migranodearena) and whether to prioritize a HelloAsso API read-integration. → *phase 2–5.*
@@ -58,3 +54,7 @@ Decisions deliberately deferred. Each has a **decide-by** phase (see [ROADMAP.md
 - **Monorepo tooling**: bun workspaces + Turborepo (over pnpm). *(user, 2026-07-08 → ADR-001)*
 - **Auth provider**: Clerk (over Convex Auth) — eases things for users and dev. *(user, 2026-07-08 → ADR-007)*
 - **Geocoding provider**: Geoapify (over Mapbox, Google) — EU-native/GDPR-first, OSM-backed FR+ES coverage. *(user, 2026-07-15 → ADR-008)*
+- **Image pipeline**: Convex storage with client-side downscale before upload (canvas resize to max 1600px, JPEG quality 0.8) — no separate CDN needed at this scale. *(user, 2026-08-03)*
+- **Email provider**: Resend, EU-hosted region. *(user, 2026-08-03 → ADR-009)*
+- **Data export/backup routine**: periodic manual `npx convex export` snapshots before risky schema migrations; revisit automated backups once on a paid Convex plan or real user data volume exists. *(user, 2026-08-03)*
+- **Testing strategy depth**: vitest for unit/domain logic (already wired); convex-test added for backend integration tests as meaningful business logic accumulates, not a blanket coverage target; Playwright deferred until Phase 2's hub ships (first public-facing surface worth E2E testing). *(user, 2026-08-03)*
