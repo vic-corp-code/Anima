@@ -270,6 +270,7 @@ const createAnnouncementTool = createTool<
 >({
   description: "Crée une annonce d'adoption (brouillon) pour un animal.",
   inputSchema: z.object({ animalId: z.string() }),
+  needsApproval: () => true,
   execute: async (ctx, args) => {
     const announcementId = await ctx.runMutation(internal.announcements.createInternal, {
       animalId: args.animalId as Id<"animals">,
