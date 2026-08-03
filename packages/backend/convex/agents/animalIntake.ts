@@ -199,6 +199,7 @@ const addEventTool = createTool<
     eventDate: z.string().describe("Date ISO YYYY-MM-DD"),
     notes: z.string().optional(),
   }),
+  needsApproval: () => true,
   execute: async (ctx, args) => {
     const eventId = await ctx.runMutation(internal.animals.addEventInternal, {
       animalId: args.animalId as Id<"animals">,
@@ -222,6 +223,7 @@ const updateEventTool = createTool<
     eventDate: z.string().optional(),
     notes: z.string().optional(),
   }),
+  needsApproval: () => true,
   execute: async (ctx, args) => {
     const eventId = await ctx.runMutation(internal.animals.updateEventInternal, {
       eventId: args.eventId as Id<"animalEvents">,
@@ -283,6 +285,7 @@ const updateAnnouncementTool = createTool<
 >({
   description: "Modifie le titre ou la description d'une annonce (brouillon ou publiée).",
   inputSchema: updateAnnouncementInputSchema,
+  needsApproval: () => true,
   execute: async (ctx, args) => {
     await ctx.runMutation(internal.announcements.updateInternal, {
       announcementId: args.announcementId as Id<"announcements">,
@@ -316,6 +319,7 @@ const closeAnnouncementTool = createTool<
 >({
   description: "Clôt une annonce publiée.",
   inputSchema: z.object({ announcementId: z.string() }),
+  needsApproval: () => true,
   execute: async (ctx, args) => {
     const announcementId = await ctx.runMutation(internal.announcements.closeInternal, {
       announcementId: args.announcementId as Id<"announcements">,
@@ -331,6 +335,7 @@ const archiveAnnouncementTool = createTool<
 >({
   description: "Archive une annonce (la masque sans la supprimer).",
   inputSchema: z.object({ announcementId: z.string() }),
+  needsApproval: () => true,
   execute: async (ctx, args) => {
     const announcementId = await ctx.runMutation(internal.announcements.archiveInternal, {
       announcementId: args.announcementId as Id<"announcements">,
@@ -382,6 +387,7 @@ const updateCagnotteTool = createTool<
 >({
   description: "Modifie les détails d'une cagnotte.",
   inputSchema: updateCagnotteInputSchema,
+  needsApproval: () => true,
   execute: async (ctx, args) => {
     await ctx.runMutation(internal.cagnottes.updateInternal, {
       ...args,
@@ -401,6 +407,7 @@ const updateCagnotteProgressTool = createTool<
     cagnotteId: z.string(),
     currentAmount: z.number().describe("Montant actuel collecté"),
   }),
+  needsApproval: () => true,
   execute: async (ctx, args) => {
     await ctx.runMutation(internal.cagnottes.updateProgressInternal, {
       cagnotteId: args.cagnotteId as Id<"cagnottes">,
@@ -417,6 +424,7 @@ const closeCagnotteTool = createTool<
 >({
   description: "Clôt une cagnotte active.",
   inputSchema: z.object({ cagnotteId: z.string() }),
+  needsApproval: () => true,
   execute: async (ctx, args) => {
     await ctx.runMutation(internal.cagnottes.closeInternal, {
       cagnotteId: args.cagnotteId as Id<"cagnottes">,
@@ -432,6 +440,7 @@ const reopenCagnotteTool = createTool<
 >({
   description: "Réouvre une cagnotte clôturée.",
   inputSchema: z.object({ cagnotteId: z.string() }),
+  needsApproval: () => true,
   execute: async (ctx, args) => {
     await ctx.runMutation(internal.cagnottes.reopenInternal, {
       cagnotteId: args.cagnotteId as Id<"cagnottes">,
@@ -447,6 +456,7 @@ const archiveCagnotteTool = createTool<
 >({
   description: "Archive une cagnotte.",
   inputSchema: z.object({ cagnotteId: z.string() }),
+  needsApproval: () => true,
   execute: async (ctx, args) => {
     await ctx.runMutation(internal.cagnottes.archiveInternal, {
       cagnotteId: args.cagnotteId as Id<"cagnottes">,
@@ -498,6 +508,7 @@ const updateNewsPostTool = createTool<
 >({
   description: "Modifie un article d'actualité.",
   inputSchema: updateNewsPostInputSchema,
+  needsApproval: () => true,
   execute: async (ctx, args) => {
     await ctx.runMutation(internal.newsPosts.updateInternal, {
       ...args,

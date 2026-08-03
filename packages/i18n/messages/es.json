@@ -264,9 +264,7 @@
     },
     "new": {
       "title": "Añadir un animal",
-      "subtitle": "Elige tu modo de entrada: IA para una entrada rápida, o formulario manual para más precisión",
-      "aiMode": "🤖 Entrada IA",
-      "manualMode": "📝 Formulario manual",
+      "subtitle": "Completa la información del animal, o usa el asistente de IA (abajo a la derecha) para una entrada rápida.",
       "submitLabel": "Crear el animal"
     },
     "edit": {

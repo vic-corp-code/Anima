@@ -19,9 +19,12 @@ interface OrgChatProps {
 }
 
 const TOOL_LABELS: Record<string, Record<string, string>> = {
+  list_animals: { status: "status" },
+  get_animal: { animalId: "animalId" },
   create_animal: { name: "name", species: "species", sex: "sex", breed: "breed", sterilized: "sterilized", arrivalDate: "arrivalDate", chipId: "chipId", identificationMethod: "identificationMethod", birthDate: "birthDate", estimatedAge: "estimatedAge", healthNotes: "healthNotes", characterNotes: "characterNotes" },
   update_animal: { animalId: "animalId", name: "name", status: "status", breed: "breed" },
   mark_animal_deceased: { animalId: "animalId" },
+  get_timeline: { animalId: "animalId" },
   add_event: { animalId: "animalId", eventType: "eventType", eventDate: "eventDate", notes: "notes" },
   update_event: { eventId: "eventId", eventType: "eventType", eventDate: "eventDate", notes: "notes" },
   remove_event: { eventId: "eventId" },
@@ -41,23 +44,29 @@ const TOOL_LABELS: Record<string, Record<string, string>> = {
 };
 
 const TOOL_DISPLAY_NAMES: Record<string, string> = {
+  list_animals: "Rechercher des animaux",
+  get_animal: "Consulter un animal",
   create_animal: "Enregistrer un animal",
   update_animal: "Modifier un animal",
   mark_animal_deceased: "Marquer l'animal comme décédé",
+  get_timeline: "Consulter l'historique",
   add_event: "Ajouter un événement",
   update_event: "Modifier un événement",
   remove_event: "Supprimer un événement",
+  list_announcements: "Rechercher des annonces",
   create_announcement: "Créer une annonce",
   update_announcement: "Modifier une annonce",
   publish_announcement: "Publier une annonce",
   close_announcement: "Clôturer une annonce",
   archive_announcement: "Archiver une annonce",
+  list_cagnottes: "Rechercher des cagnottes",
   create_cagnotte: "Créer une cagnotte",
   update_cagnotte: "Modifier une cagnotte",
   update_cagnotte_progress: "Mettre à jour la progression",
   close_cagnotte: "Clôturer une cagnotte",
   reopen_cagnotte: "Réouvrir une cagnotte",
   archive_cagnotte: "Archiver une cagnotte",
+  list_news_posts: "Rechercher des actualités",
   create_news_post: "Publier une actualité",
   update_news_post: "Modifier une actualité",
 };
@@ -381,7 +390,7 @@ function ToolProposal({
 
       {tool.state === "output-available" &&
         (isToolOutputError(tool) ? (
-          <p className="mt-1 text-xs text-red-600">{String(getToolOutput(tool))}</p>
+          <p className="mt-1 text-xs text-red-600">{t("error")}</p>
         ) : (
           <div className="mt-1 flex items-center gap-2 text-xs text-green-700">
             <span>&#10003; {t("proposal.done")}</span>
@@ -389,9 +398,7 @@ function ToolProposal({
         ))}
 
       {tool.state === "output-error" && (
-        <p className="mt-1 text-xs text-red-600">
-          {"errorText" in tool ? tool.errorText : t("error")}
-        </p>
+        <p className="mt-1 text-xs text-red-600">{t("error")}</p>
       )}
     </div>
   );

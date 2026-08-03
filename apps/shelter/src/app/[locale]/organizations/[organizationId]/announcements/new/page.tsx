@@ -25,6 +25,7 @@ export default function NewAnnouncementPage() {
   const [error, setError] = useState<string | null>(null);
 
   const handleSelectAnimal = async (animalId: Id<"animals">) => {
+    if (creatingAnimalId !== null) return;
     setError(null);
     setCreatingAnimalId(animalId);
     try {
@@ -67,7 +68,11 @@ export default function NewAnnouncementPage() {
           {animals.map((animal) => (
             <Card
               key={animal._id}
-              className="cursor-pointer hover:border-primary transition-colors"
+              className={`transition-colors ${
+                creatingAnimalId !== null
+                  ? "opacity-50 cursor-not-allowed"
+                  : "cursor-pointer hover:border-primary"
+              }`}
               onClick={() => handleSelectAnimal(animal._id as Id<"animals">)}
             >
               <CardContent className="pt-6">

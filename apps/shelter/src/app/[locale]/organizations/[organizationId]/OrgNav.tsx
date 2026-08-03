@@ -18,7 +18,13 @@ export function OrgNav() {
   const organizationId = params.organizationId as string;
   const pathname = usePathname();
 
-  const isActive = (path: string) => pathname.includes(`/${path}`);
+  // Match on the path segment right after the org id, not a raw substring —
+  // otherwise a nested route like animals/[animalId]/announcements would
+  // light up both "Animals" and "Announcements" at once.
+  const segments = pathname.split("/").filter(Boolean);
+  const orgSegmentIndex = segments.indexOf(organizationId);
+  const activeSegment = orgSegmentIndex !== -1 ? segments[orgSegmentIndex + 1] : undefined;
+  const isActive = (path: string) => activeSegment === path;
 
   return (
     <>
