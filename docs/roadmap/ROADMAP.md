@@ -42,11 +42,11 @@ Goal: one real association replaces its spreadsheet.
 - [x] Manual org verification flow (declare RNA/SIRET/ES-registry, admin marks verified). Done 2026-07-29 — self-attested, no external API check, org's own admin declares + toggles (per shelter-app.md F1's MVP cut).
 - [x] Conversational AI intake agent. Done 2026-07-30 — `@convex-dev/agent` based assistant for field use, create_animal tool with human approval, FR/ES system prompt.
 - [x] Complete backend CRUDs with archive (no hard deletes). Done 2026-07-30 — animal events manual CRUD (add/update/remove with `isManual` guard), announcements archive, cagnottes archive. All entities now have full Create/Read/Update/Archive lifecycle.
-- [x] AI agent full CRUD tools. Done 2026-07-30 — 25 tools covering animals (create/read/update/archive), events (add/update/remove), announcements (create/update/publish/close/archive), cagnottes (create/update/progress/close/reopen/archive), news posts (create/update). Write tools require human approval; internal mutations skip auth (authorized at thread level).
+- [x] AI agent full CRUD tools. Done 2026-07-30 — 25 tools covering animals (create/read/update/mark-deceased), events (add/update/remove), announcements (create/update/publish/close/archive), cagnottes (create/update/progress/close/reopen/archive), news posts (create/update). Write tools require human approval; internal mutations skip auth (authorized at thread level).
 - [x] Org dashboard navigation. Done 2026-07-30 — persistent sidebar (desktop) + bottom tab bar (mobile) within org workspace, active state detection on current route, FR/ES i18n.
 - [x] Announcement create CTA. Done 2026-07-30 — "Create Draft" button on main announcements list page, animal picker page at `/announcements/new` for creating drafts from the list view.
 - [x] Animal identification pending marker. Done 2026-07-30 — amber "ID en attente" badge on animal list cards, warning banner on animal detail page when `identificationMethod` is missing.
-- [x] AI agent frontend expansion. Done 2026-07-30 — generic `OrgChat` component handling all 27 tool types with dynamic field rendering, floating chat FAB accessible from any org page, approval UI works for all tools not just animal creation.
+- [x] AI agent frontend expansion. Done 2026-07-30 — generic `OrgChat` component handling all 25 tool types with dynamic field rendering, floating chat FAB accessible from any org page, approval UI works for all tools not just animal creation.
 - [ ] Transactional email (invites, inquiry relay groundwork). **Not blocking Phase 1** — invites already ship as shareable links (see Members & roles above); only revisit this if/when a real need for outbound email (e.g. phase-2 inquiry relay) makes it worth building.
 
 **Recruit 1–3 pilot associations in France** (Spain is gated at account creation until enabled, see ADR-004) — **deferred for now (2026-07-30)**, moved out of the active checklist. Rationale: all Phase 1 features are checked off (registry, announcements, cagnottes, news, AI agent with full CRUD, org navigation, ID pending markers). The workspace is feature-complete but needs a real-world reliability pass before onboarding non-technical users — see [human testing roadmap](humanTesting.md) for remaining open items (none are blocking, but fixing them first will improve the pilot experience).
@@ -57,20 +57,44 @@ Goal: one real association replaces its spreadsheet.
 
 Goal: pilot orgs' animals and cagnottes are public, filterable, and Google-indexable.
 
-- [ ] `apps/hub`: animals directory with filters (species, place/radius, org type + secondary), animal pages, org pages, cagnottes directory.
-- [ ] Org site editor in the shelter workspace: theme + section order + free-text custom blocks for org pages (shelter-app.md F7, connect-hub.md F3).
-- [ ] Adoption inquiry → email relay to org (no adopter account yet).
-- [ ] SEO: SSR/ISR, clean URLs, sitemaps, OpenGraph images (reuses card→image rendering).
-- [ ] **Social composer v1 (generate & copy, ADR-006):** per-network captions + rendered post/story images from animals/news/cagnottes.
-- [ ] Privacy-friendly analytics; measure inquiry sources and cagnotte click-throughs.
+Split into two independent tracks: **2b has no dependency on 2a** and can be built first, in parallel, or during Phase 1's pilot-recruitment wait — it only reads Phase-1 data (animals/news/cagnottes) and shares no code with the hub beyond the existing card components.
 
-**Exit gate:** first adoption inquiry arrives via the hub; pilot orgs use the composer ≥ weekly; animal pages indexed by Google.
+### Phase 2a — Hub core
+
+- [ ] `apps/hub`: animals directory with filters (species, place/radius, org type + secondary), animal pages, org pages, cagnottes directory.
+      Files: new `apps/hub` app, `packages/ui` (reuse existing card components), `packages/domain`
+      Verify: an unauthenticated visitor can filter and open an animal page showing a pilot org's real data.
+- [ ] Org site editor in the shelter workspace: theme + section order + free-text custom blocks for org pages (shelter-app.md F7, connect-hub.md F3).
+      Verify: an org admin edits their public page's theme/blocks and the change appears live on `apps/hub`.
+- [ ] Adoption inquiry → email relay to org (no adopter account yet).
+      Note: blocked on the still-unresolved "email provider" decision (OPEN_QUESTIONS, decide-by phase 1) — resolve that first.
+      Verify: submitting the inquiry form on a hub animal page delivers an email to the org's registered contact.
+- [ ] SEO: SSR/ISR, clean URLs, sitemaps, OpenGraph images (reuses card→image rendering).
+      Note: ISR is currently blocked by shared middleware for the shelter app (see architecture.md's SEO section) — the hub needs its own route scope.
+      Verify: an animal page's server-rendered HTML contains the animal's name with no client JS; `/sitemap.xml` lists all published animals.
+- [ ] Verified-org-only default filter on directory + org pages; basic report/flag button on animal/org/cagnotte pages, with a manual admin view of reports (no workflow needed yet). *(connect-hub.md F6 — previously not scheduled in any phase.)*
+      Verify: an unverified org's listings are hidden from the default directory view; reporting any public object creates a record an admin can see.
+- [ ] Privacy-friendly analytics; measure inquiry sources and cagnotte click-throughs.
+      Verify: a query/dashboard shows inquiry count by source and cagnotte click-throughs for at least one pilot org.
+
+**Exit gate (2a):** first adoption inquiry arrives via the hub; animal pages indexed by Google.
+
+### Phase 2b — Social composer v1
+
+- [ ] **Social composer v1 (generate & copy, ADR-006):** per-network captions + rendered post/story images from animals/news/cagnottes.
+      Files: `packages/ui` (card→image rendering), new composer route in `apps/shelter`
+      Verify: an org generates a caption + image for an existing animal/news/cagnotte and copies both out for manual posting.
+
+**Exit gate (2b):** pilot orgs use the composer ≥ weekly.
 
 ## Phase 3 — Volunteer platform (~2 months)
 
 Goal: individuals can declare structured capabilities and find orgs.
 
-- [ ] `apps/volunteers` (or a hub section — decide now, see architecture note): signup, profile, visibility controls.
+- [ ] **Decide app boundary**: `apps/volunteers` as a separate app vs. a section of `apps/hub` (architecture.md keeps package boundaries clean specifically so this stays cheap to decide here, at phase 3).
+      Verify: a one-paragraph decision recorded in architecture.md before starting the next bullet.
+- [ ] Volunteer signup + profile CRUD.
+- [ ] Visibility controls (who can see a volunteer's profile/contact info).
 - [ ] Structured capabilities: **transport + foster + availability** types first; on-site & skills after.
 - [ ] Volunteer directory for verified orgs (search by capability, area).
 - [ ] Safety basics: area-only location, report/block, 18+, GDPR export/delete.
@@ -106,7 +130,8 @@ Direction, not commitments — re-plan with real usage data:
 
 ## Standing rules
 
-1. **Don't start phase N+1 before phase N's exit gate.** Gates are user-behavior facts, not feature checklists.
-2. **Pilot feedback outranks this roadmap.** Re-cut phases 3+ after phase 2 learnings.
+1. **Don't start phase N+1 before phase N's exit gate.** Gates are user-behavior facts, not feature checklists — Phase 0's three-spike gate is the deliberate exception, since de-risking is inherently checklist-shaped.
+2. **Pilot feedback outranks this roadmap from the moment Phase 1's pilot begins** — re-cut Phase 2 scope with Phase 1 learnings, and phases 4+ with Phase 2/3 learnings.
 3. **Anything cut goes to OPEN_QUESTIONS or a phase-5 bullet** — never silently dropped.
 4. Revisit [OPEN_QUESTIONS.md](../../OPEN_QUESTIONS.md) at each phase boundary; several decisions have "decide by" phases.
+5. **Before treating a phase's checklist as complete, every OPEN_QUESTIONS item tagged "decide-by" that phase must be resolved (moved to Resolved) or explicitly re-tagged** — not left stale.
