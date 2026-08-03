@@ -63,6 +63,14 @@
       "markVerified": "Marquer comme vérifiée",
       "unmarkVerified": "Annuler la vérification",
       "markVerifiedRequiresNumber": "Renseignez un numéro de registre avant de marquer l'organisation comme vérifiée."
+    },
+    "nav": {
+      "overview": "Vue d'ensemble",
+      "animals": "Animaux",
+      "announcements": "Annonces",
+      "cagnottes": "Cagnottes",
+      "news": "Actualités",
+      "members": "Membres"
     }
   },
   "cagnottes": {
@@ -152,7 +160,14 @@
       "empty": "Aucune annonce pour cet animal.",
       "viewAll": "Voir les annonces"
     },
-    "notFound": "Annonce non trouvée"
+    "notFound": "Annonce non trouvée",
+    "new": {
+      "title": "Nouvelle annonce",
+      "subtitle": "Choisissez un animal pour créer un brouillon d'annonce",
+      "backToList": "Retour aux annonces",
+      "noAnimals": "Aucun animal enregistré. Ajoutez d'abord un animal.",
+      "creating": "Création…"
+    }
   },
   "animals": {
     "loading": "Chargement…",
@@ -183,7 +198,8 @@
     "identificationMethod": {
       "chip": "Puce",
       "tattoo": "Tatouage",
-      "none": "Aucune"
+      "none": "Aucune",
+      "identificationPending": "ID en attente"
     },
     "eventType": {
       "arrived": "Arrivée",
@@ -240,7 +256,8 @@
       "photosTitle": "Photos",
       "photoAlt": "{name} - Photo {index}",
       "historyTitle": "Historique",
-      "noEvents": "Aucun événement enregistré"
+      "noEvents": "Aucun événement enregistré",
+      "identificationPendingNotice": "Cet animal n'a pas encore d'identification (puce ou tatouage). Pensez à le faire identifier dès que possible."
     },
     "new": {
       "title": "Ajouter un animal",
@@ -321,5 +338,25 @@
     "accept": "Accepter l'invitation",
     "accepting": "Acceptation en cours…",
     "signInToAccept": "Se connecter pour accepter"
+  },
+  "orgChat": {
+    "greeting": "Bonjour ! Comment puis-je vous aider ? Je peux gérer les animaux, les annonces, les cagnottes et les actualités.",
+    "inputPlaceholder": "ex: crée une annonce pour Max...",
+    "send": "Envoyer",
+    "sending": "Envoi…",
+    "waitingForApproval": "Répondez à la proposition ci-dessus avant de continuer.",
+    "error": "Une erreur est survenue. Réessayez.",
+    "loadingThread": "Démarrage de la conversation…",
+    "loadMore": "Charger plus",
+    "proposal": {
+      "approve": "Valider",
+      "deny": "Refuser",
+      "denyReasonPlaceholder": "Motif du refus (optionnel)…",
+      "cancelDeny": "Annuler",
+      "approving": "Validation…",
+      "done": "Effectué",
+      "denied": "Proposition refusée",
+      "denialFailed": "Échec"
+    }
   }
 }

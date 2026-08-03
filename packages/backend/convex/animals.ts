@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { internalMutation, mutation, query, MutationCtx, QueryCtx } from "./_generated/server";
+import { internalMutation, internalQuery, mutation, query, MutationCtx, QueryCtx } from "./_generated/server";
 import { Id } from "./_generated/dataModel";
 
 // Organization-scoped authorization check
@@ -375,5 +375,290 @@ export const addEvent = mutation({
     });
 
     return eventId;
+  },
+});
+
+// Add a manual timeline event (staff-created, distinct from auto-generated events)
+export const addManualEvent = mutation({
+  args: {
+    animalId: v.id("animals"),
+    eventType: v.union(
+      v.literal("arrived"),
+      v.literal("vet_visit"),
+      v.literal("sterilized"),
+      v.literal("fostered"),
+      v.literal("transferred"),
+      v.literal("adopted"),
+      v.literal("deceased"),
+      v.literal("status_change"),
+      v.literal("other")
+    ),
+    eventDate: v.string(),
+    notes: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const animal = await ctx.db.get(args.animalId);
+    if (!animal) throw new Error("Animal not found");
+
+    await assertOrgAccess(ctx, animal.organizationId);
+
+    return await ctx.db.insert("animalEvents", {
+      animalId: args.animalId,
+      organizationId: animal.organizationId,
+      eventType: args.eventType,
+      eventDate: args.eventDate,
+      notes: args.notes,
+      isManual: true,
+    });
+  },
+});
+
+// Update a manual event's description, date, or type
+export const updateEvent = mutation({
+  args: {
+    eventId: v.id("animalEvents"),
+    eventType: v.optional(
+      v.union(
+        v.literal("arrived"),
+        v.literal("vet_visit"),
+        v.literal("sterilized"),
+        v.literal("fostered"),
+        v.literal("transferred"),
+        v.literal("adopted"),
+        v.literal("deceased"),
+        v.literal("status_change"),
+        v.literal("other")
+      )
+    ),
+    eventDate: v.optional(v.string()),
+    notes: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const event = await ctx.db.get(args.eventId);
+    if (!event) throw new Error("Event not found");
+
+    await assertOrgAccess(ctx, event.organizationId);
+
+    const updates: Record<string, unknown> = {};
+    if (args.eventType !== undefined) updates.eventType = args.eventType;
+    if (args.eventDate !== undefined) updates.eventDate = args.eventDate;
+    if (args.notes !== undefined) updates.notes = args.notes;
+
+    await ctx.db.patch(args.eventId, updates);
+    return args.eventId;
+  },
+});
+
+// Delete a manual event (auto-generated events cannot be deleted)
+export const removeEvent = mutation({
+  args: { eventId: v.id("animalEvents") },
+  handler: async (ctx, args) => {
+    const event = await ctx.db.get(args.eventId);
+    if (!event) throw new Error("Event not found");
+
+    await assertOrgAccess(ctx, event.organizationId);
+
+    if (!event.isManual) {
+      throw new Error("Cannot delete auto-generated events");
+    }
+
+    await ctx.db.delete(args.eventId);
+    return args.eventId;
+  },
+});
+
+// --- Internal functions (no auth — used by the AI agent which authorizes at thread level) ---
+
+export const listInternal = internalQuery({
+  args: {
+    organizationId: v.id("organizations"),
+    status: v.optional(
+      v.union(
+        v.literal("in_care"),
+        v.literal("adoptable"),
+        v.literal("adoption_pending"),
+        v.literal("adopted"),
+        v.literal("fostered"),
+        v.literal("transferred"),
+        v.literal("deceased"),
+      ),
+    ),
+  },
+  handler: async (ctx, args) => {
+    let q = ctx.db
+      .query("animals")
+      .withIndex("by_organization", (q) => q.eq("organizationId", args.organizationId));
+    if (args.status) {
+      q = q.filter((q) => q.eq(q.field("status"), args.status));
+    }
+    return await q.take(20);
+  },
+});
+
+export const getInternal = internalQuery({
+  args: { animalId: v.id("animals") },
+  handler: async (ctx, args) => {
+    return await ctx.db.get(args.animalId);
+  },
+});
+
+export const updateInternal = internalMutation({
+  args: {
+    animalId: v.id("animals"),
+    name: v.optional(v.string()),
+    species: v.optional(v.union(v.literal("dog"), v.literal("cat"))),
+    breed: v.optional(v.string()),
+    sex: v.optional(v.union(v.literal("male"), v.literal("female"), v.literal("unknown"))),
+    chipId: v.optional(v.string()),
+    identificationMethod: v.optional(v.union(v.literal("chip"), v.literal("tattoo"), v.literal("none"))),
+    birthDate: v.optional(v.string()),
+    estimatedAge: v.optional(v.string()),
+    status: v.optional(
+      v.union(
+        v.literal("in_care"),
+        v.literal("adoptable"),
+        v.literal("adoption_pending"),
+        v.literal("adopted"),
+        v.literal("fostered"),
+        v.literal("transferred"),
+        v.literal("deceased"),
+      ),
+    ),
+    arrivalDate: v.optional(v.string()),
+    sterilized: v.optional(v.boolean()),
+    healthNotes: v.optional(v.string()),
+    characterNotes: v.optional(v.string()),
+    compatibilityKids: v.optional(v.boolean()),
+    compatibilityCats: v.optional(v.boolean()),
+    compatibilityDogs: v.optional(v.boolean()),
+    story: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const animal = await ctx.db.get(args.animalId);
+    if (!animal) throw new Error("Animal not found");
+
+    const { animalId, ...rest } = args;
+    const updates: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(rest)) {
+      if (value !== undefined) updates[key] = value;
+    }
+
+    await ctx.db.patch(animalId, updates);
+
+    if (args.status !== undefined && args.status !== animal.status) {
+      await ctx.db.insert("animalEvents", {
+        animalId,
+        organizationId: animal.organizationId,
+        eventType: "status_change",
+        eventDate: new Date().toISOString(),
+        notes: `Status changed from ${animal.status} to ${args.status}`,
+      });
+    }
+
+    return animalId;
+  },
+});
+
+export const archiveInternal = internalMutation({
+  args: { animalId: v.id("animals") },
+  handler: async (ctx, args) => {
+    const animal = await ctx.db.get(args.animalId);
+    if (!animal) throw new Error("Animal not found");
+    if (animal.status === "deceased") throw new Error("Animal is already deceased");
+
+    await ctx.db.patch(args.animalId, { status: "deceased" });
+    await ctx.db.insert("animalEvents", {
+      animalId: args.animalId,
+      organizationId: animal.organizationId,
+      eventType: "deceased",
+      eventDate: new Date().toISOString(),
+      notes: "Archived via AI agent",
+    });
+    return args.animalId;
+  },
+});
+
+export const getTimelineInternal = internalQuery({
+  args: { animalId: v.id("animals") },
+  handler: async (ctx, args) => {
+    const events = await ctx.db
+      .query("animalEvents")
+      .withIndex("by_animal", (q) => q.eq("animalId", args.animalId))
+      .collect();
+    return events.sort((a, b) => a.eventDate.localeCompare(b.eventDate));
+  },
+});
+
+export const addEventInternal = internalMutation({
+  args: {
+    animalId: v.id("animals"),
+    eventType: v.union(
+      v.literal("arrived"),
+      v.literal("vet_visit"),
+      v.literal("sterilized"),
+      v.literal("fostered"),
+      v.literal("transferred"),
+      v.literal("adopted"),
+      v.literal("deceased"),
+      v.literal("status_change"),
+      v.literal("other"),
+    ),
+    eventDate: v.string(),
+    notes: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const animal = await ctx.db.get(args.animalId);
+    if (!animal) throw new Error("Animal not found");
+    return await ctx.db.insert("animalEvents", {
+      animalId: args.animalId,
+      organizationId: animal.organizationId,
+      eventType: args.eventType,
+      eventDate: args.eventDate,
+      notes: args.notes,
+      isManual: true,
+    });
+  },
+});
+
+export const updateEventInternal = internalMutation({
+  args: {
+    eventId: v.id("animalEvents"),
+    eventType: v.optional(
+      v.union(
+        v.literal("arrived"),
+        v.literal("vet_visit"),
+        v.literal("sterilized"),
+        v.literal("fostered"),
+        v.literal("transferred"),
+        v.literal("adopted"),
+        v.literal("deceased"),
+        v.literal("status_change"),
+        v.literal("other"),
+      ),
+    ),
+    eventDate: v.optional(v.string()),
+    notes: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const event = await ctx.db.get(args.eventId);
+    if (!event) throw new Error("Event not found");
+    const { eventId, ...rest } = args;
+    const updates: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(rest)) {
+      if (value !== undefined) updates[key] = value;
+    }
+    await ctx.db.patch(eventId, updates);
+    return eventId;
+  },
+});
+
+export const removeEventInternal = internalMutation({
+  args: { eventId: v.id("animalEvents") },
+  handler: async (ctx, args) => {
+    const event = await ctx.db.get(args.eventId);
+    if (!event) throw new Error("Event not found");
+    if (!event.isManual) throw new Error("Cannot delete auto-generated events");
+    await ctx.db.delete(args.eventId);
+    return args.eventId;
   },
 });

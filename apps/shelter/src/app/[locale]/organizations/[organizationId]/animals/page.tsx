@@ -154,9 +154,16 @@ export default function AnimalsListPage() {
                       {animal.breed && ` • ${animal.breed}`}
                     </p>
                   </div>
-                  <span className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(animal.status)}`}>
-                    {t(`status.${animal.status}`)}
-                  </span>
+                  <div className="flex flex-col items-end gap-1">
+                    <span className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(animal.status)}`}>
+                      {t(`status.${animal.status}`)}
+                    </span>
+                    {!animal.identificationMethod && (
+                      <span className="px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800">
+                        {t("identificationPending")}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </CardHeader>
               <CardContent>

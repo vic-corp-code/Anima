@@ -63,6 +63,14 @@
       "markVerified": "Marcar como verificada",
       "unmarkVerified": "Anular la verificación",
       "markVerifiedRequiresNumber": "Introduce un número de registro antes de marcar la organización como verificada."
+    },
+    "nav": {
+      "overview": "Vista general",
+      "animals": "Animales",
+      "announcements": "Anuncios",
+      "cagnottes": "Recaudaciones",
+      "news": "Noticias",
+      "members": "Miembros"
     }
   },
   "cagnottes": {
@@ -152,7 +160,14 @@
       "empty": "No hay anuncios para este animal.",
       "viewAll": "Ver anuncios"
     },
-    "notFound": "Anuncio no encontrado"
+    "notFound": "Anuncio no encontrado",
+    "new": {
+      "title": "Nuevo anuncio",
+      "subtitle": "Elige un animal para crear un borrador de anuncio",
+      "backToList": "Volver a los anuncios",
+      "noAnimals": "No hay animales registrados. Añade primero un animal.",
+      "creating": "Creando…"
+    }
   },
   "animals": {
     "loading": "Cargando…",
@@ -183,7 +198,8 @@
     "identificationMethod": {
       "chip": "Chip",
       "tattoo": "Tatuaje",
-      "none": "Ninguno"
+      "none": "Ninguno",
+      "identificationPending": "ID pendiente"
     },
     "eventType": {
       "arrived": "Llegada",
@@ -240,7 +256,8 @@
       "photosTitle": "Fotos",
       "photoAlt": "{name} - Foto {index}",
       "historyTitle": "Historial",
-      "noEvents": "No hay eventos registrados"
+      "noEvents": "No hay eventos registrados",
+      "identificationPendingNotice": "Este animal aún no tiene identificación (chip o tatuaje). Recuerda identificarlo lo antes posible."
     },
     "new": {
       "title": "Añadir un animal",
@@ -321,5 +338,25 @@
     "accept": "Aceptar la invitación",
     "accepting": "Aceptando…",
     "signInToAccept": "Inicia sesión para aceptar"
+  },
+  "orgChat": {
+    "greeting": "¡Hola! ¿Cómo puedo ayudarte? Puedo gestionar animales, anuncios, recaudaciones y noticias.",
+    "inputPlaceholder": "ej: crea un anuncio para Max...",
+    "send": "Enviar",
+    "sending": "Enviando…",
+    "waitingForApproval": "Responde a la propuesta de arriba antes de continuar.",
+    "error": "Se produjo un error. Inténtalo de nuevo.",
+    "loadingThread": "Iniciando la conversación…",
+    "loadMore": "Cargar más",
+    "proposal": {
+      "approve": "Aprobar",
+      "deny": "Rechazar",
+      "denyReasonPlaceholder": "Motivo del rechazo (opcional)…",
+      "cancelDeny": "Cancelar",
+      "approving": "Aprobando…",
+      "done": "Hecho",
+      "denied": "Propuesta rechazada",
+      "denialFailed": "Fallo"
+    }
   }
 }

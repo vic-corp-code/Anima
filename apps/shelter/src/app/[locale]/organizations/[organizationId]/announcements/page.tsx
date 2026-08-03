@@ -7,7 +7,8 @@ import { useTranslations } from "next-intl";
 import { api } from "@anima/backend/convex/_generated/api";
 import { Id } from "@anima/backend/convex/_generated/dataModel";
 import { useRouter } from "@/i18n/navigation";
-import { AnnouncementCard, Card, CardContent } from "@anima/ui";
+import { Link } from "@/i18n/navigation";
+import { AnnouncementCard, Button, Card, CardContent } from "@anima/ui";
 
 const STATUS_OPTIONS = ["draft", "published", "closed"] as const;
 type Status = (typeof STATUS_OPTIONS)[number];
@@ -39,9 +40,16 @@ export default function AnnouncementsListPage() {
 
   return (
     <div className="container mx-auto p-4">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold">{t("title")}</h1>
-        <p className="text-muted-foreground">{t("subtitle")}</p>
+      <div className="mb-6 flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">{t("title")}</h1>
+          <p className="text-muted-foreground">{t("subtitle")}</p>
+        </div>
+        <Button asChild>
+          <Link href={`/organizations/${organizationId}/announcements/new`}>
+            {t("createDraft")}
+          </Link>
+        </Button>
       </div>
 
       <Card className="mb-6">

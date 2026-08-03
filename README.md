@@ -2,7 +2,7 @@
 
 *(working name)* — A connected ecosystem for animal welfare in France and Spain: shelter management, volunteer coordination, and a public hub for adoptions and fund drives.
 
-**Status: planning.** No code yet — this repo currently holds the vision, product specs, technical decisions, and roadmap that prepare the build.
+**Status: Phase 1 (Shelter MVP) in progress.** The shelter workspace is feature-complete with animal registry, announcements, cagnottes, news posts, AI-powered intake agent, and org management. See [ROADMAP.md](docs/roadmap/ROADMAP.md) for current phase status.
 
 ## The three platforms (one monorepo, one shared backend)
 
@@ -32,8 +32,11 @@
 - **Social:** composer generates ready-to-paste posts + images; platform APIs come later.
 - **Sequence:** shelter workspace → public hub → volunteers → missions/connection → matching & trust.
 
-## Next actions
+## Getting started
 
-1. Resolve remaining phase-0 open questions (i18n strategy/lib, geocoding).
-2. Scaffold the monorepo and run the three Convex validation spikes.
-3. Start conversations with 1–3 candidate pilot associations (can begin now — it gates phase 1).
+```bash
+bun install          # install everything
+bun run dev           # turbo run dev, all apps
+```
+
+See [CLAUDE.md](CLAUDE.md) for conventions, first-time setup (Convex, Clerk, Vercel), and deploying.

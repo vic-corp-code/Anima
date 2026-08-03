@@ -18,15 +18,15 @@ Foundations  →   Shelter MVP      →   Public Hub       →   Volunteers     
 
 Goal: a running skeleton and answers to the questions that could invalidate the stack.
 
-- [ ] Monorepo scaffold: bun workspaces + Turborepo, `apps/shelter` + `packages/{backend,ui,i18n,domain,config}` (hub/volunteers apps created in their phases). Quick spike confirming bun plays well with Convex + Next.js tooling; fall back to pnpm if it fights either (ADR-001).
-- [ ] Convex project + first schema slice (organizations, users, memberships).
-- [ ] Wire Clerk auth (ADR-007): login/signup, org membership synced to Convex.
-- [ ] i18n wiring (next-intl or chosen lib), FR + ES catalogs, lint rule against hardcoded strings.
+- [x] Monorepo scaffold: bun workspaces + Turborepo, `apps/shelter` + `packages/{backend,ui,i18n,domain,config}` (hub/volunteers apps created in their phases). Done — bun confirmed working with Convex + Next.js (ADR-001).
+- [x] Convex project + first schema slice (organizations, users, memberships). Done — full schema in `convex/schema.ts` with organizations, memberships, invites, animals, animalEvents, announcements, cagnottes, newsPosts, animalIntakeThreads.
+- [x] Wire Clerk auth (ADR-007): login/signup, org membership synced to Convex. Done — `convex/auth.config.ts` wired, user records created on first org creation.
+- [x] i18n wiring (next-intl or chosen lib), FR + ES catalogs, lint rule against hardcoded strings. Done — next-intl with `[locale]` URL prefix, FR + ES message catalogs in `packages/i18n/messages/`.
 - [x] **Spike: geo** — store lat/lng, radius query via Convex geospatial component. *Convex validation gate #1 (ADR-003).* Done 2026-07-15, see `architecture.md`'s Geography section.
 - [x] **Spike: SSR/SEO** — server-render a page from Convex data with ISR. *Gate #2.* Done 2026-07-15: SSR confirmed working; ISR currently blocked by shared middleware — see `architecture.md`'s SEO section.
 - [x] **Check: Convex EU data residency.** *Gate #3.* Done 2026-07-15: dev deployment moved to `eu` region — see `architecture.md`'s GDPR section. **All three Convex validation gates are now green.**
-- [ ] Basic design tokens in `packages/ui` (the three apps must feel like one product later).
-- [ ] Repo hygiene: CI (typecheck/lint/test), preview deployments, README, CLAUDE.md for the repo.
+- [x] Basic design tokens in `packages/ui` — shared components (Button, Card, Input, etc.) with Tailwind, used across the shelter app.
+- [x] Repo hygiene: CI (typecheck/lint), preview deployments, CLAUDE.md for the repo. Done — GitHub Actions CI (`.github/workflows/ci.yml`), Vercel preview deploys on push, CLAUDE.md with full conventions. README still says "no code yet" and needs updating.
 
 **Exit gate:** logged-in user creates an organization, in FR and ES, on a deployed preview; all three Convex gates green (else switch to Supabase now — see ADR-003).
 
@@ -40,9 +40,16 @@ Goal: one real association replaces its spreadsheet.
 - [x] Cagnottes: create with external link (ADR-005), manual progress, list. Done 2026-07-29.
 - [x] Minimal news posts. Done 2026-07-29 — title/text/photos, optional links to animals and a cagnotte, no lifecycle (per the MVP-cut note).
 - [x] Manual org verification flow (declare RNA/SIRET/ES-registry, admin marks verified). Done 2026-07-29 — self-attested, no external API check, org's own admin declares + toggles (per shelter-app.md F1's MVP cut).
+- [x] Conversational AI intake agent. Done 2026-07-30 — `@convex-dev/agent` based assistant for field use, create_animal tool with human approval, FR/ES system prompt.
+- [x] Complete backend CRUDs with archive (no hard deletes). Done 2026-07-30 — organizations remove (cascade), animal events manual CRUD (add/update/remove with `isManual` guard), announcements archive, cagnottes archive. All entities now have full Create/Read/Update/Archive lifecycle.
+- [x] AI agent full CRUD tools. Done 2026-07-30 — 27 tools covering animals (create/read/update/archive), events (add/update/remove), announcements (create/update/publish/close/archive), cagnottes (create/update/progress/close/reopen/archive), news posts (create/update). Write tools require human approval; internal mutations skip auth (authorized at thread level).
+- [x] Org dashboard navigation. Done 2026-07-30 — persistent sidebar (desktop) + bottom tab bar (mobile) within org workspace, active state detection on current route, FR/ES i18n.
+- [x] Announcement create CTA. Done 2026-07-30 — "Create Draft" button on main announcements list page, animal picker page at `/announcements/new` for creating drafts from the list view.
+- [x] Animal identification pending marker. Done 2026-07-30 — amber "ID en attente" badge on animal list cards, warning banner on animal detail page when `identificationMethod` is missing.
+- [x] AI agent frontend expansion. Done 2026-07-30 — generic `OrgChat` component handling all 27 tool types with dynamic field rendering, floating chat FAB accessible from any org page, approval UI works for all tools not just animal creation.
 - [ ] Transactional email (invites, inquiry relay groundwork). **Not blocking Phase 1** — invites already ship as shareable links (see Members & roles above); only revisit this if/when a real need for outbound email (e.g. phase-2 inquiry relay) makes it worth building.
 
-**Recruit 1–3 pilot associations in France** (Spain is gated at account creation until enabled, see ADR-004) — **deferred for now (2026-07-29)**, moved out of the active checklist. Rationale: the workspace doesn't feel pilot-ready yet even with every feature above now checked off (2026-07-29) — this was a deliberate call, not a checklist gate: revisit only after a real polish/reliability pass for a non-technical volunteer's actual first-week experience (error handling, remaining hardcoded-French debt on the animal pages, general "does this survive contact with a real user" testing), not automatically just because the boxes above are ticked.
+**Recruit 1–3 pilot associations in France** (Spain is gated at account creation until enabled, see ADR-004) — **deferred for now (2026-07-30)**, moved out of the active checklist. Rationale: all Phase 1 features are checked off (registry, announcements, cagnottes, news, AI agent with full CRUD, org navigation, ID pending markers). The workspace is feature-complete but needs a real-world reliability pass before onboarding non-technical users — see [human testing roadmap](humanTesting.md) for remaining open items (none are blocking, but fixing them first will improve the pilot experience).
 
 **Exit gate:** ≥1 pilot org manages its real animals in Anima for 4 consecutive weeks; "arrival → announcement live" under 10 min. *(Gate itself unchanged — only the timing of when to start recruiting toward it has moved.)*
 
