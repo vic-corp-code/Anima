@@ -359,5 +359,19 @@
       "denied": "Proposition refusée",
       "denialFailed": "Échec"
     }
+  },
+  "hub": {
+    "title": "Trouvez votre compagnon",
+    "subtitle": "Animaux à l'adoption dans les refuges partenaires",
+    "speciesFilterLabel": "Type d'animal",
+    "allSpecies": "Tous",
+    "loading": "Chargement…",
+    "empty": "Aucun animal disponible pour le moment.",
+    "error": "Une erreur est survenue.",
+    "backToDirectory": "Retour aux animaux",
+    "verifiedBadge": "Organisation vérifiée",
+    "unverifiedBadge": "Organisation non vérifiée",
+    "notFound": "Annonce introuvable",
+    "organizationLabel": "Refuge"
   }
 }

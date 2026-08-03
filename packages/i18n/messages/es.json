@@ -359,5 +359,19 @@
       "denied": "Propuesta rechazada",
       "denialFailed": "Fallo"
     }
+  },
+  "hub": {
+    "title": "Encuentra a tu compañero",
+    "subtitle": "Animales en adopción en refugios asociados",
+    "speciesFilterLabel": "Tipo de animal",
+    "allSpecies": "Todos",
+    "loading": "Cargando…",
+    "empty": "No hay animales disponibles por el momento.",
+    "error": "Se produjo un error.",
+    "backToDirectory": "Volver a los animales",
+    "verifiedBadge": "Organización verificada",
+    "unverifiedBadge": "Organización no verificada",
+    "notFound": "Anuncio no encontrado",
+    "organizationLabel": "Refugio"
   }
 }
