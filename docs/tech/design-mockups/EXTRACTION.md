@@ -4,7 +4,7 @@ Reverse-engineered from the 6 static HTML/CSS mockups in this folder (produced i
 
 ## 1. Design tokens
 
-### Colors (light only — **no dark mode in any of the 6 mockups**, see Gaps)
+### Colors (light + a dark-mode proof-of-concept added 2026-08-05 to 2 of 6 screens, see below)
 
 | Mockup var | Value | Shelter `globals.css` slot | Notes |
 |---|---|---|---|
@@ -37,9 +37,30 @@ teal:   { accent: '#0f766e', secondary: '#14b8a6' }
 slate:  { accent: '#334155', secondary: '#475569' }
 ```
 
-This directly matches the "tweak cn to easily allow users to customise" direction: implement as a per-organization accent-color preference (persist in the `organizations` table or a settings sub-object, not localStorage, since this is multi-user/multi-device), applied the same way — override `--color-primary` (and a same-hue `--color-primary-hover`-equivalent) as inline CSS custom properties on a root element, computed server-side from the org's stored choice so there's no flash-of-default-color. `secondary` in the picker is really just a darker/adjacent shade of the same hue for gradients — not a second semantic color; don't confuse it with `--accent-secondary` (the red destructive color) used elsewhere, which is unrelated and organization-independent.
+This directly matches the "tweak cn to easily allow users to customise" direction. **Decided (2026-08-05): keep this a BO-wide preference, localStorage-persisted, exactly as the mockup builds it — not per-organization.** Per-org theming is deferred until the phase 3+ apps exist. Implement by overriding `--color-primary` as an inline CSS custom property on `documentElement`, same mechanism as the mockup. `secondary` in the picker is really just a darker/adjacent shade of the same hue for gradients — not a second semantic color; don't confuse it with `--accent-secondary` (the red destructive color) used elsewhere, which is unrelated.
 
-**shadcn/tweakcn implication**: this changes issue #103's framing from "pick one static theme" to "install one tweakcn theme as the *default*, but keep `--color-primary` swappable at runtime per-org from a small curated set (the 9 mockup pairs are a ready-made starting list)." Needs a decision on where the primitive lives (button variant `primary` must read the CSS var, not a hardcoded Tailwind color class).
+**shadcn/tweakcn implication**: this changes issue #103's framing from "pick one static theme" to "install one tweakcn theme as the *default*, but keep `--color-primary` swappable at runtime from a small curated set (the 9 mockup pairs are a ready-made starting list), persisted in the browser." Needs a decision on where the primitive lives (button variant `primary` must read the CSS var, not a hardcoded Tailwind color class).
+
+### Dark mode: a real proposal now exists (added 2026-08-05, `index.html` + `dashboard.html` only)
+
+Victoria added a dark-mode example to 2 of the 6 mockup screens (not all 6 — `announcements.html`, `fundraising.html`, `registry.html`, `social.html` are still light-only). Mechanism, read directly from the updated files:
+
+- **Attribute-based, not media-query-based**: `[data-theme="dark"] { ... }` selector overriding the `:root` vars, toggled by setting/removing `data-theme="dark"` on `documentElement` — **not** `prefers-color-scheme`. This matters: it means dark mode is an explicit user choice here, not an OS-preference follow, and it uses the identical mechanism (attribute + `localStorage`) as the accent-color picker above — the two toggles should likely be built as one small settings system, not two independent ad hoc pieces.
+- **Dark palette values**:
+
+  | Token | Light | Dark |
+  |---|---|---|
+  | `--bg` | `#ffffff` | `#0f0f0f` |
+  | `--surface` | `#f5f5f5` | `#1a1a1a` |
+  | `--fg` | `#000000` | `#f0f0f0` |
+  | `--muted` | `#8c8c8c` | `#a0a0a0` |
+  | `--border` | `#dbdbdb` | `#2a2a2a` |
+  | `--accent` / `--accent-secondary` | `#032f62` / `#d73a49` | **unchanged** — mockup's own comment flags this: "Accent colors stay the same but will be perceived differently on dark background" |
+
+  **Flag, don't silently fix**: reusing the exact same navy/red on a near-black background is a real contrast risk (navy `#032f62` especially, as text-on-dark or as a large fill) — the mockup author explicitly left this as a known open question, not a considered decision. Whoever implements dark mode should check contrast ratios and likely needs a lightened accent variant for dark mode (e.g. a `--color-primary` that's a lighter navy in dark mode while `--accent` swatch previews stay true to the picker's colors), not just reuse these two values as-is. `--success`/`--warning` (only defined in `dashboard.html`/`fundraising.html`/`registry.html`'s `:root`, see above) have **no dark equivalent in this example at all** — still fully open.
+- **Toggle UI**: a fixed sun/moon icon button (48×48, same card-style chrome as other floating controls), animated icon swap (sun fades/rotates out, moon fades/rotates in) via opacity+transform transitions, `aria-label="Basculer le mode sombre"`. Positioned bottom-right in `dashboard.html`; in `index.html` it's shifted to `right: 84px` specifically to sit beside the existing theme-color-picker trigger (which occupies the actual bottom-right corner there) — i.e. **the mockup itself is already juggling two floating settings buttons in one corner**, a sign these two controls (accent color + light/dark) belong in one combined settings affordance for the real build rather than two separate fixed buttons.
+- **Persistence**: `localStorage.getItem('spa-dark-mode')` / `setItem('spa-dark-mode', 'dark'|'light')`, defaults to light if unset. Same BO-wide (not per-org) scope decision as the accent picker applies here — see above.
+- **Responsive**: toggle button repositions at the mobile breakpoint (same pattern as other floating controls repositioning at ≤768/1024px elsewhere in the mockups).
 
 ### Typography
 
@@ -158,4 +179,4 @@ For the shadcn `sidebar` block (#105): use its standard header/content/footer sl
 
 **In the milestone's screen inventory but not covered by any mockup at all** (still need an independent palette/pattern decision, this extraction doesn't help): Animal detail (#108), Animal create/edit (#109), Members (#113), Org creation flow (#114), Verification card (#115), AI chat panel (#116), Sign-in/up theming (#117), Invite accept (#118). None of these 8 screens appear in any of the 6 mockup files.
 
-**Dark mode**: none of the 6 mockups define a `.dark` class or `prefers-color-scheme: dark` media query — this whole extraction is light-mode-only. `apps/shelter/globals.css` already has a dark block; every token in §1 needs an independently-chosen dark equivalent, not derived from this mockup.
+**Dark mode**: `index.html` and `dashboard.html` got a real proof-of-concept added 2026-08-05 (`[data-theme="dark"]` attribute + toggle, values in §1). The other 4 screens (`announcements`, `fundraising`, `registry`, `social`) are still light-only — apply the same 5 base tokens (`--bg`/`--surface`/`--fg`/`--muted`/`--border`) to them when building, and still resolve the open `--accent`/`--success`/`--warning` dark-contrast question (§1) before shipping, since the 2-screen example explicitly punts on it.

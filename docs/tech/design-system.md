@@ -29,7 +29,14 @@ Starting point for the shelter workspace's visual design. Scope is BO-Shelter on
 
 ## Dark mode
 
-**In scope, not deferred** — but the mockup provides zero guidance (no `.dark` class, no `prefers-color-scheme` query anywhere in the 6 files). `apps/shelter/globals.css` already has a dark block; every token in the palette table above needs an independently-chosen dark equivalent as its own small design pass before/alongside building each screen.
+**In scope, not deferred.** A proof-of-concept now exists on 2 of the 6 mockup screens (`index.html`, `dashboard.html`, added 2026-08-05) — see `docs/tech/design-mockups/EXTRACTION.md` §1 for full detail. Mechanism and values:
+
+- Toggle is an explicit user choice (`[data-theme="dark"]` attribute on the root element + a sun/moon button), **not** a `prefers-color-scheme` media query — same BO-wide, `localStorage`-persisted pattern as the accent-color picker above. Build both as one small settings surface, not two independent floating buttons (the mockup itself ends up placing two separate floating buttons in the same corner — don't repeat that).
+- Base tokens have dark values: `--bg` → `#0f0f0f`, `--surface` → `#1a1a1a`, `--foreground` → `#f0f0f0`, muted text → `#a0a0a0`, border → `#2a2a2a`.
+- **Still open**: the example reuses the light-mode `--color-primary`/`--color-destructive` (navy/red) unchanged in dark mode — flagged by its own author as a contrast risk, not a considered decision. `--color-success`/`--color-warning` have no dark values at all yet. Resolve both before shipping dark mode for real, likely with lightened variants for dark backgrounds.
+- Only applied to 2 of 6 mockup screens — apply the same base tokens to the other 4 when building them.
+
+`apps/shelter/globals.css` already has a `prefers-color-scheme: dark` block from scaffolding — note the mechanism decided here (explicit toggle) means that media-query block should likely be replaced by the attribute-based approach, not merged with it.
 
 ## Typography notes from the mockup
 
