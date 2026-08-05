@@ -56,7 +56,9 @@ See the [Phase 2b milestone](https://github.com/vic-corp-code/Anima/milestone/4)
 
 Goal: individuals can declare structured capabilities and find orgs.
 
-See the [Phase 3 milestone](https://github.com/vic-corp-code/Anima/milestone/5): app-boundary decision (`apps/volunteers` vs. a hub section), signup + profile CRUD, visibility controls, structured capabilities (transport/foster/availability first), volunteer directory, safety basics, and org browsing.
+**App boundary decided (2026-08-05, #12): built inside `apps/hub`, not a separate app** — Hub is the single public marketplace reuniting shelters, adopters, and volunteers.
+
+See the [Phase 3 milestone](https://github.com/vic-corp-code/Anima/milestone/5): signup + profile CRUD, visibility controls, structured capabilities (transport/foster/availability first), volunteer directory, safety basics, and org browsing.
 
 **Exit gate:** ≥20 profiles with ≥1 structured capability; a pilot org finds and contacts a volunteer.
 
