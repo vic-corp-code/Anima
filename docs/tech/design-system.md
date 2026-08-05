@@ -1,6 +1,6 @@
 # Design system — Back Office (BO / shelter workspace)
 
-Starting point for the shelter workspace's visual design. Scope is BO-Shelter only for now — Hub (phase 2a, and phase 3's volunteer section — resolved to live inside `apps/hub`, not a separate app, see [#12](https://github.com/vic-corp-code/Anima/issues/12)) and ShelterWeb (technical shape still open, see [#91](https://github.com/vic-corp-code/Anima/issues/91)) get their own design pass later, once this establishes the pattern.
+Starting point for the shelter workspace's visual design. Scope is BO-Shelter only for now — Hub (phase 2a, and phase 3's volunteer section — resolved to live inside `apps/hub`, not a separate app, see [#12](https://github.com/vic-corp-code/Anima/issues/12)) and ShelterWeb (a separate, optional, not-yet-scheduled app — one shelter's own standalone site, decided in [#91](https://github.com/vic-corp-code/Anima/issues/91)) get their own design pass later, once this establishes the pattern.
 
 **Ground truth: the "Shelter Workspace Mission" mockup** — 6 static HTML/CSS screens produced in Open Design, copied into [`docs/tech/design-mockups/`](design-mockups/) (`index`, `dashboard`, `announcements`, `fundraising`, `registry`, `social`). [`design-mockups/EXTRACTION.md`](design-mockups/EXTRACTION.md) is the full reverse-engineered spec (exact colors, type scale, spacing, per-screen component inventory, JS-interaction inventory) — read it before building any screen below. This doc stays a summary; EXTRACTION.md has the pixel-level detail.
 
