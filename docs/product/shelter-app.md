@@ -61,7 +61,46 @@ The association manager: usually a volunteer, time-poor, moderately tech-comfort
 
 ## MVP cut (what phase 1 actually ships)
 
-F1 (without registry verification API — manual), F2, F3, F5 (link-out only), minimal F6. F4 in phase 2 as generate-&-copy. F7 ships with phase 2 (basic theme + free-text blocks only). F8 waits for the volunteer platform.
+Feature status, verified against the codebase on `dev` (2026-08-05):
+
+### F1. Organization & members — ✅ Shipped (partial)
+- [x] Create organization: name, type, country (FR enabled / ES gated per ADR-004), address, description, logo
+- [x] Manual verification: self-declare RNA/SIRET (FR) or registry number (ES), admin toggles verified status — no API check
+- [x] Invite members: **shareable invite links** (not email — transactional email infra doesn't exist yet)
+- [x] Roles: admin (everything) / editor (animals, posts, announcements)
+- [ ] Transactional email for invites — deferred (#41, not blocking; invites work via links)
+
+### F2. Animal registry — ✅ Shipped
+- [x] Full CRUD: name, species (dog/cat), breed, sex, chip/tattoo ID, sterilization, photos (Convex storage), arrival date, health notes, character notes, compatibility (kids/cats/dogs)
+- [x] Status lifecycle: 7-value enum (`in_care`, `adoptable`, `adoption_pending`, `adopted`, `fostered`, `transferred`, `deceased`)
+- [x] Event timeline per animal: append-only events (arrived, vet_visit, sterilized, fostered, transferred, adopted, deceased, status_change, other), full CRUD on events
+- [x] List view: filters (species, status), text search
+- [x] Archive lifecycle (soft-delete via `archiveInternal`)
+- [x] **AI intake agent** (`OrgChat.tsx` + `agents/animalIntake.ts`): conversational assistant with 25 tools spanning animals, announcements, cagnottes, and news posts — full CRUD with human-approval flow
+
+### F3. Adoption announcements — ✅ Shipped (partial)
+- [x] Create: auto-drafts title/description from an animal record — no re-typing
+- [x] Edit title/description while draft or published
+- [x] Lifecycle: draft → published → closed → archived
+- [ ] **Auto-close when animal → adopted**: not wired — status changes create a timeline event but do not close linked announcements
+- [ ] Compact card format with compatibility icons, fee, contact — not yet built as a structured card component (auto-draft fills title + description only)
+
+### F5. Cagnottes — ✅ Shipped
+- [x] Create: title, goal description, target amount, external URL, photo, deadline
+- [x] Manual progress updates (`updateProgress`)
+- [x] Lifecycle: active → closed, with reopen
+- [x] Archive lifecycle
+
+### F6. News posts — ✅ Shipped (minimal)
+- [x] Create: title, text, photos, optional linked animals + cagnotte
+- [x] List + detail view
+- [x] Edit + delete
+- [ ] No lifecycle (no publish/close/archive — intentional MVP cut)
+
+### Not shipped in Phase 1 (deferred to later phases)
+- **F4 (Social post composer)** → Phase 2b: generate-&-copy (ADR-006)
+- **F7 (Org site editor)** → Phase 2a: basic theme + free-text blocks
+- **F8 (Missions)** → Phase 4: bridges to volunteer platform
 
 ## Explicitly out of scope
 
