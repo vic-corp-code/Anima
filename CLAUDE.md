@@ -36,6 +36,16 @@ Hosted on Vercel — project `anima-shelter`, team `victorias-projects-10f9308b`
 - For any Vercel CLI y/N confirmation (e.g. `vercel project rm`), pipe `printf 'y\n' |`, not `yes |` — the latter spams a broken echo loop in this CLI version instead of submitting.
 - `vercel-build.sh` passes `--check-build-environment disable` to `convex deploy`. Newer Convex CLI versions refuse to deploy with a Production-type `CONVEX_DEPLOY_KEY` on a non-production Vercel build (`VERCEL_ENV !== "production"`) unless told otherwise — which is every branch except `main` here, since this project deliberately uses one Production deploy key across all Vercel environments (see the `CONVEX_DEPLOY_KEY` bullet above). Without that flag, every `dev`-branch (and any other non-`main`) deploy fails immediately with "Detected a non-production build environment... This is probably unintentional." Don't remove the flag without also changing that deploy-key strategy.
 
+## Issue workflow: branches, PRs, project board
+
+- **`main` and `dev` require a PR — no direct pushes, including from you or an agent** (branch protection enabled 2026-08-05, `enforce_admins` on, 0 required approvals since this is solo). Work on a feature branch, open a PR, and merge it yourself explicitly — **never run `gh pr merge` or push straight to `main`/`dev` without being asked.** This is the actual mechanism that stops an agent from freely merging; it doesn't rely on convention alone.
+- **Project board**: ["Anima"](https://github.com/orgs/vic-corp-code/projects/3) tracks status across all open issues (org-level project, linked to this repo). Status field has 4 options: `Todo` → `In Progress` → `In Review` → `Done`. `Done` is automatic (issue closed / PR merged trigger it) — but **moving Todo → In Progress when starting work, and In Progress → In Review when you open a PR, is not automatic and must be done explicitly**, so Victoria can see what's actually in a PR waiting on her without opening every issue. To move an item:
+  ```
+  gh project item-edit --project-id PVT_kwDOELvlgc4BfecE --id <ITEM_ID> \
+    --field-id PVTSSF_lADOELvlgc4BfecEzhZxEro --single-select-option-id <OPTION_ID>
+  ```
+  Option IDs: Todo `e220bac3`, In Progress `5f26ab9c`, In Review `ab6a37db`, Done `0b8a567b`. Find `<ITEM_ID>` via `gh project item-list 3 --owner vic-corp-code --format json` (match on issue number/URL) — `gh project item-add` also prints it on add.
+
 ## Conventions
 
 - TypeScript strict everywhere (ADR-002). Shared `tsconfig.base.json` and `eslint.base.js` live in `packages/config`.
