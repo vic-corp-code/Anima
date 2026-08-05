@@ -1,6 +1,6 @@
 # Anima — Vision
 
-> Working name. See [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md#naming--branding) for naming.
+> Working name. See the [naming/branding decision issues](https://github.com/vic-corp-code/Anima/issues?q=is%3Aissue+is%3Aopen+label%3Adecision+naming) for naming.
 
 ## Mission
 

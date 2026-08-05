@@ -2,7 +2,7 @@
 
 *(working name)* — A connected ecosystem for animal welfare in France and Spain: shelter management, volunteer coordination, and a public hub for adoptions and fund drives.
 
-**Status: Phase 1 (Shelter MVP) in progress.** The shelter workspace is feature-complete with animal registry, announcements, cagnottes, news posts, AI-powered intake agent, and org management. See [ROADMAP.md](docs/roadmap/ROADMAP.md) for current phase status.
+**Status: Phase 1 (Shelter MVP) complete, Phase 2a (Hub core) in progress.** The shelter workspace is feature-complete with animal registry, announcements, cagnottes, news posts, AI-powered intake agent, and org management. See [ROADMAP.md](docs/roadmap/ROADMAP.md) for phase rationale/exit gates and the [GitHub milestones](https://github.com/vic-corp-code/Anima/milestones) for the live task list.
 
 ## The three platforms (one monorepo, one shared backend)
 
@@ -22,7 +22,8 @@
 | [docs/tech/architecture.md](docs/tech/architecture.md) | Monorepo layout, stack, cross-cutting design, risk list |
 | [docs/tech/decisions/](docs/tech/decisions/) | ADRs: monorepo tooling, TS/Next.js, Convex, i18n, payments, social posting, auth |
 | [docs/roadmap/ROADMAP.md](docs/roadmap/ROADMAP.md) | Phases 0–5 with exit gates (solo, part-time pacing) |
-| [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md) | Deferred decisions with decide-by phases |
+| [GitHub milestones](https://github.com/vic-corp-code/Anima/milestones) & [issues](https://github.com/vic-corp-code/Anima/issues) | The actual task list — one milestone per phase |
+| [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md) | Pointer to deferred decisions (`label:decision` issues) |
 
 ## Key decisions so far
 
