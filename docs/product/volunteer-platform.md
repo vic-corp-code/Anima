@@ -46,7 +46,7 @@ Rating humans on "trustability" is legally and ethically loaded (GDPR profiling 
 
 1. **Phase 3 (launch):** verified facts only — email/phone verified, profile completeness, member since.
 2. **Phase 4:** **mission history** — count of completed missions, confirmed by both sides. Objective, non-gameable, no opinions.
-3. **Phase 5 (after real usage teaches us):** possible additions — org endorsements (structured tags like "punctual", "great with fearful dogs", only after a completed mission, no free text, no numeric score), reliability signal (completed vs. accepted-then-abandoned). **Never**: public 1–5 stars on people, at least until strongly justified. Full design in OPEN_QUESTIONS.
+3. **Phase 5 (after real usage teaches us):** possible additions — org endorsements (structured tags like "punctual", "great with fearful dogs", only after a completed mission, no free text, no numeric score), reliability signal (completed vs. accepted-then-abandoned). **Never**: public 1–5 stars on people, at least until strongly justified. Full design in the [reputation-system-design decision issue](https://github.com/vic-corp-code/Anima/issues?q=is%3Aissue+label%3Adecision+reputation).
 
 ### F5. Safety & privacy
 - Exact address never public — area/city only; precise info shared only after an org accepts an application.

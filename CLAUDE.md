@@ -1,6 +1,6 @@
 # Anima — code conventions
 
-Product/architecture context lives in [docs/](docs/), [VISION.md](VISION.md), [ROADMAP.md](docs/roadmap/ROADMAP.md), and the ADRs in [docs/tech/decisions/](docs/tech/decisions/). Read those before making product or architecture decisions — this file is dev-workflow only.
+Product/architecture context lives in [docs/](docs/), [docs/VISION.md](docs/VISION.md), [ROADMAP.md](docs/roadmap/ROADMAP.md), and the ADRs in [docs/tech/decisions/](docs/tech/decisions/). Read those before making product or architecture decisions — this file is dev-workflow only.
 
 ## Workspace
 

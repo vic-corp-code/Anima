@@ -5,7 +5,7 @@
 
 ## Context
 
-`OPEN_QUESTIONS.md` left the email provider open, decide-by phase 1. Nothing in Phase 1 actually blocks on it — invites ship as shareable links (no email infra needed) — but Phase 2's adoption-inquiry relay does need one, and the roadmap's new standing rule 5 requires decide-by-phase-1 items to be resolved before Phase 1 counts as complete.
+The RGPD-baseline decision issue left the email provider open, decide-by phase 1. Nothing in Phase 1 actually blocks on it — invites ship as shareable links (no email infra needed) — but Phase 2's adoption-inquiry relay does need one, and the roadmap's new standing rule 5 requires decide-by-phase-1 items to be resolved before Phase 1 counts as complete.
 
 Same RGPD-first posture that drove `ADR-008` (Geoapify) applies here: any provider handling adopter/org contact emails is a third party processing EU personal data.
 
@@ -22,4 +22,4 @@ Same RGPD-first posture that drove `ADR-008` (Geoapify) applies here: any provid
 ## Consequences
 
 - No code or dependency exists yet — this ADR fixes the *choice*, not the integration. Provisioning (via `/marketplace`) and wiring happen when Phase 2's inquiry relay is actually built.
-- Still worth confirming Resend's specific DPA/data-processing terms during the RGPD baseline work (`OPEN_QUESTIONS.md`), same as the Convex, Clerk, and Geoapify checks.
+- Still worth confirming Resend's specific DPA/data-processing terms during the RGPD baseline work (see the decision issue), same as the Convex, Clerk, and Geoapify checks.

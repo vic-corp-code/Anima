@@ -14,7 +14,7 @@
 
 | Document | What it answers |
 |---|---|
-| [VISION.md](VISION.md) | Why this exists, for whom, principles, non-goals |
+| [docs/VISION.md](docs/VISION.md) | Why this exists, for whom, principles, non-goals |
 | [docs/product/overview.md](docs/product/overview.md) | How the three products connect; shared domain model |
 | [docs/product/shelter-app.md](docs/product/shelter-app.md) | Shelter workspace spec |
 | [docs/product/volunteer-platform.md](docs/product/volunteer-platform.md) | Volunteer platform spec |
@@ -22,8 +22,7 @@
 | [docs/tech/architecture.md](docs/tech/architecture.md) | Monorepo layout, stack, cross-cutting design, risk list |
 | [docs/tech/decisions/](docs/tech/decisions/) | ADRs: monorepo tooling, TS/Next.js, Convex, i18n, payments, social posting, auth |
 | [docs/roadmap/ROADMAP.md](docs/roadmap/ROADMAP.md) | Phases 0–5 with exit gates (solo, part-time pacing) |
-| [GitHub milestones](https://github.com/vic-corp-code/Anima/milestones) & [issues](https://github.com/vic-corp-code/Anima/issues) | The actual task list — one milestone per phase |
-| [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md) | Pointer to deferred decisions (`label:decision` issues) |
+| [GitHub milestones](https://github.com/vic-corp-code/Anima/milestones) & [issues](https://github.com/vic-corp-code/Anima/issues) | The actual task list — one milestone per phase, plus bugs (`label:bug`) and deferred decisions (`label:decision`) |
 
 ## Key decisions so far
 

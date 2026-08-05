@@ -1,6 +1,6 @@
 # Product Overview — The Anima Ecosystem
 
-Three products, one data model, one account system. Read [VISION.md](../../VISION.md) first.
+Three products, one data model, one account system. Read [VISION.md](../VISION.md) first.
 
 ## The three products and how they connect
 
@@ -53,7 +53,7 @@ The hub is primarily the **public read-side** of the other two, plus the interac
 | **Mission** | Organization | A need for human help: type (transport, foster, on-site, event, skill-based), urgency, location(s), time window |
 | **Volunteer profile** | Individual | Structured capabilities (see volunteer-platform.md), availability, service area / regular routes |
 | **Application / Inquiry** | Individual → Org | Volunteer applies to mission; adopter inquires about animal. Lifecycle: sent → seen → accepted/declined → completed |
-| **Reputation event** | System | Deferred design. Only from *completed, mutually confirmed* missions — never free-text public ratings at first. See OPEN_QUESTIONS |
+| **Reputation event** | System | Deferred design. Only from *completed, mutually confirmed* missions — never free-text public ratings at first. See the [reputation-system-design decision issue](https://github.com/vic-corp-code/Anima/issues?q=is%3Aissue+label%3Adecision+reputation) |
 
 ## Shared concepts across all three apps
 

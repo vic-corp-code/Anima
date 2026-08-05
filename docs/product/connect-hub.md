@@ -46,7 +46,7 @@ Ships in **phase 2** as a read-only showcase; grows interaction features as the 
 ### F6. Trust & moderation (cross-cutting)
 - Only verified organizations appear by default (filter to include unverified, clearly badged).
 - Content reporting on any public object; admin moderation queue.
-- No user-generated free-text reviews of orgs or people in v1 (see OPEN_QUESTIONS on reputation).
+- No user-generated free-text reviews of orgs or people in v1 (see the [reputation-system-design decision issue](https://github.com/vic-corp-code/Anima/issues?q=is%3Aissue+label%3Adecision+reputation)).
 
 ## MVP cut (phase 2)
 
@@ -56,7 +56,7 @@ F1 + F2 + F3, read-only, with email-based adoption inquiries. No accounts needed
 
 - In-app payments/donation processing.
 - Reviews/comments on animals or orgs.
-- Adoption paperwork workflow (contracts, certificates — France's *certificat d'engagement*, note in OPEN_QUESTIONS).
+- Adoption paperwork workflow (contracts, certificates — France's *certificat d'engagement*, see the [adopter-accounts decision issue](https://github.com/vic-corp-code/Anima/issues?q=is%3Aissue+label%3Adecision+adopter)).
 - Cross-posting to Leboncoin-style marketplaces.
 
 ## Success metrics

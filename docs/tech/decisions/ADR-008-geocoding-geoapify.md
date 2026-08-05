@@ -5,7 +5,7 @@
 
 ## Context
 
-`architecture.md`'s Geography section calls place-based filtering (radius search, route matching) the top technical risk of the Convex choice. The plan is to geocode addresses (org, mission, volunteer area) to lat/lng **once, at write time**, then run radius queries against stored coordinates via Convex's geospatial component — geocoding itself is low-volume, not a per-search cost. `OPEN_QUESTIONS.md` left the provider choice open pending the phase-0 geo spike, with FR+ES coverage and cost as the stated criteria; RGPD/EU data residency is a phase-0 blocking concern for the project overall (`architecture.md`'s GDPR section), which also bears on sending address text to a third party.
+`architecture.md`'s Geography section calls place-based filtering (radius search, route matching) the top technical risk of the Convex choice. The plan is to geocode addresses (org, mission, volunteer area) to lat/lng **once, at write time**, then run radius queries against stored coordinates via Convex's geospatial component — geocoding itself is low-volume, not a per-search cost. The geocoding-provider decision issue left the provider choice open pending the phase-0 geo spike, with FR+ES coverage and cost as the stated criteria; RGPD/EU data residency is a phase-0 blocking concern for the project overall (`architecture.md`'s GDPR section), which also bears on sending address text to a third party.
 
 Candidates considered: Mapbox (best free tier and DX, US company with standard EU DPA/SCCs), Google Geocoding API (best raw accuracy, but requires a billing account with a card on file and is the heaviest setup friction), and Geoapify (Germany-based, GDPR-first positioning, OSM-backed data).
 
@@ -23,4 +23,4 @@ Candidates considered: Mapbox (best free tier and DX, US company with standard E
 
 - Less polished docs/SDKs than Mapbox — budget a bit more integration time in the phase-0 geo spike.
 - One more third-party vendor and cost curve to watch at scale, same posture as Convex (`ADR-003`) and Clerk (`ADR-007`).
-- Still worth confirming Geoapify's specific DPA/data-processing terms during the RGPD baseline work (`OPEN_QUESTIONS.md`), same as the Convex and Clerk EU-residency checks.
+- Still worth confirming Geoapify's specific DPA/data-processing terms during the RGPD baseline work (see the decision issue), same as the Convex and Clerk EU-residency checks.
