@@ -18,34 +18,31 @@ The result: animals stay longer in shelters, urgent transports and foster placem
 
 ## The product: three connected platforms, one ecosystem
 
-### 1. Shelter workspace (for organizations)
+### 1. BO-Shelter (for organizations)
 The back-office for SPAs, shelters, associations, and rescue groups:
 - Manage their animal registry (identity, health, status, photos, history).
 - Publish adoption announcements once, in a compact format, ready for every channel.
 - Compose social media posts from animal/news data instead of writing from scratch.
 - Create **cagnottes** for concrete needs ("we need 5 new cages"), linked to external payment platforms.
 
-### 2. Volunteer platform (for people)
-Where individuals build a structured helper profile:
-- Skills and experience ("10 years nursing cats"), resources ("big house, dedicated room"), and logistics ("I drive X→A regularly, can transport animals in urgent care").
-- Availability and response capacity (including urgency: can they act same-day?).
-- Over time: reputation signals — reliability, verified history of completed missions. *(Design of any rating system is deliberately deferred; see open questions — rating humans is legally and ethically sensitive.)*
+### 2. Hub (public, brings organizations, adopters, and volunteers together)
+The public face and the matchmaker — one marketplace, three kinds of people:
+- Adopters and donors browse adoptable animals and active cagnottes, filterable by animal type, place, and organization type (SPA, shelter, association…).
+- Volunteers build a structured helper profile right here — skills and experience ("10 years nursing cats"), resources ("big house, dedicated room"), logistics ("I drive X→A regularly, can transport animals in urgent care"), and availability/urgency (can they act same-day?). Over time: reputation signals — reliability, verified history of completed missions. *(Design of any rating system is deliberately deferred; see open questions — rating humans is legally and ethically sensitive.)*
+- Organizations post **needs/missions** (transport, foster, event help); volunteers find projects to invest themselves in. Matching between declared volunteer capabilities and organization needs starts with search and filters, growing toward proactive matching.
 
-### 3. Connection hub (public, brings the two together)
-The public face and the matchmaker:
-- Browse adoptable animals and active cagnottes, filterable by animal type, place, and organization type (SPA, shelter, association…).
-- Organizations post **needs/missions** (transport, foster, event help); volunteers find projects to invest themselves in.
-- Matching between declared volunteer capabilities and organization needs — starting with search and filters, growing toward proactive matching.
+### 3. ShelterWeb (optional, for organizations that want their own presence)
+A shelter's own standalone public website — own domain, managed from BO-Shelter, showing only that organization's data. Separate from appearing on the Hub: an organization can have one, the other, or both. Not yet built; no launch timeline committed.
 
-**Key structural insight:** the hub is mostly the *public read-side* of data created in the other two platforms. This drives the architecture (shared backend, shared data model) — see [docs/tech/architecture.md](docs/tech/architecture.md).
+**Key structural insight:** the hub is mostly the *public read-side* of data created in BO-Shelter, plus write surfaces of its own (volunteer profiles, applications, inquiries all happen on the hub, not in a separate app). ShelterWeb is a read-only window onto a single organization's data. This drives the architecture (shared backend, shared data model) — see [docs/tech/architecture.md](docs/tech/architecture.md).
 
 ## Who it's for
 
 | Persona | Platform | Core job |
 |---|---|---|
-| Association manager (often a volunteer herself) | Shelter workspace | Track animals, communicate, fundraise — in minimal time |
-| Skilled volunteer | Volunteer platform | Declare what she can offer, find where it's needed |
-| Adopter / donor | Connection hub | Find an animal or a cause, trust what she sees |
+| Association manager (often a volunteer herself) | BO-Shelter | Track animals, communicate, fundraise — in minimal time |
+| Skilled volunteer | Hub | Declare what she can offer, find where it's needed |
+| Adopter / donor | Hub | Find an animal or a cause, trust what she sees |
 
 ## Principles
 
