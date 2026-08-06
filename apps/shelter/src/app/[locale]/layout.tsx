@@ -4,6 +4,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Toaster } from "@anima/ui";
 import { routing } from "@/i18n/routing";
 import { ConvexClientProvider } from "../ConvexClientProvider";
 import "../globals.css";
@@ -52,6 +53,7 @@ export default async function LocaleLayout({
             <NextIntlClientProvider messages={messages}>
               {children}
             </NextIntlClientProvider>
+            <Toaster />
           </body>
         </html>
       </ConvexClientProvider>
