@@ -79,6 +79,40 @@ Grounded in `apps/shelter/src/app/[locale]/organizations/[organizationId]/` and 
 
 `table`, `badge`, `dialog`, `sheet`, `dropdown-menu`, `tabs`, `select`, `textarea`, `checkbox`, `radio-group`, `popover`, `form`, `avatar`, `progress`, `sonner` (toast), `skeleton`, `separator`, `breadcrumb`, `sidebar`. (`button`, `card`, `input` already exist — replace with CLI versions if they drift from the block-provided ones. `popover` added for the accent-color switcher.)
 
+## Component organization
+
+Decided for [#136](https://github.com/vic-corp-code/Anima/issues/136) (2026-08-06), ahead of 15+ screen issues landing in parallel on this milestone — gates the Foundation wave. See [#130](https://github.com/vic-corp-code/Anima/issues/130) for the full bespoke-component inventory referenced below — its audit table isn't merged into this branch yet (still an open PR, and the landing filename hasn't been finalized), so this section doesn't link a specific path; check the issue for wherever it lands.
+
+### 1. shadcn CLI-sourced primitives stay flat in `components/ui/`
+
+Confirmed as a decision, not just current state: every primitive pulled via `npx shadcn add` — the already-installed set (the list in "Primitives to install" above, plus `button`, `card`, `input`, `label`, `tooltip`), plus `switch`, `alert`, `pagination` (#137), `toggle-group` (candidate raised in #130's audit), and any future ones — lands directly in `packages/ui/src/components/ui/`, one file per primitive, no subfolders. This matches the pattern set by #102/#104.
+
+Reason: it must stay safe to re-run `npx shadcn add <name>` and diff the result without hunting through domain folders for a stray hand-edited copy. If a primitive needs Anima-specific restyling beyond tokens/variants, restyle it in place in `components/ui/` — don't fork it into a domain folder under a new name.
+
+### 2. New bespoke/composite components: domain-grouped folders, following existing precedent
+
+`animals/`, `announcements/`, `cagnottes/`, `news/` already group composites by schema entity, and a component can live in one domain's folder while being reused from another: `AnnouncementCard.tsx` lives in `components/announcements/` but is imported by the "Animal → announcements" screen (`/animals/[id]/announcements`, see the screen inventory above), which is routed under the `animals/` domain. Consistency wins over inventing a new structure: keep grouping by domain, and treat cross-domain reuse as normal rather than a reason to relocate a component.
+
+Applying this to #130's bespoke/no-shadcn-equivalent inventory:
+
+| New composite | Folder | Why |
+|---|---|---|
+| `StatTile`/KPI card, KPI delta indicator, bar chart, donut chart, needs-attention list, activity feed | `apps/shelter/src/components/dashboard/` (new) | Dashboard-screen-specific; no existing domain folder fits, and the dashboard is a first-class screen in the inventory above. Lives under `apps/shelter`, not `packages/ui` — see "Which package" below |
+| `AnimalCard` (`.animal-card`), adoption-stage stepper | `packages/ui/src/components/animals/` | Entity-specific — the stepper tracks one animal's adoption progress, same domain `PhotoUpload`/`AnimalForm` already live in |
+| Media card / media tile (`.media-card`/`.media-tile`) | `packages/ui/src/components/media/` (new) — **only if/when a media-library screen is actually built.** It's not in this doc's screen inventory today; don't create the folder speculatively | — |
+| Status pill (`.pill--*`), banner/alert wrapper (`.banner--*`), custom breadcrumb (`.crumbs`), file-upload dropzone (`.drop-area`) | `packages/ui/src/components/common/` (new) | Cross-cutting — no single entity owns a status pill, a banner, or a breadcrumb; these get used from every domain folder and from app shell chrome |
+
+Rule for anything not in this table: if a new composite is tied to one schema entity or one dedicated screen, it joins that entity's/screen's folder (creating a new domain folder if none exists yet, as with `dashboard/` above). If it's genuinely used across domains with no natural single owner, it goes in `common/`. Don't create a new domain folder for a single one-off component — check whether `common/` already fits first.
+
+**Which package**: per the "Constraints" section above (`packages/ui` when shared across future apps, `apps/shelter/src/components` when BO-specific, like `OrgChat.tsx`) — `components/dashboard/` goes under `apps/shelter/src/components/dashboard/`, since org dashboards are an admin-only concept with no public-hub or ShelterWeb equivalent, same reasoning as `OrgChat.tsx`. `components/common/` goes under `packages/ui/src/components/common/`, alongside the other domain folders: status pills, banners, and breadcrumbs are generic enough that the public hub or ShelterWeb are plausible future consumers, matching why `AnnouncementCard`/`CagnotteCard`/`NewsPostCard` are already in `packages/ui`. `components/animals/` composites (`AnimalCard`, the adoption-stage stepper) stay in `packages/ui` too, joining the existing `animals/` folder there. If a future composite's audience is genuinely unclear, default to `packages/ui` — it's easier to leave a component unused by other apps than to migrate it later once something outside `apps/shelter` imports it.
+
+### 3. File naming: kebab-case and PascalCase coexist, deliberately
+
+- `components/ui/*.tsx` — kebab-case (`dropdown-menu.tsx`, `radio-group.tsx`), because that's what the shadcn CLI writes verbatim. Never rename these to PascalCase — it breaks the "safe to re-run `npx shadcn add`" property from decision 1.
+- `components/<domain>/*.tsx` — PascalCase (`AnimalForm.tsx`, `PhotoUpload.tsx`, `AnnouncementCard.tsx`, `CagnotteCard.tsx`, `NewsPostCard.tsx`, and new ones like `StatTile.tsx`), matching every composite that exists today.
+
+This split is deliberate, not an inconsistency to clean up later: kebab-case marks "generated by the shadcn CLI, treat as regenerable"; PascalCase marks "hand-written composite, ours to change freely." New composites should always be PascalCase regardless of which folder they land in; new primitives pulled by the CLI should always be kebab-case. Don't force one convention repo-wide.
+
 ## Scope decisions made against the mockup (2026-08-05)
 
 The mockup proposes several dashboard/social concepts with no schema or issue backing. Decided:
