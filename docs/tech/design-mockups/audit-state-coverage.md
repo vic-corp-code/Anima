@@ -19,7 +19,7 @@ tbody.innerHTML = '<tr><td colspan="9" class="empty-row">No animals match — tr
 
 Styling, exact values:
 - **Spacing**: `padding: 48px 16px` (`--space-12 --space-4`) — generous vertical padding, not just a normal row height, so the empty state reads as a distinct block rather than a squashed row.
-- **Text**: `--text-sm` (14px), color `--muted` (`#8c8c8c` light-mode) — same weight/color as any other secondary table text, no special emphasis.
+- **Text**: `--text-sm` (14px), color `--muted` (`#7a6d63` light-mode, `#9e9081` dark-mode, per `assets/site.css` — the stylesheet both `ui-kit.html` and `admin-dashboard.html` bind) — same weight/color as any other secondary table text, no special emphasis.
 - **No icon.** Just centered text.
 - **Structure**: a single `<tr>` with one `<td colspan="{column count}">` spanning the full table width, keeping the table shell (header, borders, `.table-wrap` container) intact around it — only the body collapses to the message.
 - **Copy pattern**: states what's empty + the likely fix ("No animals match — try clearing filters."), not a bare "No results." Carry that tone into other lists.
