@@ -10,15 +10,15 @@ The oft-quoted "FR runs ~15–30% longer than EN" is an average across full sent
 
 | English concept | FR | Δ | ES | Δ |
 |---|---|---|---|---|
-| Save | `Enregistrer` | +57% | `Guardar` | 0% |
-| Status | `Statut` | 0% | `Estado` | +17% |
-| Remove | `Retirer` | +17% | `Eliminar` | +50% |
-| Edit | `Modifier` | +100% | `Modificar` | +125% |
-| **Fostered** (animal status) | **`En famille d'accueil`** | **+162%** | `En acogida` | +25% |
-| Adoption pending | `Adoption en cours` | +6% | `Adopción en curso` | +12% |
-| Generate invite link | `Générer un lien d'invitation` | +33% | `Generar enlace de invitación` | +38% |
+| Save (4) | `Enregistrer` (11) | +175% | `Guardar` (7) | +75% |
+| Status (6) | `Statut` (6) | 0% | `Estado` (6) | 0% |
+| Remove (6) | `Retirer` (7) | +17% | `Eliminar` (8) | +33% |
+| Edit (4) | `Modifier` (8) | +100% | `Modificar` (9) | +125% |
+| Fostered (8) | `En famille d'accueil` (20) | +150% | `En acogida` (10) | +25% |
+| Adoption pending (16) | `Adoption en cours` (17) | +6% | `Adopción en curso` (17) | +6% |
+| Generate invite link (20) | `Générer un lien d'invitation` (28) | +40% | `Generar enlace de invitación` (28) | +40% |
 
-`animals.status.fostered` is the worst case found in the actual catalog and it's a direct hit on this audit's #2 (status pills): the mockup's `registry.html`/table status badges are single words ("Available", "Foster", "Adopted") sized for ~6–8 characters. The real FR string for one of those seven statuses is 21 characters. Any pill sized to fit "Foster" will not fit "En famille d'accueil".
+The single largest raw expansion in this sample is `"Save"` → `"Enregistrer"` at +175% — a 4-character button label almost tripling in length. That's not this audit's worst case *in practice*, though, because `.btn` sizes via padding (see §1) and easily absorbs it. The worst case that actually matters for this audit is `animals.status.fostered` → `"En famille d'accueil"` at +150%: it's a status-enum string headed for a *status pill*, a tighter, more content-sensitive container than a button, and it's a direct hit on this audit's #2 (status pills). The mockup's `registry.html`/table status badges are single words ("Available", "Foster", "Adopted") sized for ~6–8 characters; one of the seven real statuses is 20 characters. Any pill sized to fit "Foster" will not fit "En famille d'accueil".
 
 ## Findings by component
 
@@ -36,9 +36,9 @@ The oft-quoted "FR runs ~15–30% longer than EN" is an average across full sent
 
 So none of these will *clip* — they'll grow. The risk is layout, not truncation:
 - **Table status cells** (`animalRow()` in admin-dashboard.html:928-931, and the static rows in `ui-kit.html`'s table demo) render the badge inline in a `<td>` with `white-space: nowrap` on the cell (see §4) — a badge that grows from "Foster" to "En famille d'accueil" width will widen that whole table column, which cascades into the table-overflow risk below.
-- **`attn-row .tag`** (admin-dashboard.html:214, the "Needs attention" panel's "Long wait" pill) sits at the end of a flex row (`flex: none`) next to body text that's allowed to truncate implicitly via flexbox — worth confirming the body text has `min-width: 0` / truncation styling once real copy lands, since a wider pill shrinks the space left for the name/description next to it.
+- **`attn-row .tag`** (admin-dashboard.html:214, the "Needs attention" panel's "Long wait" pill) sits at the end of a flex row (`flex: none`) next to `.attn-row .body` (admin-dashboard.html:211), which already has `min-width: 0` set (the same defensive pattern noted for `.side-profile .who` in §5) so it shrinks instead of overflowing when the pill widens. Good — no fix needed here, just worth knowing this is *why* it's safe.
 
-**Recommendation**: no CSS change needed for the pills themselves. Flag `animals.status.*` specifically for whoever builds the animal-list/registry screen (#107 in design-system.md) — budget badge/column width for `fostered`'s 21 characters, not `Adopted`'s 7.
+**Recommendation**: no CSS change needed for the pills themselves. Flag `animals.status.*` specifically for whoever builds the animal-list/registry screen (#107 in design-system.md) — budget badge/column width for `fostered`'s 20 characters, not `Adopted`'s 7.
 
 ### 3. Sidebar nav item labels — risky
 
@@ -91,7 +91,7 @@ The one column that already does this right is `.cell-name` (admin-dashboard.htm
 |---|---|---|---|
 | `.btn*` buttons | padding-based | Safe | none |
 | `.chip` filter buttons | padding-based | Safe (group wrap is minor) | add `flex-wrap: wrap` to `.chips` |
-| `.tag`/`.pill` badges | padding-based | Safe (CSS); content risk via `fostered` (+162%) | budget real enum-string widths, esp. animal status |
+| `.tag`/`.pill` badges | padding-based | Safe (CSS); content risk via `fostered` (+150%) | budget real enum-string widths, esp. animal status |
 | Sidebar nav items (`.side-link` in 248px `.sidebar`) | flex row, no wrap/ellipsis rule either way | **Risky — undefined** | decide wrap-to-2-lines vs. ellipsis+tooltip before building the nav shell |
 | Table headers/cells (`admin-dashboard.html`) | `white-space: nowrap` + `overflow: hidden` (no scroll, no ellipsis) | **Risky — silent clipping** | switch to `overflow-x: auto` (match `ui-kit.html`) or add ellipsis+tooltip; re-verify column-drop breakpoints against real FR text |
 | `.cell-name` table column | `white-space: normal; min-width` | Safe — model pattern | none, copy this pattern elsewhere |
