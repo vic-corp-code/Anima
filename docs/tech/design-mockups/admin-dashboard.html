@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paws &amp; Hearts — Shelter admin</title>
+  <link rel="stylesheet" href="assets/site.css">
+  <style>
+    :root {
+      --admin-pad: clamp(16px, 3vw, 32px);
+      --side-w: 248px;
+    }
+    html, body { height: 100%; }
+    body { background: var(--bg); overflow-x: hidden; }
+    .admin-shell { min-height: 100vh; }
+
+    .sidebar {
+      position: fixed; top: 0; left: 0; bottom: 0; width: var(--side-w);
+      background: var(--surface); border-right: 1px solid var(--border-soft);
+      display: flex; flex-direction: column;
+      padding: var(--space-5) var(--space-4) var(--space-4);
+      z-index: 70;
+      transition: transform var(--motion-base) var(--ease-standard);
+    }
+    .side-brand {
+      display: flex; align-items: center; gap: var(--space-3);
+      text-decoration: none; color: var(--fg);
+      padding: var(--space-2) var(--space-2) var(--space-5);
+    }
+    .side-brand .brand-mark { width: 34px; height: 34px; }
+    .side-brand .brand-name { font-size: var(--text-lg); }
+    .side-brand .brand-sub { font-size: 10px; letter-spacing: 0.12em; }
+
+    .side-nav { flex: 1; overflow-y: auto; }
+    .side-group-label {
+      font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em;
+      font-weight: 700; color: var(--muted);
+      padding: var(--space-4) var(--space-3) var(--space-2);
+    }
+    .side-nav ul { list-style: none; margin: 0; padding: 0; }
+    .side-link {
+      display: flex; align-items: center; gap: var(--space-3);
+      padding: var(--space-3); border-radius: var(--radius-sm);
+      text-decoration: none; color: var(--fg-2);
+      font-size: var(--text-sm); font-weight: 500; letter-spacing: 0.01em;
+      position: relative;
+      transition: background var(--motion-fast) var(--ease-standard), color var(--motion-fast) var(--ease-standard);
+    }
+    .side-link svg { width: 18px; height: 18px; flex: none; color: var(--muted); }
+    .side-link:hover { background: var(--surface-warm); color: var(--fg); }
+    .side-link:hover svg { color: var(--fg-2); }
+    .side-link.is-active { background: color-mix(in oklab, var(--accent) 12%, var(--surface)); color: var(--accent); }
+    .side-link.is-active::before {
+      content: ""; position: absolute; left: -1px; top: 8px; bottom: 8px;
+      width: 3px; border-radius: var(--radius-pill); background: var(--accent);
+    }
+    .side-link.is-active svg { color: var(--accent); }
+    .side-link .count { margin-left: auto; font-size: 11px; font-family: var(--font-mono); color: var(--muted); }
+
+    .side-foot { padding-top: var(--space-3); border-top: 1px solid var(--border-soft); }
+    .side-back {
+      display: inline-flex; align-items: center; gap: var(--space-2);
+      font-size: var(--text-sm); text-decoration: none; color: var(--fg-2);
+      padding: var(--space-2);
+    }
+    .side-back:hover { color: var(--accent); }
+    .side-back svg { width: 15px; height: 15px; }
+    .side-profile {
+      display: flex; align-items: center; gap: var(--space-3);
+      padding: var(--space-3) var(--space-2); border-radius: var(--radius-sm); margin-top: var(--space-2);
+    }
+    .side-profile .ph { width: 40px; height: 40px; border-radius: var(--radius-pill); flex: none; }
+    .side-profile .ph svg { width: 60%; height: 60%; }
+    .side-profile .who { display: flex; flex-direction: column; line-height: 1.25; min-width: 0; }
+    .side-profile .who strong { font-size: var(--text-sm); font-weight: 600; color: var(--fg); }
+    .side-profile .who span { font-size: 11px; color: var(--muted); }
+
+    .sidebar-backdrop {
+      display: none; position: fixed; inset: 0;
+      background: color-mix(in oklab, var(--fg) 42%, transparent);
+      z-index: 65; opacity: 0; transition: opacity var(--motion-base) var(--ease-standard);
+    }
+
+    .main { margin-left: var(--side-w); min-width: 0; }
+    .topbar {
+      position: sticky; top: 0; z-index: 50;
+      background: color-mix(in oklab, var(--surface) 86%, transparent);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-soft);
+      display: flex; align-items: center; gap: var(--space-4);
+      padding: var(--space-3) var(--admin-pad); min-height: 64px;
+    }
+    .iconbtn {
+      display: inline-grid; place-items: center;
+      width: 42px; height: 42px; border-radius: var(--radius-pill);
+      background: transparent; border: 1px solid transparent;
+      color: var(--fg-2); cursor: pointer; flex: none;
+      transition: background var(--motion-fast) var(--ease-standard), border-color var(--motion-fast) var(--ease-standard);
+    }
+    .iconbtn svg { width: 19px; height: 19px; }
+    .iconbtn:hover { background: var(--surface-warm); color: var(--fg); }
+    .hamburger { display: none; }
+    .topbar-titles { min-width: 0; margin-right: auto; }
+    .topbar-crumb {
+      font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--muted); font-weight: 600; line-height: 1.2;
+    }
+    .topbar-title {
+      font-family: var(--font-display); font-size: var(--text-xl);
+      line-height: 1.1; letter-spacing: -0.015em; color: var(--fg); margin-top: 1px;
+    }
+    .topbar-search { position: relative; display: flex; align-items: center; width: min(320px, 30vw); flex: none; }
+    .topbar-search svg { position: absolute; left: 12px; width: 16px; height: 16px; color: var(--muted); pointer-events: none; }
+    .topbar-search input {
+      width: 100%; height: 42px; padding: 0 var(--space-4) 0 36px;
+      border-radius: var(--radius-pill); background: var(--bg);
+      border: 1px solid var(--border-soft); color: var(--fg); font-size: var(--text-sm);
+    }
+    .topbar-search input::placeholder { color: var(--muted); }
+    .topbar-search input:focus { border-color: var(--accent); background: var(--surface); }
+
+    .topbar-actions { display: flex; align-items: center; gap: var(--space-2); flex: none; }
+    .bell { position: relative; }
+    .bell .dot { position: absolute; top: 8px; right: 9px; width: 8px; height: 8px; background: var(--danger); border-radius: 50%; border: 2px solid var(--surface); }
+    .demo-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;
+      padding: 6px 12px; border-radius: var(--radius-pill);
+      background: color-mix(in oklab, var(--meta) 14%, var(--surface));
+      color: color-mix(in oklab, var(--meta), black 22%);
+      border: 1px solid color-mix(in oklab, var(--meta) 28%, var(--surface));
+    }
+    .demo-pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--meta); }
+    .topbar-avatar.ph { width: 40px; height: 40px; border-radius: var(--radius-pill); flex: none; }
+    .topbar-avatar.ph svg { width: 58%; height: 58%; }
+
+    .content { padding: var(--admin-pad); padding-bottom: var(--space-12); }
+    .view { display: block; }
+    .view[hidden] { display: none; }
+
+    .view-head {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      gap: var(--space-4); flex-wrap: wrap; margin-bottom: var(--space-6);
+    }
+    .view-head h1 { font-size: var(--text-2xl); line-height: 1.05; letter-spacing: -0.02em; }
+    .view-head .sub { color: var(--fg-2); font-size: var(--text-sm); margin-top: 4px; max-width: 60ch; }
+    .view-head .count-pill { font-family: var(--font-mono); font-size: var(--text-sm); color: var(--muted); margin-left: var(--space-3); }
+
+    .kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--space-4); margin-bottom: var(--space-8); }
+    .kpi {
+      background: var(--surface); border: 1px solid var(--border-soft);
+      border-radius: var(--radius-md); padding: var(--space-5);
+      display: flex; flex-direction: column; gap: var(--space-2);
+    }
+    .kpi-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; color: var(--muted); }
+    .kpi-num { font-family: var(--font-display); font-size: var(--text-3xl); line-height: 1; letter-spacing: -0.03em; color: var(--fg); }
+    .kpi-num .unit { font-family: var(--font-body); font-size: var(--text-sm); color: var(--muted); margin-left: 4px; }
+    .kpi-delta { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; letter-spacing: 0.01em; }
+    .kpi-delta svg { width: 11px; height: 11px; }
+    .kpi-delta[data-dir="up"] { color: var(--success); }
+    .kpi-delta[data-dir="down"][data-good="true"] { color: var(--success); }
+    .kpi-delta[data-dir="down"] { color: var(--danger); }
+    .kpi-delta .vs { color: var(--muted); font-weight: 500; }
+
+    .panel { background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-md); padding: var(--space-5); }
+    .panel-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-4); margin-bottom: var(--space-5); flex-wrap: wrap; }
+    .panel-head h3 { font-family: var(--font-body); font-size: var(--text-sm); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; color: var(--fg); }
+    .panel-head .panel-sub { font-size: var(--text-sm); color: var(--muted); }
+
+    .dash-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: var(--space-5); margin-bottom: var(--space-5); }
+    .dash-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); }
+
+    .bar-chart { --max: 11; display: flex; flex-direction: column; gap: var(--space-3); }
+    .bar-row { display: grid; grid-template-columns: 48px 1fr auto; align-items: center; gap: var(--space-3); }
+    .bar-row .month { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; color: var(--muted); }
+    .bar-track { height: 16px; background: var(--surface-warm); border-radius: var(--radius-pill); overflow: hidden; }
+    .bar-fill {
+      height: 100%; width: calc(var(--v) / var(--max) * 100%);
+      background: color-mix(in oklab, var(--accent) 64%, var(--surface));
+      border-radius: var(--radius-pill);
+    }
+    .bar-row.is-current .bar-fill { background: var(--accent); }
+    .bar-row .val { font-family: var(--font-mono); font-size: var(--text-sm); color: var(--fg); min-width: 20px; text-align: right; }
+
+    .donut-block { display: flex; align-items: center; gap: var(--space-6); flex-wrap: wrap; }
+    .donut {
+      position: relative; width: 150px; height: 150px; border-radius: 50%; flex: none;
+      background: conic-gradient(var(--accent) 0 54.2%, var(--meta) 54.2% 87.5%, var(--warn) 87.5% 100%);
+    }
+    .donut-hole {
+      position: absolute; inset: 34px; border-radius: 50%;
+      background: var(--surface); display: grid; place-items: center; text-align: center;
+    }
+    .donut-hole .n { font-family: var(--font-display); font-size: var(--text-xl); line-height: 1; color: var(--fg); }
+    .donut-hole .l { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-top: 2px; }
+    .legend { display: flex; flex-direction: column; gap: var(--space-3); min-width: 150px; }
+    .legend-row { display: flex; align-items: center; gap: var(--space-3); font-size: var(--text-sm); }
+    .legend-row .sw { width: 12px; height: 12px; border-radius: 3px; flex: none; }
+    .legend-row .sw.dog { background: var(--accent); }
+    .legend-row .sw.cat { background: var(--meta); }
+    .legend-row .sw.small { background: var(--warn); }
+    .legend-row .nm { color: var(--fg); }
+    .legend-row .ct { margin-left: auto; font-family: var(--font-mono); color: var(--muted); }
+
+    .attn-list { display: flex; flex-direction: column; }
+    .attn-row { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) 0; border-bottom: 1px solid var(--border-soft); }
+    .attn-row:last-child { border-bottom: none; }
+    .attn-row .glyph { width: 36px; height: 36px; border-radius: var(--radius-sm); flex: none; background: var(--surface-warm); display: grid; place-items: center; color: var(--fg-2); }
+    .attn-row .glyph.ph.av { border-radius: var(--radius-pill); }
+    .attn-row .glyph svg { width: 18px; height: 18px; }
+    .attn-row .body { min-width: 0; flex: 1; }
+    .attn-row .body strong { font-size: var(--text-sm); font-weight: 600; color: var(--fg); display: block; }
+    .attn-row .body span { font-size: 12px; color: var(--muted); }
+    .attn-row .tag { flex: none; }
+
+    .feed { display: flex; flex-direction: column; }
+    .feed-item { display: grid; grid-template-columns: 92px 1fr; gap: var(--space-4); padding: var(--space-3) 0; border-bottom: 1px solid var(--border-soft); }
+    .feed-item:last-child { border-bottom: none; }
+    .feed-item .when { font-family: var(--font-mono); font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; padding-top: 2px; }
+    .feed-item .what { font-size: var(--text-sm); color: var(--fg-2); line-height: 1.5; }
+    .feed-item .what b { color: var(--fg); font-weight: 600; }
+
+    .toolbar { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; margin-bottom: var(--space-5); }
+    .toolbar .search-input { position: relative; display: flex; align-items: center; flex: 1; min-width: 200px; max-width: 360px; }
+    .toolbar .search-input svg { position: absolute; left: 12px; width: 16px; height: 16px; color: var(--muted); pointer-events: none; }
+    .toolbar .search-input input {
+      width: 100%; height: 42px; padding: 0 var(--space-4) 0 36px;
+      border-radius: var(--radius-pill); background: var(--surface);
+      border: 1px solid var(--border-soft); font-size: var(--text-sm); color: var(--fg);
+    }
+    .toolbar .search-input input:focus { border-color: var(--accent); }
+
+    .chips { display: inline-flex; gap: 4px; background: var(--surface-warm); padding: 4px; border-radius: var(--radius-pill); }
+    .chip {
+      appearance: none; border: none; cursor: pointer;
+      padding: 8px 14px; min-height: 34px; border-radius: var(--radius-pill);
+      background: transparent; color: var(--fg-2);
+      font-size: var(--text-sm); font-weight: 600; letter-spacing: 0.01em;
+      transition: background var(--motion-fast) var(--ease-standard), color var(--motion-fast) var(--ease-standard);
+    }
+    .chip:hover { color: var(--fg); }
+    .chip.is-active { background: var(--surface); color: var(--fg); box-shadow: var(--elev-ring); }
+
+    .select {
+      appearance: none; -webkit-appearance: none; -moz-appearance: none;
+      height: 42px; width: 100%; padding: 0 40px 0 var(--space-4);
+      border-radius: var(--radius-pill); background: var(--surface);
+      border: 1px solid var(--border-soft); font-size: var(--text-sm); color: var(--fg); cursor: pointer;
+    }
+    .select:focus { border-color: var(--accent); }
+    .select-wrap { position: relative; display: inline-flex; align-items: center; }
+    .select-wrap > svg {
+      position: absolute; right: 12px; pointer-events: none;
+      width: 16px; height: 16px; color: var(--muted); transform: rotate(90deg);
+    }
+
+    .table-wrap { background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-md); overflow: hidden; }
+    .table-scroll { overflow-x: hidden; }
+    table.data { width: 100%; border-collapse: collapse; table-layout: auto; }
+    table.data th, table.data td { padding: var(--space-3) var(--space-4); text-align: left; vertical-align: middle; white-space: nowrap; }
+    table.data thead th {
+      font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
+      font-weight: 700; color: var(--muted); border-bottom: 1px solid var(--border-soft); background: var(--bg);
+    }
+    table.data tbody tr { border-bottom: 1px solid var(--border-soft); }
+    table.data tbody tr:last-child { border-bottom: none; }
+    table.data tbody tr:hover { background: color-mix(in oklab, var(--surface-warm) 50%, var(--surface)); }
+    table.data td.num { font-family: var(--font-mono); font-size: var(--text-sm); }
+    table.data td.mono { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+    .cell-name { white-space: normal; min-width: 120px; }
+    .row-name { font-weight: 600; color: var(--fg); font-size: var(--text-sm); }
+    .ph.av { width: 40px; height: 40px; border-radius: var(--radius-pill); display: grid; place-items: center; }
+    .ph.av svg { width: 58%; height: 58%; }
+    .cell-actions { text-align: right; }
+    .cell-actions .iconbtn { width: 36px; height: 36px; }
+    .cell-actions .iconbtn svg { width: 16px; height: 16px; }
+    .empty-row td { text-align: center; padding: var(--space-12) var(--space-4); color: var(--muted); font-size: var(--text-sm); }
+
+    .tag--meta { background: color-mix(in oklab, var(--meta) 14%, var(--surface)); border-color: color-mix(in oklab, var(--meta) 30%, var(--surface)); color: color-mix(in oklab, var(--meta), black 22%); }
+    .tag--muted { background: color-mix(in oklab, var(--muted) 14%, var(--surface)); border-color: color-mix(in oklab, var(--muted) 28%, var(--surface)); color: var(--muted); }
+
+    .drawer {
+      position: fixed; top: 0; right: 0; bottom: 0; width: min(480px, 100%);
+      background: var(--surface); z-index: 80; transform: translateX(100%);
+      transition: transform var(--motion-base) var(--ease-standard);
+      display: flex; flex-direction: column; box-shadow: var(--elev-raised);
+    }
+    .drawer.is-open { transform: translateX(0); }
+    .drawer[hidden] { display: none; }
+    .drawer-head { display: flex; align-items: center; justify-content: space-between; padding: var(--space-5) var(--space-5) var(--space-4); border-bottom: 1px solid var(--border-soft); }
+    .drawer-head h2 { font-size: var(--text-xl); letter-spacing: -0.015em; }
+    .drawer-body { padding: var(--space-5); overflow-y: auto; flex: 1; }
+    .drawer-foot { display: flex; justify-content: flex-end; gap: var(--space-3); padding: var(--space-4) var(--space-5); border-top: 1px solid var(--border-soft); background: var(--bg); }
+    .drawer-backdrop { display: none; position: fixed; inset: 0; background: color-mix(in oklab, var(--fg) 42%, transparent); z-index: 75; opacity: 0; transition: opacity var(--motion-base) var(--ease-standard); }
+    .drawer-backdrop.is-open { display: block; opacity: 1; }
+
+    .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: var(--space-4); }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
+    .field label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; color: var(--fg-2); }
+    .field input[type="text"], .field input[type="email"], .field textarea, .field select {
+      width: 100%; height: 42px; padding: 0 var(--space-3);
+      border-radius: var(--radius-sm); background: var(--surface);
+      border: 1px solid var(--border-soft); color: var(--fg); font-size: var(--text-sm);
+    }
+    .field textarea { height: auto; padding: var(--space-3); min-height: 96px; resize: vertical; line-height: 1.5; }
+    .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--accent); }
+    .field input[aria-invalid="true"], .field textarea[aria-invalid="true"], .field select[aria-invalid="true"] { border-color: var(--danger); }
+    .field-error { font-size: 12px; color: var(--danger); min-height: 0; }
+    .field-hint { font-size: 11px; color: var(--muted); }
+    .drop-area {
+      display: grid; place-items: center; gap: var(--space-2);
+      border: 1px dashed var(--border); border-radius: var(--radius-md);
+      padding: var(--space-6); text-align: center; color: var(--muted); font-size: var(--text-sm); cursor: pointer;
+    }
+    .drop-area .ph { width: 84px; height: 64px; border-radius: var(--radius-sm); }
+    .drop-area .ph svg { width: 46%; height: 46%; }
+    .drop-area strong { color: var(--fg-2); font-weight: 600; }
+
+    .toast-region { position: fixed; right: var(--space-5); bottom: var(--space-5); display: flex; flex-direction: column; gap: var(--space-3); z-index: 90; }
+    .toast {
+      display: flex; align-items: center; gap: var(--space-3);
+      padding: var(--space-3) var(--space-5); background: var(--fg); color: var(--bg);
+      border-radius: var(--radius-pill); font-size: var(--text-sm); font-weight: 500; box-shadow: var(--elev-raised);
+      opacity: 0; transform: translateY(10px);
+      transition: opacity var(--motion-base) var(--ease-standard), transform var(--motion-base) var(--ease-standard);
+    }
+    .toast.in { opacity: 1; transform: none; }
+    .toast svg { color: var(--success); width: 16px; height: 16px; flex: none; }
+
+    .stepper { display: flex; align-items: center; gap: 4px; }
+    .stepper .seg { height: 6px; flex: 1; min-width: 16px; border-radius: var(--radius-pill); background: var(--border-soft); }
+    .stepper .seg.done { background: color-mix(in oklab, var(--success) 70%, var(--surface)); }
+    .stepper .seg.current { background: var(--fg-2); }
+    .stepper .seg.complete { background: var(--success); }
+    .stage-name { font-size: 12px; color: var(--fg-2); margin-top: 4px; font-weight: 600; }
+    .stage-name.is-done { color: var(--success); }
+
+    .content-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-4); }
+    .content-card { background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-md); padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-3); }
+    .content-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-3); }
+    .content-card h4 { font-family: var(--font-display); font-size: var(--text-lg); letter-spacing: -0.01em; }
+    .content-card .meta { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: var(--space-3); }
+    .content-card .meta .mono { font-family: var(--font-mono); }
+    .content-card .desc { font-size: var(--text-sm); color: var(--fg-2); line-height: 1.5; }
+    .content-card .actions { display: flex; gap: var(--space-4); margin-top: auto; padding-top: var(--space-2); }
+
+    .media-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-4); }
+    .media-tile { background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-md); overflow: hidden; display: flex; flex-direction: column; }
+    .media-tile .ph { aspect-ratio: 4 / 3; border-radius: 0; }
+    .media-tile .ph svg { width: 38%; height: 38%; }
+    .media-tile .meta { padding: var(--space-3); display: flex; flex-direction: column; gap: 4px; }
+    .media-tile .meta .nm { font-size: var(--text-sm); font-weight: 600; color: var(--fg); }
+    .media-tile .meta .dim { font-size: 11px; font-family: var(--font-mono); color: var(--muted); }
+    .media-tile .tagrow { padding: 0 var(--space-3) var(--space-3); }
+
+    .msg-list { display: flex; flex-direction: column; }
+    .msg-row { display: grid; grid-template-columns: 16px 1fr auto; gap: var(--space-4); align-items: center; padding: var(--space-4) 0; border-bottom: 1px solid var(--border-soft); }
+    .msg-row:last-child { border-bottom: none; }
+    .msg-row .who .from { font-weight: 600; color: var(--fg); font-size: var(--text-sm); }
+    .msg-row .who .subj { color: var(--fg-2); font-size: var(--text-sm); }
+    .msg-row .when { font-family: var(--font-mono); font-size: 12px; color: var(--muted); text-align: right; }
+    .msg-row.unread .who .from { color: var(--accent); }
+    .unread-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+
+    .settings-stack { display: flex; flex-direction: column; gap: var(--space-5); max-width: 760px; }
+    .toggle-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); padding: var(--space-3) 0; border-bottom: 1px solid var(--border-soft); }
+    .toggle-row:last-child { border-bottom: none; }
+    .toggle-row .tx strong { display: block; font-size: var(--text-sm); font-weight: 600; color: var(--fg); }
+    .toggle-row .tx span { font-size: 12px; color: var(--muted); }
+    .switch { position: relative; width: 42px; height: 24px; flex: none; }
+    .switch input { position: absolute; opacity: 0; inset: 0; cursor: pointer; margin: 0; }
+    .switch .track { position: absolute; inset: 0; border-radius: var(--radius-pill); background: var(--border); transition: background var(--motion-fast) var(--ease-standard); }
+    .switch .thumb { position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: var(--surface); transition: transform var(--motion-fast) var(--ease-standard); box-shadow: var(--elev-ring); }
+    .switch input:checked ~ .track { background: var(--accent); }
+    .switch input:checked ~ .thumb { transform: translateX(18px); }
+    .fee-row { display: flex; justify-content: space-between; padding: var(--space-2) 0; font-size: var(--text-sm); }
+    .fee-row span:first-child { color: var(--fg-2); }
+    .fee-row span:last-child { font-family: var(--font-mono); color: var(--fg); }
+    .illus-note { font-size: 12px; color: var(--muted); font-style: italic; margin-top: var(--space-3); }
+
+    .btn-sm { min-height: 40px; padding: 0 var(--space-4); font-size: 13px; }
+
+    @media (max-width: 1240px) {
+      .kpi-grid { grid-template-columns: repeat(3, 1fr); }
+      .media-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 1024px) {
+      .sidebar { transform: translateX(-100%); box-shadow: var(--elev-raised); }
+      .sidebar.is-open { transform: translateX(0); }
+      .sidebar-backdrop.is-open { display: block; opacity: 1; }
+      .main { margin-left: 0; }
+      .hamburger { display: inline-grid; }
+      .dash-grid { grid-template-columns: 1fr; }
+      .col-days { display: none; }
+    }
+    @media (max-width: 860px) {
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      .dash-grid-2 { grid-template-columns: 1fr; }
+      .content-grid { grid-template-columns: 1fr; }
+      .media-grid { grid-template-columns: repeat(2, 1fr); }
+      .topbar-search { display: none; }
+      .col-breed, .col-updated { display: none; }
+    }
+    @media (max-width: 620px) {
+      .kpi-grid { grid-template-columns: 1fr; }
+      .col-type { display: none; }
+      .field-row { grid-template-columns: 1fr; }
+      .drawer { width: 100%; }
+      .demo-pill { display: none; }
+      .view-head h1 { font-size: var(--text-xl); }
+    }
+    @media (max-width: 480px) {
+      .col-age { display: none; }
+      .media-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<svg width="0" height="0" aria-hidden="true" style="position:absolute">
+  <symbol id="g-dog" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M14 16v14c0 11 8 20 18 20s18-9 18-20V16l-9 6H23z"/><circle cx="25" cy="32" r="1.6" fill="currentColor" stroke="none"/><circle cx="39" cy="32" r="1.6" fill="currentColor" stroke="none"/><path d="M32 38v4M28 44c1.6 1.6 6.4 1.6 8 0"/>
+  </symbol>
+  <symbol id="g-cat" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M16 14l4 12M48 14l-4 12M16 14c-1 8 0 14 0 16 0 10 7 18 16 18s16-8 16-18c0-2 1-8 0-16l-8 12H24z"/><circle cx="25" cy="33" r="1.6" fill="currentColor" stroke="none"/><circle cx="39" cy="33" r="1.6" fill="currentColor" stroke="none"/><path d="M30 39h4M32 39v3M20 36h6M38 36h6"/>
+  </symbol>
+  <symbol id="g-rabbit" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M24 26c-3-6-4-13-2-16s6 2 7 9M40 26c3-6 4-13 2-16s-6 2-7 9"/><path d="M32 26c-8 0-14 6-14 13s6 11 14 11 14-4 14-11-6-13-14-13z"/><circle cx="26" cy="38" r="1.6" fill="currentColor" stroke="none"/><circle cx="38" cy="38" r="1.6" fill="currentColor" stroke="none"/><path d="M30 44h4"/>
+  </symbol>
+  <symbol id="g-paw" viewBox="0 0 24 24" fill="currentColor">
+    <ellipse cx="7" cy="8" rx="2.1" ry="2.8"/><ellipse cx="12" cy="6.4" rx="2.1" ry="2.9"/><ellipse cx="17" cy="8" rx="2.1" ry="2.8"/><path d="M12 11.4c2.9 0 5.4 2.2 5.4 4.6 0 2-1.6 3.2-3.4 3.2-.9 0-1.4-.4-2-.4s-1.1.4-2 .4c-1.8 0-3.4-1.2-3.4-3.2 0-2.4 2.5-4.6 5.4-4.6z"/>
+  </symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 20.2 4.6 13a4.6 4.6 0 0 1 6.5-6.5l.9.9.9-.9A4.6 4.6 0 1 1 19.4 13z"/>
+  </symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5 12h14M13 6l6 6-6 6"/>
+  </symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 12.5 9 17.5 20 6.5"/>
+  </symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/>
+  </symbol>
+  <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/>
+  </symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+    <path d="M12 5v14M5 12h14"/>
+  </symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2H4.5z"/><path d="M10 19a2 2 0 0 0 4 0"/>
+  </symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="3.2"/><path d="M12 3v2.2M12 18.8V21M3 12h2.2M18.8 12H21M5.6 5.6l1.6 1.6M16.8 16.8l1.6 1.6M18.4 5.6l-1.6 1.6M7.2 16.8l-1.6 1.6"/>
+  </symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+    <path d="M4 7h16M4 12h16M4 17h16"/>
+  </symbol>
+  <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+    <path d="M6 6l12 12M18 6L6 18"/>
+  </symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M14 6l4 4"/>
+  </symbol>
+  <symbol id="i-image" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="4" y="5" width="16" height="14" rx="2"/><circle cx="9" cy="10" r="1.4"/><path d="M5 17l4.5-4.5 3 3L16 12l3.5 3.5"/>
+  </symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 7l8 6 8-6"/>
+  </symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/><path d="M10 12h5M10 16h5"/>
+  </symbol>
+  <symbol id="i-up" viewBox="0 0 12 12" fill="currentColor"><path d="M6 3l4 5H2z"/></symbol>
+  <symbol id="i-down" viewBox="0 0 12 12" fill="currentColor"><path d="M6 9L2 4h8z"/></symbol>
+</svg>
+
+<div class="admin-shell" data-od-id="admin-shell">
+
+  <aside class="sidebar" id="sidebar" data-od-id="admin-sidebar" aria-label="Admin navigation">
+    <a class="side-brand" href="admin-dashboard.html" data-od-id="admin-brand">
+      <span class="brand-mark"><svg width="20" height="20" aria-hidden="true"><use href="#g-paw"/></svg></span>
+      <span>
+        <span class="brand-name">Paws &amp; Hearts</span>
+        <span class="brand-sub">Shelter admin</span>
+      </span>
+    </a>
+
+    <nav class="side-nav" aria-label="Sections">
+      <p class="side-group-label">Manage</p>
+      <ul>
+        <li><a class="side-link is-active" href="#dashboard" data-view="dashboard" data-od-id="nav-dashboard"><svg aria-hidden="true"><use href="#i-grid"/></svg> Dashboard</a></li>
+        <li><a class="side-link" href="#animals" data-view="animals" data-od-id="nav-animals"><svg aria-hidden="true"><use href="#g-paw"/></svg> Animals <span class="count">24</span></a></li>
+        <li><a class="side-link" href="#adoptions" data-view="adoptions" data-od-id="nav-adoptions"><svg aria-hidden="true"><use href="#i-heart"/></svg> Adoptions <span class="count">6</span></a></li>
+        <li><a class="side-link" href="#content" data-view="content" data-od-id="nav-content"><svg aria-hidden="true"><use href="#i-doc"/></svg> Content</a></li>
+        <li><a class="side-link" href="#media" data-view="media" data-od-id="nav-media"><svg aria-hidden="true"><use href="#i-image"/></svg> Media</a></li>
+        <li><a class="side-link" href="#messages" data-view="messages" data-od-id="nav-messages"><svg aria-hidden="true"><use href="#i-mail"/></svg> Messages <span class="count">3</span></a></li>
+      </ul>
+
+      <p class="side-group-label">System</p>
+      <ul>
+        <li><a class="side-link" href="#settings" data-view="settings" data-od-id="nav-settings"><svg aria-hidden="true"><use href="#i-gear"/></svg> Settings</a></li>
+      </ul>
+    </nav>
+
+    <div class="side-foot">
+      <a class="side-back" href="index.html" data-od-id="back-to-site">Back to site <svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+      <div class="side-profile" data-od-id="admin-profile">
+        <span class="ph" style="--tint: var(--accent)"><svg aria-hidden="true"><use href="#g-paw"/></svg></span>
+        <span class="who">
+          <strong>A. Rivera</strong>
+          <span>Shelter staff</span>
+        </span>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-backdrop" id="sidebarBackdrop" data-od-id="sidebar-backdrop"></div>
+
+  <div class="main">
+    <header class="topbar" data-od-id="admin-topbar">
+      <button class="iconbtn hamburger" id="sidebarOpen" type="button" aria-label="Open menu" aria-controls="sidebar" data-od-id="topbar-menu"><svg aria-hidden="true"><use href="#i-menu"/></svg></button>
+      <div class="topbar-titles">
+        <p class="topbar-crumb" id="viewCrumb">Overview</p>
+        <h1 class="topbar-title" id="viewTitle">Dashboard</h1>
+      </div>
+      <div class="topbar-search" data-od-id="topbar-search">
+        <svg aria-hidden="true"><use href="#i-search"/></svg>
+        <label for="topSearch" style="position:absolute;left:-9999px">Search</label>
+        <input id="topSearch" type="search" placeholder="Search animals, people…" data-od-id="topbar-search-input">
+      </div>
+      <div class="topbar-actions">
+        <span class="demo-pill" data-od-id="demo-pill">Demo data</span>
+        <button class="iconbtn bell" type="button" aria-label="Notifications (3 new)" data-od-id="topbar-bell"><svg aria-hidden="true"><use href="#i-bell"/></svg><span class="dot"></span></button>
+        <span class="ph topbar-avatar" style="--tint: var(--meta)" data-od-id="topbar-avatar"><svg aria-hidden="true"><use href="#g-paw"/></svg></span>
+      </div>
+    </header>
+
+    <main class="content">
+
+      <section class="view" data-view="dashboard" data-od-id="view-dashboard">
+        <div class="view-head">
+          <div>
+            <h1>Good afternoon, A. Rivera</h1>
+            <p class="sub">Here's how the shelter is doing this month. Numbers reflect current demo data.</p>
+          </div>
+        </div>
+
+        <div class="kpi-grid" data-od-id="kpi-row">
+          <div class="kpi" data-od-id="kpi-in-care"><span class="kpi-label">Animals in care</span><span class="kpi-num">24</span><span class="kpi-delta" data-dir="up"><svg aria-hidden="true"><use href="#i-up"/></svg>+3 <span class="vs">vs last month</span></span></div>
+          <div class="kpi" data-od-id="kpi-available"><span class="kpi-label">Available now</span><span class="kpi-num">17</span><span class="kpi-delta" data-dir="up"><svg aria-hidden="true"><use href="#i-up"/></svg>+2 <span class="vs">vs last month</span></span></div>
+          <div class="kpi" data-od-id="kpi-adoptions"><span class="kpi-label">Adoptions this month</span><span class="kpi-num">11</span><span class="kpi-delta" data-dir="up"><svg aria-hidden="true"><use href="#i-up"/></svg>+4 <span class="vs">vs last month</span></span></div>
+          <div class="kpi" data-od-id="kpi-avg-days"><span class="kpi-label">Avg. days in care</span><span class="kpi-num">96<span class="unit">days</span></span><span class="kpi-delta" data-dir="down" data-good="true"><svg aria-hidden="true"><use href="#i-down"/></svg>&minus;12 <span class="vs">vs last month</span></span></div>
+          <div class="kpi" data-od-id="kpi-enquiries"><span class="kpi-label">New enquiries</span><span class="kpi-num">8</span><span class="kpi-delta" data-dir="up"><svg aria-hidden="true"><use href="#i-up"/></svg>+1 <span class="vs">vs last week</span></span></div>
+        </div>
+
+        <div class="dash-grid">
+          <div class="panel" data-od-id="chart-adoptions">
+            <div class="panel-head"><h3>Adoptions, last 6 months</h3><span class="panel-sub">Completed adoptions per month</span></div>
+            <div class="bar-chart" role="img" aria-label="Bar chart of adoptions over six months">
+              <div class="bar-row"><span class="month">Mar</span><div class="bar-track"><div class="bar-fill" style="--v:4"></div></div><span class="val">4</span></div>
+              <div class="bar-row"><span class="month">Apr</span><div class="bar-track"><div class="bar-fill" style="--v:7"></div></div><span class="val">7</span></div>
+              <div class="bar-row"><span class="month">May</span><div class="bar-track"><div class="bar-fill" style="--v:5"></div></div><span class="val">5</span></div>
+              <div class="bar-row"><span class="month">Jun</span><div class="bar-track"><div class="bar-fill" style="--v:9"></div></div><span class="val">9</span></div>
+              <div class="bar-row"><span class="month">Jul</span><div class="bar-track"><div class="bar-fill" style="--v:6"></div></div><span class="val">6</span></div>
+              <div class="bar-row is-current"><span class="month">Aug</span><div class="bar-track"><div class="bar-fill" style="--v:11"></div></div><span class="val">11</span></div>
+            </div>
+          </div>
+
+          <div class="panel" data-od-id="chart-by-type">
+            <div class="panel-head"><h3>Animals by type</h3><span class="panel-sub">Currently in care</span></div>
+            <div class="donut-block">
+              <div class="donut" aria-hidden="true"><div class="donut-hole"><div><div class="n">24</div><div class="l">in care</div></div></div></div>
+              <div class="legend">
+                <div class="legend-row"><span class="sw dog"></span><span class="nm">Dogs</span><span class="ct">13</span></div>
+                <div class="legend-row"><span class="sw cat"></span><span class="nm">Cats</span><span class="ct">8</span></div>
+                <div class="legend-row"><span class="sw small"></span><span class="nm">Small animals</span><span class="ct">3</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-grid-2">
+          <div class="panel" data-od-id="panel-attention">
+            <div class="panel-head"><h3>Needs attention</h3></div>
+            <div class="attn-list">
+              <div class="attn-row" data-od-id="attn-duke"><span class="ph av glyph" style="--tint: var(--accent)"><svg aria-hidden="true"><use href="#g-dog"/></svg></span><div class="body"><strong>Duke has waited 14 months</strong><span>Staffordshire mix · longest-staying resident</span></div><span class="tag tag--wait">Long wait</span></div>
+              <div class="attn-row" data-od-id="attn-whiskers"><span class="ph av glyph" style="--tint: var(--meta)"><svg aria-hidden="true"><use href="#g-cat"/></svg></span><div class="body"><strong>Whiskers has waited 11 months</strong><span>Domestic longhair · quiet home preferred</span></div><span class="tag tag--wait">Long wait</span></div>
+              <div class="attn-row" data-od-id="attn-buddy"><span class="ph av glyph" style="--tint: var(--warn)"><svg aria-hidden="true"><use href="#g-dog"/></svg></span><div class="body"><strong>Buddy has waited 9 months</strong><span>Mixed breed · would suit an experienced owner</span></div><span class="tag tag--wait">Long wait</span></div>
+              <div class="attn-row" data-od-id="attn-photos"><span class="glyph"><svg aria-hidden="true"><use href="#i-image"/></svg></span><div class="body"><strong>3 listings missing photos</strong><span>Listings without photos get fewer enquiries</span></div><a class="btn-quiet" href="#media" data-jump="media">Fix</a></div>
+              <div class="attn-row" data-od-id="attn-enquiries"><span class="glyph"><svg aria-hidden="true"><use href="#i-mail"/></svg></span><div class="body"><strong>2 enquiries unanswered</strong><span>Oldest is 3 days old</span></div><a class="btn-quiet" href="#messages" data-jump="messages">Reply</a></div>
+            </div>
+          </div>
+
+          <div class="panel" data-od-id="panel-activity">
+            <div class="panel-head"><h3>Recent activity</h3></div>
+            <div class="feed">
+              <div class="feed-item"><span class="when">Aug 06<br>14:22</span><span class="what"><b>Sara Müller</b> completed adoption of <b>Duke</b> — home check passed.</span></div>
+              <div class="feed-item"><span class="when">Aug 06<br>11:05</span><span class="what"><b>Marbles</b> (cat) intake recorded — brought in as a stray.</span></div>
+              <div class="feed-item"><span class="when">Aug 05<br>16:40</span><span class="what">Listing for <b>Bella</b> updated — added note about leash training.</span></div>
+              <div class="feed-item"><span class="when">Aug 05<br>09:12</span><span class="what">New enquiry from <b>Drew K.</b> about <b>Daisy</b>.</span></div>
+              <div class="feed-item"><span class="when">Aug 04<br>17:30</span><span class="what"><b>Rocky</b> marked adopted — 58 days in care.</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" data-view="animals" hidden data-od-id="view-animals">
+        <div class="view-head">
+          <div>
+            <h1>Animals<span class="count-pill" id="animalCount">11</span></h1>
+            <p class="sub">Every animal currently listed, plus recently adopted. Edit a row to update its story, status, or tags.</p>
+          </div>
+          <button class="btn btn-primary" id="addAnimalBtn" type="button" data-od-id="btn-add-animal"><svg width="16" height="16" aria-hidden="true"><use href="#i-plus"/></svg> Add animal</button>
+        </div>
+
+        <div class="toolbar" data-od-id="animals-toolbar">
+          <div class="search-input">
+            <svg aria-hidden="true"><use href="#i-search"/></svg>
+            <label for="animalSearch" style="position:absolute;left:-9999px">Search animals</label>
+            <input id="animalSearch" type="search" placeholder="Search by name or breed…" data-od-id="animals-search">
+          </div>
+          <div class="chips" role="tablist" aria-label="Filter by type" data-od-id="animals-type-chips">
+            <button class="chip is-active" data-type="all" type="button">All</button>
+            <button class="chip" data-type="dog" type="button">Dogs</button>
+            <button class="chip" data-type="cat" type="button">Cats</button>
+            <button class="chip" data-type="small" type="button">Small</button>
+          </div>
+          <label for="animalStatus" style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;font-weight:700;color:var(--fg-2)">Status</label>
+          <span class="select-wrap">
+            <select id="animalStatus" class="select" data-od-id="animals-status">
+              <option value="all">All statuses</option>
+              <option value="Available">Available</option>
+              <option value="Pending">Pending</option>
+              <option value="Foster">Foster</option>
+              <option value="Adopted">Adopted</option>
+            </select>
+            <svg aria-hidden="true"><use href="#i-arrow"/></svg>
+          </span>
+        </div>
+
+        <div class="table-wrap" data-od-id="animals-table">
+          <div class="table-scroll">
+            <table class="data">
+              <thead>
+                <tr>
+                  <th style="width:56px"></th>
+                  <th>Name</th>
+                  <th class="col-type">Type</th>
+                  <th class="col-breed">Breed</th>
+                  <th class="col-age">Age</th>
+                  <th>Status</th>
+                  <th class="col-days">Days at shelter</th>
+                  <th class="col-updated">Updated</th>
+                  <th class="cell-actions">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="animalTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" data-view="adoptions" hidden data-od-id="view-adoptions">
+        <div class="view-head">
+          <div>
+            <h1>Adoptions<span class="count-pill">6 active</span></h1>
+            <p class="sub">Each application moves through four stages: Enquiry → Meet → Home check → Complete.</p>
+          </div>
+          <button class="btn btn-secondary" type="button" data-od-id="btn-new-application"><svg width="16" height="16" aria-hidden="true"><use href="#i-plus"/></svg> New application</button>
+        </div>
+
+        <div class="table-wrap" data-od-id="adoptions-table">
+          <div class="table-scroll">
+            <table class="data">
+              <thead>
+                <tr>
+                  <th>Applicant</th>
+                  <th>Animal</th>
+                  <th style="min-width:210px">Stage</th>
+                  <th class="col-updated">Started</th>
+                  <th class="col-breed">Contact</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr data-od-id="adoption-1"><td><span class="row-name">Jamie Chen</span></td><td>Luna · Cat</td><td><div class="stepper" aria-label="Stage 1 of 4: Enquiry"><span class="seg current"></span><span class="seg"></span><span class="seg"></span><span class="seg"></span></div><div class="stage-name">Enquiry</div></td><td class="mono">Aug 04</td><td class="col-breed mono">jamie.chen@email</td></tr>
+                <tr data-od-id="adoption-2"><td><span class="row-name">Patel family</span></td><td>Max · Dog</td><td><div class="stepper" aria-label="Stage 2 of 4: Meet"><span class="seg done"></span><span class="seg current"></span><span class="seg"></span><span class="seg"></span></div><div class="stage-name">Meet &amp; greet</div></td><td class="mono">Aug 01</td><td class="col-breed mono">r.patel@email</td></tr>
+                <tr data-od-id="adoption-3"><td><span class="row-name">R. Okafor</span></td><td>Bella · Dog</td><td><div class="stepper" aria-label="Stage 3 of 4: Home check"><span class="seg done"></span><span class="seg done"></span><span class="seg current"></span><span class="seg"></span></div><div class="stage-name">Home check</div></td><td class="mono">Jul 28</td><td class="col-breed mono">r.okafor@email</td></tr>
+                <tr data-od-id="adoption-4"><td><span class="row-name">Tom &amp; Lin</span></td><td>Oliver · Cat</td><td><div class="stepper" aria-label="Stage 2 of 4: Meet"><span class="seg done"></span><span class="seg current"></span><span class="seg"></span><span class="seg"></span></div><div class="stage-name">Meet &amp; greet</div></td><td class="mono">Aug 03</td><td class="col-breed mono">tomlin@email</td></tr>
+                <tr data-od-id="adoption-5"><td><span class="row-name">Drew K.</span></td><td>Daisy · Dog</td><td><div class="stepper" aria-label="Stage 1 of 4: Enquiry"><span class="seg current"></span><span class="seg"></span><span class="seg"></span><span class="seg"></span></div><div class="stage-name">Enquiry</div></td><td class="mono">Aug 05</td><td class="col-breed mono">drew.k@email</td></tr>
+                <tr data-od-id="adoption-6"><td><span class="row-name">Sara Müller</span></td><td>Duke · Dog</td><td><div class="stepper" aria-label="Stage 4 of 4: Complete"><span class="seg complete"></span><span class="seg complete"></span><span class="seg complete"></span><span class="seg complete"></span></div><div class="stage-name is-done">Complete</div></td><td class="mono">Jul 15</td><td class="col-breed mono">sara.m@email</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" data-view="content" hidden data-od-id="view-content">
+        <div class="view-head">
+          <div><h1>Content</h1><p class="sub">The sections that make up the public site. Edit copy, photos, and ordering for each.</p></div>
+        </div>
+        <div class="content-grid">
+          <div class="content-card" data-od-id="content-hero"><div class="content-card-top"><h4>Hero</h4><span class="tag tag--ok">Published</span></div><p class="desc">The top of the home page — headline, lead photo, and the primary call to action.</p><div class="meta"><span class="mono">Edited Aug 02</span><span>· v12</span></div><div class="actions"><button class="btn-quiet" type="button">Edit</button><a class="btn-quiet" href="index.html">View</a></div></div>
+          <div class="content-card" data-od-id="content-available"><div class="content-card-top"><h4>Available animals</h4><span class="tag tag--ok">Published</span></div><p class="desc">The grid of animals currently listed as available for adoption.</p><div class="meta"><span class="mono">Edited Aug 05</span><span>· auto-syncs</span></div><div class="actions"><button class="btn-quiet" type="button">Edit</button><a class="btn-quiet" href="animal-shelter.html#animals">View</a></div></div>
+          <div class="content-card" data-od-id="content-waiting"><div class="content-card-top"><h4>Longest waiting</h4><span class="tag tag--ok">Published</span></div><p class="desc">A short list highlighting residents who have been in care the longest.</p><div class="meta"><span class="mono">Edited Jul 30</span><span>· v4</span></div><div class="actions"><button class="btn-quiet" type="button">Edit</button><a class="btn-quiet" href="animal-shelter.html#waiting">View</a></div></div>
+          <div class="content-card" data-od-id="content-news"><div class="content-card-top"><h4>News &amp; stories</h4><span class="tag tag--wait">Draft</span></div><p class="desc">Shelter updates and happy-tails stories. One draft post awaiting review.</p><div class="meta"><span class="mono">Edited Aug 06</span><span>· 1 draft</span></div><div class="actions"><button class="btn-quiet" type="button">Edit</button><a class="btn-quiet" href="happy-tails.html">View</a></div></div>
+          <div class="content-card" data-od-id="content-visit"><div class="content-card-top"><h4>Visit info</h4><span class="tag tag--ok">Published</span></div><p class="desc">Opening hours, address, and how to plan a visit to meet the animals.</p><div class="meta"><span class="mono">Edited Jul 18</span><span>· v7</span></div><div class="actions"><button class="btn-quiet" type="button">Edit</button><a class="btn-quiet" href="animal-shelter.html#visit">View</a></div></div>
+          <div class="content-card" data-od-id="content-footer"><div class="content-card-top"><h4>Footer</h4><span class="tag tag--ok">Published</span></div><p class="desc">Links, newsletter signup, and the registered-nonprofit line on every page.</p><div class="meta"><span class="mono">Edited Jun 22</span><span>· v3</span></div><div class="actions"><button class="btn-quiet" type="button">Edit</button><a class="btn-quiet" href="index.html">View</a></div></div>
+        </div>
+      </section>
+
+      <section class="view" data-view="media" hidden data-od-id="view-media">
+        <div class="view-head">
+          <div><h1>Media library</h1><p class="sub">Photos used across animal listings and site sections.</p></div>
+        </div>
+        <div class="toolbar" data-od-id="media-toolbar">
+          <div class="chips" role="tablist" aria-label="Filter media">
+            <button class="chip is-active" data-media="all" type="button">All</button>
+            <button class="chip" data-media="unused" type="button">Unused</button>
+          </div>
+        </div>
+        <div class="media-grid" data-od-id="media-grid">
+          <div class="media-tile" data-od-id="media-1"><div class="ph" style="--tint: var(--accent)"><svg aria-hidden="true"><use href="#g-dog"/></svg></div><div class="meta"><span class="nm">max-portrait.jpg</span><span class="dim">1200 × 900</span></div><div class="tagrow"><span class="tag tag--ok">Used</span></div></div>
+          <div class="media-tile" data-od-id="media-2"><div class="ph" style="--tint: var(--meta)"><svg aria-hidden="true"><use href="#g-cat"/></svg></div><div class="meta"><span class="nm">luna-window.jpg</span><span class="dim">1600 × 1200</span></div><div class="tagrow"><span class="tag tag--ok">Used</span></div></div>
+          <div class="media-tile" data-od-id="media-3"><div class="ph" style="--tint: var(--warn)"><svg aria-hidden="true"><use href="#g-dog"/></svg></div><div class="meta"><span class="nm">bella-park.jpg</span><span class="dim">1200 × 900</span></div><div class="tagrow"><span class="tag tag--ok">Used</span></div></div>
+          <div class="media-tile" data-unused="true" data-od-id="media-4"><div class="ph" style="--tint: var(--success)"><svg aria-hidden="true"><use href="#g-cat"/></svg></div><div class="meta"><span class="nm">oliver-sleeping.jpg</span><span class="dim">1400 × 1050</span></div><div class="tagrow"><span class="tag tag--muted">Unused</span></div></div>
+          <div class="media-tile" data-od-id="media-5"><div class="ph" style="--tint: var(--accent)"><svg aria-hidden="true"><use href="#g-dog"/></svg></div><div class="meta"><span class="nm">duke-portrait.jpg</span><span class="dim">1200 × 1200</span></div><div class="tagrow"><span class="tag tag--ok">Used</span></div></div>
+          <div class="media-tile" data-unused="true" data-od-id="media-6"><div class="ph" style="--tint: var(--meta)"><svg aria-hidden="true"><use href="#g-rabbit"/></svg></div><div class="meta"><span class="nm">charlie-hutch.jpg</span><span class="dim">1024 × 768</span></div><div class="tagrow"><span class="tag tag--muted">Unused</span></div></div>
+          <div class="media-tile" data-od-id="media-7"><div class="ph" style="--tint: var(--warn)"><svg aria-hidden="true"><use href="#g-dog"/></svg></div><div class="meta"><span class="nm">daisy-field.jpg</span><span class="dim">1600 × 1067</span></div><div class="tagrow"><span class="tag tag--ok">Used</span></div></div>
+          <div class="media-tile" data-od-id="media-8"><div class="ph" style="--tint: var(--accent)"><svg aria-hidden="true"><use href="#g-paw"/></svg></div><div class="meta"><span class="nm">shelter-front.jpg</span><span class="dim">1920 × 1080</span></div><div class="tagrow"><span class="tag tag--ok">Used</span></div></div>
+        </div>
+      </section>
+
+      <section class="view" data-view="messages" hidden data-od-id="view-messages">
+        <div class="view-head">
+          <div><h1>Messages<span class="count-pill">5</span></h1><p class="sub">Adoption enquiries and questions from the public contact form.</p></div>
+        </div>
+        <div class="panel" data-od-id="messages-list" style="padding: var(--space-2) var(--space-5)">
+          <div class="msg-list">
+            <div class="msg-row unread" data-od-id="msg-1"><span class="unread-dot" aria-label="Unread"></span><div class="who"><span class="from">Drew K.</span><span class="subj">Interested in adopting Daisy — what's the next step?</span></div><span class="when">Aug 05<br>09:12</span></div>
+            <div class="msg-row unread" data-od-id="msg-2"><span class="unread-dot" aria-label="Unread"></span><div class="who"><span class="from">Jamie Chen</span><span class="subj">Enquiry about Luna — can I visit this weekend?</span></div><span class="when">Aug 04<br>18:40</span></div>
+            <div class="msg-row unread" data-od-id="msg-3"><span class="unread-dot" aria-label="Unread"></span><div class="who"><span class="from">Maya Rosario</span><span class="subj">Foster application — small dogs only</span></div><span class="when">Aug 03<br>11:02</span></div>
+            <div class="msg-row" data-od-id="msg-4"><span></span><div class="who"><span class="from">Patel family</span><span class="subj">Re: Max meet &amp; greet — confirmed for Saturday</span></div><span class="when">Aug 02<br>15:20</span></div>
+            <div class="msg-row" data-od-id="msg-5"><span></span><div class="who"><span class="from">Tom &amp; Lin</span><span class="subj">Question about Oliver's diet and allergies</span></div><span class="when">Jul 31<br>13:08</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" data-view="settings" hidden data-od-id="view-settings">
+        <div class="view-head">
+          <div><h1>Settings</h1><p class="sub">Shelter profile, example adoption fees, and notification preferences.</p></div>
+        </div>
+        <div class="settings-stack">
+          <div class="panel" data-od-id="settings-profile">
+            <div class="panel-head"><h3>Shelter profile</h3></div>
+            <div class="field"><label for="s-name">Shelter name</label><input id="s-name" type="text" value="Paws & Hearts Animal Shelter"></div>
+            <div class="field-row">
+              <div class="field"><label for="s-email">Contact email</label><input id="s-email" type="email" value="hello@pawsandhearts.org"></div>
+              <div class="field"><label for="s-phone">Phone</label><input id="s-phone" type="text" value="(555) 010-1998"></div>
+            </div>
+            <div class="field"><label for="s-addr">Address</label><input id="s-addr" type="text" value="14 Hollyhock Lane, Riverton"></div>
+          </div>
+
+          <div class="panel" data-od-id="settings-fees">
+            <div class="panel-head"><h3>Adoption fees — example</h3><span class="panel-sub">Shown on the public adoption page</span></div>
+            <div class="fee-row"><span>Dogs</span><span>$185</span></div>
+            <div class="fee-row"><span>Cats</span><span>$95</span></div>
+            <div class="fee-row"><span>Small animals (rabbits, etc.)</span><span>$45</span></div>
+            <p class="illus-note">Illustrative amounts only — demo data.</p>
+          </div>
+
+          <div class="panel" data-od-id="settings-notifications">
+            <div class="panel-head"><h3>Notifications</h3></div>
+            <div class="toggle-row"><div class="tx"><strong>New adoption enquiry</strong><span>Email me when a form is submitted</span></div><label class="switch"><input type="checkbox" checked><span class="track"></span><span class="thumb"></span></label></div>
+            <div class="toggle-row"><div class="tx"><strong>Animal waiting over 6 months</strong><span>Monthly digest of long-staying residents</span></div><label class="switch"><input type="checkbox" checked><span class="track"></span><span class="thumb"></span></label></div>
+            <div class="toggle-row"><div class="tx"><strong>Weekly summary</strong><span>Intake, adoptions, and enquiries every Monday</span></div><label class="switch"><input type="checkbox"><span class="track"></span><span class="thumb"></span></label></div>
+            <div class="toggle-row"><div class="tx"><strong>Marketing &amp; fundraising</strong><span>Occasional news about shelter campaigns</span></div><label class="switch"><input type="checkbox"><span class="track"></span><span class="thumb"></span></label></div>
+          </div>
+
+          <div style="display:flex; justify-content:flex-end; gap:var(--space-3)">
+            <button class="btn btn-secondary" type="button">Cancel</button>
+            <button class="btn btn-primary" type="button" id="settingsSave" data-od-id="btn-settings-save">Save changes</button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<div class="drawer-backdrop" id="drawerBackdrop" data-od-id="drawer-backdrop"></div>
+<aside class="drawer" id="animalDrawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" data-od-id="animal-drawer" hidden>
+  <div class="drawer-head">
+    <h2 id="drawerTitle">Add animal</h2>
+    <button class="iconbtn" id="drawerClose" type="button" aria-label="Close" data-od-id="drawer-close"><svg aria-hidden="true"><use href="#i-close"/></svg></button>
+  </div>
+
+  <form id="animalForm" class="drawer-body" novalidate data-od-id="animal-form">
+    <div class="field" data-od-id="field-name">
+      <label for="f-name">Name</label>
+      <input id="f-name" name="name" type="text" autocomplete="off" required>
+      <span class="field-error" id="err-name"></span>
+    </div>
+
+    <div class="field-row">
+      <div class="field" data-od-id="field-type">
+        <label for="f-type">Type</label>
+        <select id="f-type" name="type" required>
+          <option value="">Choose…</option>
+          <option>Dog</option><option>Cat</option><option>Rabbit</option><option>Other</option>
+        </select>
+        <span class="field-error" id="err-type"></span>
+      </div>
+      <div class="field" data-od-id="field-age">
+        <label for="f-age">Age</label>
+        <input id="f-age" name="age" type="text" placeholder="e.g. 3 yrs">
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field" data-od-id="field-sex">
+        <label for="f-sex">Sex</label>
+        <select id="f-sex" name="sex"><option>Female</option><option>Male</option><option>Unknown</option></select>
+      </div>
+      <div class="field" data-od-id="field-size">
+        <label for="f-size">Size</label>
+        <input id="f-size" name="size" type="text" placeholder="e.g. Medium">
+      </div>
+    </div>
+
+    <div class="field" data-od-id="field-breed">
+      <label for="f-breed">Breed</label>
+      <input id="f-breed" name="breed" type="text">
+    </div>
+
+    <div class="field" data-od-id="field-status">
+      <label for="f-status">Status</label>
+      <select id="f-status" name="status"><option>Available</option><option>Pending</option><option>Foster</option><option>Adopted</option></select>
+    </div>
+
+    <div class="field" data-od-id="field-tags">
+      <label for="f-tags">Tags</label>
+      <input id="f-tags" name="tags" type="text" placeholder="Comma separated, e.g. Calm, Good with kids">
+      <span class="field-hint">Shown as chips on the public listing.</span>
+    </div>
+
+    <div class="field" data-od-id="field-story">
+      <label for="f-story">Story</label>
+      <textarea id="f-story" name="story" placeholder="A short paragraph about this animal's personality and needs."></textarea>
+    </div>
+
+    <div class="field" data-od-id="field-photo">
+      <label>Photo</label>
+      <div class="drop-area" data-od-id="drop-area">
+        <span class="ph" style="--tint: var(--accent)"><svg aria-hidden="true"><use href="#g-paw"/></svg></span>
+        <span><strong>Drop a photo</strong> or click to upload</span>
+        <span style="font-size:11px">JPG or PNG · demo only — no file is stored</span>
+      </div>
+    </div>
+  </form>
+
+  <div class="drawer-foot">
+    <button class="btn btn-secondary btn-sm" id="drawerCancel" type="button" data-od-id="drawer-cancel">Cancel</button>
+    <button class="btn btn-primary btn-sm" id="drawerSave" type="button" data-od-id="drawer-save">Save animal</button>
+  </div>
+</aside>
+
+<div class="toast-region" id="toastRegion" data-od-id="toast-region" aria-live="polite"></div>
+
+<script>
+(function () {
+  "use strict";
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+
+  var views = $$('.view');
+  var sideLinks = $$('.side-link');
+  var viewTitle = $('#viewTitle');
+  var viewCrumb = $('#viewCrumb');
+  var titles = {
+    dashboard: ['Dashboard', 'Overview'],
+    animals: ['Animals', 'Manage · Animals'],
+    adoptions: ['Adoptions', 'Manage · Adoptions'],
+    content: ['Content', 'Manage · Content'],
+    media: ['Media', 'Manage · Media'],
+    messages: ['Messages', 'Manage · Messages'],
+    settings: ['Settings', 'System · Settings']
+  };
+  function switchView(name) {
+    views.forEach(function (v) { v.hidden = v.dataset.view !== name; });
+    sideLinks.forEach(function (l) { l.classList.toggle('is-active', l.dataset.view === name); });
+    var t = titles[name] || titles.dashboard;
+    viewTitle.textContent = t[0];
+    viewCrumb.textContent = t[1];
+    closeSidebar();
+    window.scrollTo(0, 0);
+  }
+  sideLinks.forEach(function (l) {
+    l.addEventListener('click', function (e) { e.preventDefault(); switchView(l.dataset.view); });
+  });
+  $$('[data-jump]').forEach(function (a) {
+    a.addEventListener('click', function (e) { e.preventDefault(); switchView(a.dataset.jump); });
+  });
+
+  var sidebar = $('#sidebar');
+  var sidebarBackdrop = $('#sidebarBackdrop');
+  function openSidebar() { sidebar.classList.add('is-open'); sidebarBackdrop.classList.add('is-open'); document.body.style.overflow = 'hidden'; }
+  function closeSidebar() { sidebar.classList.remove('is-open'); sidebarBackdrop.classList.remove('is-open'); document.body.style.overflow = ''; }
+  $('#sidebarOpen').addEventListener('click', function () { sidebar.classList.contains('is-open') ? closeSidebar() : openSidebar(); });
+  sidebarBackdrop.addEventListener('click', closeSidebar);
+
+  var animals = [
+    { id: 'a1', name: 'Max', type: 'Dog', breed: 'Labrador Retriever', age: '3 yrs', sex: 'Male', size: 'Large', status: 'Available', days: 28, updated: '2d ago', tags: 'Calm, Good with kids', story: 'Max is a gentle, steady boy who loves slow walks and a warm spot by the sofa.' },
+    { id: 'a2', name: 'Luna', type: 'Cat', breed: 'Domestic shorthair', age: '2 yrs', sex: 'Female', size: 'Small', status: 'Available', days: 12, updated: '1d ago', tags: 'Affectionate, Indoor only', story: 'Luna greets everyone at the door and would love a quiet home of her own.' },
+    { id: 'a3', name: 'Bella', type: 'Dog', breed: 'Beagle mix', age: '4 yrs', sex: 'Female', size: 'Medium', status: 'Pending', days: 19, updated: '3h ago', tags: 'Curious, Leash training', story: 'Bella is bright and food-motivated and has picked up leash manners fast.' },
+    { id: 'a4', name: 'Oliver', type: 'Cat', breed: 'Tabby', age: '1 yr', sex: 'Male', size: 'Small', status: 'Available', days: 8, updated: '5d ago', tags: 'Playful, Young', story: 'Oliver is a curious young cat who loves feather wands and sunny sills.' },
+    { id: 'a5', name: 'Charlie', type: 'Rabbit', breed: 'Holland Lop', age: '2 yrs', sex: 'Male', size: 'Small', status: 'Foster', days: 41, updated: '1w ago', tags: 'Gentle, Litter trained', story: 'Charlie is in a foster home and doing very well with handling.' },
+    { id: 'a6', name: 'Daisy', type: 'Dog', breed: 'Cocker spaniel', age: '7 yrs', sex: 'Female', size: 'Medium', status: 'Available', days: 63, updated: '4d ago', tags: 'Senior, Calm', story: 'Daisy is a sweet senior who just wants a soft bed and someone to love.' },
+    { id: 'a7', name: 'Duke', type: 'Dog', breed: 'Staffordshire mix', age: '5 yrs', sex: 'Male', size: 'Medium', status: 'Available', days: 427, updated: '6d ago', tags: 'Experienced owner, Loyal', story: 'Duke is our longest-staying resident: loyal, smart, and ready for his person.' },
+    { id: 'a8', name: 'Whiskers', type: 'Cat', breed: 'Domestic longhair', age: '6 yrs', sex: 'Female', size: 'Small', status: 'Available', days: 334, updated: '2d ago', tags: 'Quiet, Solo home', story: 'Whiskers prefers a calm, adult-only home where she can take her time.' },
+    { id: 'a9', name: 'Buddy', type: 'Dog', breed: 'Mixed breed', age: '4 yrs', sex: 'Male', size: 'Large', status: 'Available', days: 273, updated: '1d ago', tags: 'Active, Experienced owner', story: 'Buddy is energetic and would thrive with an experienced, active owner.' },
+    { id: 'a10', name: 'Rocky', type: 'Dog', breed: 'Boxer mix', age: '4 yrs', sex: 'Male', size: 'Large', status: 'Adopted', days: 58, updated: '3w ago', tags: 'Adopted', story: 'Rocky found his family after 58 days and is doing wonderfully.' },
+    { id: 'a11', name: 'Marbles', type: 'Cat', breed: 'Calico', age: '2 yrs', sex: 'Female', size: 'Small', status: 'Adopted', days: 22, updated: '5w ago', tags: 'Adopted', story: 'Marbles went home after just 22 days — a quick and happy match.' }
+  ];
+
+  var glyphByType = { Dog: '#g-dog', Cat: '#g-cat', Rabbit: '#g-rabbit', Other: '#g-paw' };
+  var tintByType = { Dog: 'var(--accent)', Cat: 'var(--meta)', Rabbit: 'var(--warn)', Other: 'var(--success)' };
+  function statusBadge(s) {
+    var m = { Available: 'tag--ok', Pending: 'tag--wait', Foster: 'tag--meta', Adopted: 'tag--muted' };
+    return '<span class="tag ' + (m[s] || '') + '">' + s + '</span>';
+  }
+  function esc(str) { return String(str).replace(/[&<>"]/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]; }); }
+  function animalRow(a) {
+    var g = glyphByType[a.type] || '#g-paw';
+    var t = tintByType[a.type] || 'var(--accent)';
+    return '<tr data-id="' + a.id + '">' +
+      '<td><span class="ph av" style="--tint:' + t + '"><svg width="22" height="22" aria-hidden="true"><use href="' + g + '"/></svg></span></td>' +
+      '<td class="cell-name"><span class="row-name">' + esc(a.name) + '</span></td>' +
+      '<td class="col-type">' + a.type + '</td>' +
+      '<td class="col-breed">' + esc(a.breed) + '</td>' +
+      '<td class="col-age">' + esc(a.age) + '</td>' +
+      '<td>' + statusBadge(a.status) + '</td>' +
+      '<td class="col-days num">' + a.days + '</td>' +
+      '<td class="col-updated mono">' + a.updated + '</td>' +
+      '<td class="cell-actions"><button class="iconbtn js-edit" data-id="' + a.id + '" type="button" aria-label="Edit ' + esc(a.name) + '"><svg width="16" height="16" aria-hidden="true"><use href="#i-edit"/></svg></button></td>' +
+      '</tr>';
+  }
+
+  var animalSearch = $('#animalSearch');
+  var animalStatus = $('#animalStatus');
+  var currentType = 'all';
+  function renderAnimals() {
+    var q = animalSearch.value.trim().toLowerCase();
+    var status = animalStatus.value;
+    var filtered = animals.filter(function (a) {
+      var matchQ = !q || a.name.toLowerCase().indexOf(q) > -1 || a.breed.toLowerCase().indexOf(q) > -1;
+      var matchType =
+        currentType === 'all' ||
+        (currentType === 'dog' && a.type === 'Dog') ||
+        (currentType === 'cat' && a.type === 'Cat') ||
+        (currentType === 'small' && (a.type === 'Rabbit' || a.type === 'Other'));
+      var matchStatus = status === 'all' || a.status === status;
+      return matchQ && matchType && matchStatus;
+    });
+    var tbody = $('#animalTbody');
+    if (filtered.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="9" class="empty-row">No animals match — try clearing filters.</td></tr>';
+    } else {
+      tbody.innerHTML = filtered.map(animalRow).join('');
+    }
+    $('#animalCount').textContent = filtered.length;
+  }
+  animalSearch.addEventListener('input', renderAnimals);
+  animalStatus.addEventListener('change', renderAnimals);
+  $$('.chip[data-type]').forEach(function (c) {
+    c.addEventListener('click', function () {
+      $$('.chip[data-type]').forEach(function (x) { x.classList.remove('is-active'); });
+      c.classList.add('is-active');
+      currentType = c.dataset.type;
+      renderAnimals();
+    });
+  });
+
+  $('#topSearch').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') {
+      animalSearch.value = e.target.value;
+      switchView('animals');
+      renderAnimals();
+      animalSearch.focus();
+    }
+  });
+
+  $('#addAnimalBtn').addEventListener('click', function () { openDrawer('add'); });
+
+  var drawer = $('#animalDrawer');
+  var drawerBackdrop = $('#drawerBackdrop');
+  var form = $('#animalForm');
+  var drawerTitle = $('#drawerTitle');
+  var editId = null;
+
+  function openDrawer(mode, id) {
+    editId = mode === 'edit' ? id : null;
+    drawerTitle.textContent = mode === 'edit' ? 'Edit animal' : 'Add animal';
+    form.reset();
+    clearErrors();
+    if (mode === 'edit') {
+      var a = animals.filter(function (x) { return x.id === id; })[0];
+      if (a) {
+        $('#f-name').value = a.name;
+        $('#f-type').value = a.type;
+        $('#f-breed').value = a.breed;
+        $('#f-age').value = a.age;
+        $('#f-sex').value = a.sex;
+        $('#f-size').value = a.size;
+        $('#f-status').value = a.status;
+        $('#f-tags').value = a.tags || '';
+        $('#f-story').value = a.story || '';
+      }
+    }
+    drawer.hidden = false;
+    drawer.classList.add('is-open');
+    drawerBackdrop.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+    window.setTimeout(function () { $('#f-name').focus(); }, 60);
+  }
+  function closeDrawer() {
+    drawer.classList.remove('is-open');
+    drawerBackdrop.classList.remove('is-open');
+    document.body.style.overflow = '';
+    editId = null;
+    window.setTimeout(function () { drawer.hidden = true; }, 240);
+  }
+  $('#drawerClose').addEventListener('click', closeDrawer);
+  $('#drawerCancel').addEventListener('click', closeDrawer);
+  drawerBackdrop.addEventListener('click', closeDrawer);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && drawer.classList.contains('is-open')) closeDrawer(); });
+
+  function clearErrors() {
+    $$('.field-error', form).forEach(function (el) { el.textContent = ''; });
+    $$('[aria-invalid]', form).forEach(function (el) { el.removeAttribute('aria-invalid'); });
+  }
+  function setError(field, msg) {
+    var f = $('#f-' + field);
+    if (f) f.setAttribute('aria-invalid', 'true');
+    var e = $('#err-' + field);
+    if (e) e.textContent = msg;
+  }
+
+  function saveAnimal() {
+    clearErrors();
+    var name = $('#f-name').value.trim();
+    var type = $('#f-type').value;
+    var ok = true;
+    if (!name) { setError('name', 'Please enter a name.'); ok = false; }
+    if (!type) { setError('type', 'Choose a type.'); ok = false; }
+    if (!ok) return;
+    var data = {
+      name: name, type: type,
+      breed: $('#f-breed').value.trim() || '—',
+      age: $('#f-age').value.trim() || '—',
+      sex: $('#f-sex').value || 'Unknown',
+      size: $('#f-size').value.trim() || '—',
+      status: $('#f-status').value || 'Available',
+      tags: $('#f-tags').value.trim(),
+      story: $('#f-story').value.trim()
+    };
+    if (editId) {
+      animals.forEach(function (a) { if (a.id === editId) { Object.assign(a, data); a.updated = 'just now'; } });
+      toast(data.name + ' updated');
+    } else {
+      var id = 'a' + (animals.length + 1) + '-' + Date.now().toString(36);
+      animals.unshift(Object.assign({ id: id, days: 0, updated: 'just now' }, data));
+      toast(data.name + ' added');
+    }
+    renderAnimals();
+    closeDrawer();
+  }
+  $('#drawerSave').addEventListener('click', saveAnimal);
+  form.addEventListener('submit', function (e) { e.preventDefault(); saveAnimal(); });
+
+  $('#animalTbody').addEventListener('click', function (e) {
+    var btn = e.target.closest('.js-edit');
+    if (!btn) return;
+    openDrawer('edit', btn.dataset.id);
+  });
+
+  $$('[data-media]').forEach(function (c) {
+    c.addEventListener('click', function () {
+      $$('[data-media]').forEach(function (x) { x.classList.remove('is-active'); });
+      c.classList.add('is-active');
+      var mode = c.dataset.media;
+      $$('.media-tile').forEach(function (tile) {
+        tile.style.display = (mode === 'all' || tile.hasAttribute('data-unused')) ? '' : 'none';
+      });
+    });
+  });
+
+  $('#settingsSave').addEventListener('click', function () { toast('Settings saved'); });
+  $('.bell').addEventListener('click', function () { switchView('messages'); });
+
+  var toastRegion = $('#toastRegion');
+  function toast(msg) {
+    var el = document.createElement('div');
+    el.className = 'toast';
+    el.setAttribute('role', 'status');
+    el.innerHTML = '<svg width="16" height="16" aria-hidden="true"><use href="#i-check"/></svg><span>' + esc(msg) + '</span>';
+    toastRegion.appendChild(el);
+    window.requestAnimationFrame(function () { el.classList.add('in'); });
+    window.setTimeout(function () { el.classList.remove('in'); window.setTimeout(function () { el.remove(); }, 260); }, 2600);
+  }
+
+  renderAnimals();
+})();
+</script>
+</body>
+</html>

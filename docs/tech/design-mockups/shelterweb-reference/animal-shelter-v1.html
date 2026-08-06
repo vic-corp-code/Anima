@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paws & Hearts Animal Shelter — Find Your Perfect Companion</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --surface: #f5f5f5;
+      --fg: #000000;
+      --muted: #8c8c8c;
+      --border: #dbdbdb;
+      --accent: #032f62;
+      --accent-secondary: #d73a49;
+      
+      --font-display: Geist, system-ui, -apple-system, Segoe UI, Helvetica Neue, Arial, sans-serif;
+      --font-body: Geist, system-ui, -apple-system, Segoe UI, Helvetica Neue, Arial, sans-serif;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.5;
+      color: var(--fg);
+      background: var(--bg);
+    }
+    
+    /* Typography */
+    h1 {
+      font-family: var(--font-display);
+      font-size: 48px;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      font-weight: 600;
+    }
+    
+    h2 {
+      font-family: var(--font-display);
+      font-size: 32px;
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+      font-weight: 600;
+      margin-bottom: 32px;
+    }
+    
+    h3 {
+      font-family: var(--font-display);
+      font-size: 20px;
+      line-height: 1.3;
+      font-weight: 550;
+      margin-bottom: 8px;
+    }
+    
+    p {
+      font-size: 16px;
+      line-height: 1.6;
+    }
+    
+    /* Header */
+    header {
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      z-index: 100;
+    }
+    
+    nav {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--fg);
+      text-decoration: none;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    
+    .nav-links a {
+      color: var(--fg);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 450;
+      letter-spacing: 0.01em;
+      transition: color 0.2s;
+    }
+    
+    .nav-links a:hover {
+      color: var(--accent);
+    }
+    
+    .nav-links a:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+    
+    /* Hero */
+    .hero {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 80px 24px;
+      text-align: center;
+    }
+    
+    .hero h1 {
+      margin-bottom: 24px;
+    }
+    
+    .hero p {
+      font-size: 18px;
+      color: var(--muted);
+      max-width: 600px;
+      margin: 0 auto 40px;
+    }
+    
+    .cta-primary {
+      display: inline-block;
+      background: var(--accent);
+      color: var(--bg);
+      padding: 14px 32px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 550;
+      font-size: 16px;
+      letter-spacing: 0.02em;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    
+    .cta-primary:hover {
+      background: oklch(from var(--accent) calc(l - 0.08) c h);
+    }
+    
+    .cta-primary:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 4px;
+    }
+    
+    /* Section */
+    section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 64px 24px;
+    }
+    
+    .section-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    
+    .section-header p {
+      color: var(--muted);
+      font-size: 16px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    /* Filter */
+    .filter-bar {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+    }
+    
+    .filter-btn {
+      padding: 10px 20px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 450;
+      letter-spacing: 0.01em;
+      color: var(--fg);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .filter-btn:hover {
+      background: var(--surface);
+      border-color: var(--muted);
+    }
+    
+    .filter-btn.active {
+      background: var(--fg);
+      color: var(--bg);
+      border-color: var(--fg);
+    }
+    
+    .filter-btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+    
+    /* Animal Grid */
+    .animal-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+    }
+    
+    .animal-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      transition: all 0.2s;
+      position: relative;
+    }
+    
+    .animal-card:hover {
+      border-color: var(--muted);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      transform: translateY(-2px);
+    }
+    
+    .animal-image {
+      width: 100%;
+      height: 240px;
+      object-fit: cover;
+      background: var(--surface);
+    }
+    
+    .animal-info {
+      padding: 20px;
+    }
+    
+    .animal-name {
+      font-size: 20px;
+      font-weight: 550;
+      margin-bottom: 4px;
+    }
+    
+    .animal-breed {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+    
+    .animal-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    
+    .tag {
+      padding: 4px 10px;
+      background: var(--surface);
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 450;
+      letter-spacing: 0.01em;
+      color: var(--fg);
+    }
+    
+    .tag.urgent {
+      background: oklch(from var(--accent-secondary) l c h / 0.1);
+      color: var(--accent-secondary);
+    }
+    
+    .cta-secondary {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      text-align: center;
+      text-decoration: none;
+      color: var(--fg);
+      font-weight: 450;
+      font-size: 14px;
+      letter-spacing: 0.01em;
+      transition: all 0.2s;
+    }
+    
+    .cta-secondary:hover {
+      background: var(--surface);
+      border-color: var(--muted);
+    }
+    
+    .cta-secondary:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+    
+    /* Updates Section */
+    .updates-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 32px;
+    }
+    
+    .update-card {
+      background: var(--surface);
+      padding: 24px;
+      border-radius: 8px;
+    }
+    
+    .update-date {
+      color: var(--muted);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 12px;
+    }
+    
+    .update-card h3 {
+      margin-bottom: 12px;
+    }
+    
+    .update-card p {
+      font-size: 15px;
+      color: var(--fg);
+      line-height: 1.6;
+    }
+    
+    /* Longest Waiting Section */
+    .longest-waiting {
+      background: var(--surface);
+      padding: 48px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    
+    .longest-waiting h2 {
+      margin-bottom: 16px;
+    }
+    
+    .longest-waiting > p {
+      color: var(--muted);
+      margin-bottom: 40px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .featured-animals {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    
+    .featured-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .featured-image {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: var(--surface);
+      margin: 0 auto 16px;
+    }
+    
+    .waiting-badge {
+      display: inline-block;
+      padding: 6px 12px;
+      background: oklch(from var(--accent-secondary) l c h / 0.1);
+      color: var(--accent-secondary);
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 550;
+      letter-spacing: 0.02em;
+      margin-top: 12px;
+    }
+    
+    /* Location Section */
+    .location-section {
+      background: var(--bg);
+    }
+    
+    .location-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: start;
+    }
+    
+    .location-info h3 {
+      margin-bottom: 16px;
+      margin-top: 32px;
+    }
+    
+    .location-info h3:first-of-type {
+      margin-top: 0;
+    }
+    
+    .location-info p {
+      color: var(--fg);
+      margin-bottom: 8px;
+    }
+    
+    .map-placeholder {
+      width: 100%;
+      height: 400px;
+      background: var(--surface);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 14px;
+      border: 1px solid var(--border);
+    }
+    
+    .social-links {
+      display: flex;
+      gap: 16px;
+      margin-top: 16px;
+    }
+    
+    .social-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      text-decoration: none;
+      color: var(--fg);
+      font-size: 20px;
+      transition: all 0.2s;
+    }
+    
+    .social-link:hover {
+      background: var(--surface);
+      border-color: var(--muted);
+    }
+    
+    .social-link:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+    
+    /* Footer */
+    footer {
+      background: var(--surface);
+      padding: 48px 24px;
+      margin-top: 64px;
+    }
+    
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    
+    .footer-content p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+    
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-top: 24px;
+      list-style: none;
+    }
+    
+    .footer-links a {
+      color: var(--fg);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 450;
+      transition: color 0.2s;
+    }
+    
+    .footer-links a:hover {
+      color: var(--accent);
+    }
+    
+    .footer-links a:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+    
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 36px;
+      }
+      
+      h2 {
+        font-size: 28px;
+      }
+      
+      .nav-links {
+        display: none;
+      }
+      
+      .hero {
+        padding: 48px 24px;
+      }
+      
+      section {
+        padding: 48px 24px;
+      }
+      
+      .location-content {
+        grid-template-columns: 1fr;
+      }
+      
+      .animal-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .longest-waiting {
+        padding: 32px 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header data-od-id="header">
+    <nav>
+      <a href="#" class="logo">Paws & Hearts</a>
+      <ul class="nav-links">
+        <li><a href="#animals">Adopt</a></li>
+        <li><a href="#updates">News</a></li>
+        <li><a href="#location">Visit Us</a></li>
+        <li><a href="#volunteer">Volunteer</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" data-od-id="hero">
+      <h1>Every Animal Deserves a Loving Home</h1>
+      <p>Find your perfect companion from our shelter. All animals are健康checked, vaccinated, and ready to join their forever family.</p>
+      <a href="#animals" class="cta-primary">Meet Our Animals</a>
+    </section>
+
+    <section id="animals" data-od-id="available-animals">
+      <div class="section-header">
+        <h2>Available for Adoption</h2>
+        <p>Browse our current residents and find your new best friend</p>
+      </div>
+      
+      <div class="filter-bar">
+        <button class="filter-btn active" data-filter="all">All Animals</button>
+        <button class="filter-btn" data-filter="dog">Dogs</button>
+        <button class="filter-btn" data-filter="cat">Cats</button>
+        <button class="filter-btn" data-filter="other">Other</button>
+      </div>
+
+      <div class="animal-grid">
+        <div class="animal-card" data-type="dog">
+          <img src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&h=600&fit=crop" alt="Max the dog" class="animal-image">
+          <div class="animal-info">
+            <h3 class="animal-name">Max</h3>
+            <p class="animal-breed">Golden Retriever Mix • 3 years</p>
+            <div class="animal-tags">
+              <span class="tag">Friendly</span>
+              <span class="tag">Good with kids</span>
+            </div>
+            <a href="#" class="cta-secondary">Learn More</a>
+          </div>
+        </div>
+
+        <div class="animal-card" data-type="cat">
+          <img src="https://images.unsplash.com/photo-1573865526739-10c1dd7aa5b4?w=600&h=600&fit=crop" alt="Luna the cat" class="animal-image">
+          <div class="animal-info">
+            <h3 class="animal-name">Luna</h3>
+            <p class="animal-breed">Domestic Shorthair • 2 years</p>
+            <div class="animal-tags">
+              <span class="tag">Quiet</span>
+              <span class="tag">Indoor cat</span>
+            </div>
+            <a href="#" class="cta-secondary">Learn More</a>
+          </div>
+        </div>
+
+        <div class="animal-card" data-type="dog">
+          <img src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=600&h=600&fit=crop" alt="Bella the dog" class="animal-image">
+          <div class="animal-info">
+            <h3 class="animal-name">Bella</h3>
+            <p class="animal-breed">Labrador Retriever • 5 years</p>
+            <div class="animal-tags">
+              <span class="tag">Energetic</span>
+              <span class="tag">Trained</span>
+            </div>
+            <a href="#" class="cta-secondary">Learn More</a>
+          </div>
+        </div>
+
+        <div class="animal-card" data-type="cat">
+          <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=600&h=600&fit=crop" alt="Oliver the cat" class="animal-image">
+          <div class="animal-info">
+            <h3 class="animal-name">Oliver</h3>
+            <p class="animal-breed">Maine Coon • 4 years</p>
+            <div class="animal-tags">
+              <span class="tag">Gentle</span>
+              <span class="tag">Loves cuddles</span>
+            </div>
+            <a href="#" class="cta-secondary">Learn More</a>
+          </div>
+        </div>
+
+        <div class="animal-card" data-type="dog">
+          <img src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=600&h=600&fit=crop" alt="Charlie the dog" class="animal-image">
+          <div class="animal-info">
+            <h3 class="animal-name">Charlie</h3>
+            <p class="animal-breed">Beagle Mix • 1 year</p>
+            <div class="animal-tags">
+              <span class="tag">Playful</span>
+              <span class="tag">Young</span>
+            </div>
+            <a href="#" class="cta-secondary">Learn More</a>
+          </div>
+        </div>
+
+        <div class="animal-card" data-type="other">
+          <img src="https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?w=600&h=600&fit=crop" alt="Thumper the rabbit" class="animal-image">
+          <div class="animal-info">
+            <h3 class="animal-name">Thumper</h3>
+            <p class="animal-breed">Holland Lop Rabbit • 2 years</p>
+            <div class="animal-tags">
+              <span class="tag">Calm</span>
+              <span class="tag">Litter trained</span>
+            </div>
+            <a href="#" class="cta-secondary">Learn More</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="updates" data-od-id="latest-updates">
+      <div class="section-header">
+        <h2>Latest Updates</h2>
+        <p>Recent arrivals and happy adoptions from our shelter</p>
+      </div>
+
+      <div class="updates-grid">
+        <div class="update-card">
+          <p class="update-date">Jan 28, 2026</p>
+          <h3>New Arrival: Meet Daisy</h3>
+          <p>A sweet 6-month-old puppy found abandoned near the park. She's healthy, vaccinated, and ready to find her forever home. Daisy is great with children and loves to play fetch.</p>
+        </div>
+
+        <div class="update-card">
+          <p class="update-date">Jan 25, 2026</p>
+          <h3>Adopted: Rocky Found His Family</h3>
+          <p>After 8 months at our shelter, Rocky the senior German Shepherd has finally found his forever home! We're so happy for him and his new family. Thank you for choosing adoption.</p>
+        </div>
+
+        <div class="update-card">
+          <p class="update-date">Jan 20, 2026</p>
+          <h3>New Arrival: Three Kittens</h3>
+          <p>Three adorable kittens rescued from a local farm arrived this week. They're being socialized and will be available for adoption in 3 weeks after their final health checks.</p>
+        </div>
+      </div>
+    </section>
+
+    <section data-od-id="longest-waiting">
+      <div class="longest-waiting">
+        <h2>Our Longest Waiting Residents</h2>
+        <p>These wonderful animals have been with us the longest and are still waiting for their forever homes. They have so much love to give.</p>
+        
+        <div class="featured-animals">
+          <div class="featured-card">
+            <img src="https://images.unsplash.com/photo-1558788353-f76d92427f16?w=240&h=240&fit=crop" alt="Duke the dog" class="featured-image">
+            <h3 class="animal-name">Duke</h3>
+            <p class="animal-breed">Pit Bull Mix • 7 years</p>
+            <span class="waiting-badge">14 months waiting</span>
+          </div>
+
+          <div class="featured-card">
+            <img src="https://images.unsplash.com/photo-1574158622682-e40e69881006?w=240&h=240&fit=crop" alt="Whiskers the cat" class="featured-image">
+            <h3 class="animal-name">Whiskers</h3>
+            <p class="animal-breed">Senior Cat • 12 years</p>
+            <span class="waiting-badge">11 months waiting</span>
+          </div>
+
+          <div class="featured-card">
+            <img src="https://images.unsplash.com/photo-1596854407944-bf87f6fdd49e?w=240&h=240&fit=crop" alt="Buddy the dog" class="featured-image">
+            <h3 class="animal-name">Buddy</h3>
+            <p class="animal-breed">Terrier Mix • 8 years</p>
+            <span class="waiting-badge">9 months waiting</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="location" data-od-id="location">
+      <div class="section-header">
+        <h2>Visit Us</h2>
+        <p>Come meet our animals in person during visiting hours</p>
+      </div>
+
+      <div class="location-content">
+        <div class="location-info">
+          <h3>Address</h3>
+          <p>1234 Compassion Street</p>
+          <p>Happytown, ST 12345</p>
+
+          <h3>Visiting Hours</h3>
+          <p>Monday – Friday: 10:00 AM – 6:00 PM</p>
+          <p>Saturday – Sunday: 9:00 AM – 5:00 PM</p>
+          <p>Closed on major holidays</p>
+
+          <h3>Contact</h3>
+          <p>Phone: (555) 123-4567</p>
+          <p>Email: adopt@pawsandhearts.org</p>
+
+          <h3>Follow Us</h3>
+          <div class="social-links">
+            <a href="#" class="social-link" aria-label="Facebook">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+              </svg>
+            </a>
+            <a href="#" class="social-link" aria-label="Instagram">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+              </svg>
+            </a>
+            <a href="#" class="social-link" aria-label="Twitter">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="map-placeholder">
+          Map placeholder — integrate with Google Maps or similar service
+        </div>
+      </div>
+    </section>
+
+    <section id="volunteer" data-od-id="volunteer">
+      <div class="section-header">
+        <h2>Support Our Mission</h2>
+        <p>Help us care for animals in need through volunteering or donations</p>
+      </div>
+
+      <div class="updates-grid">
+        <div class="update-card">
+          <h3>Volunteer</h3>
+          <p>Join our team of dedicated volunteers. Help with daily care, socialization, events, and more. No experience necessary — we provide training.</p>
+        </div>
+
+        <div class="update-card">
+          <h3>Donate</h3>
+          <p>Your donation helps us provide food, medical care, and shelter for animals in need. Every contribution makes a difference in an animal's life.</p>
+        </div>
+
+        <div class="update-card">
+          <h3>Foster</h3>
+          <p>Provide temporary care for animals who need extra attention or aren't ready for adoption yet. We supply everything you need.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer data-od-id="footer">
+    <div class="footer-content">
+      <p>&copy; 2026 Paws & Hearts Animal Shelter. A registered 501(c)(3) nonprofit organization.</p>
+      <ul class="footer-links">
+        <li><a href="#privacy">Privacy Policy</a></li>
+        <li><a href="#terms">Terms of Service</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script>
+    // Filter functionality
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const animalCards = document.querySelectorAll('.animal-card');
+
+    filterButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const filter = button.dataset.filter;
+        
+        // Update active state
+        filterButtons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        
+        // Filter cards
+        animalCards.forEach(card => {
+          if (filter === 'all' || card.dataset.type === filter) {
+            card.style.display = 'block';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+
+    // Smooth scroll for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
