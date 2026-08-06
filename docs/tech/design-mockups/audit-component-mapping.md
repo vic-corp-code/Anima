@@ -97,7 +97,8 @@ For `Dialog`, `DropdownMenu`, `Tabs`, `Popover`, `Command`, `Sheet`, `Sonner`: *
 |---|---|---|---|---|
 | Toast (`.toast`, `.toast-region`) | admin (real hand-rolled JS: timed show/dismiss, ARIA live region) | `Sonner` | — | Framing note applies — see nuance above. Use for copy/tone reference (e.g. "Max added", "Settings saved"), not for the interaction itself |
 | Drawer (`.drawer`, slide-in from right, backdrop, Escape-to-close, focus-on-open) | admin "Add/Edit animal" | `Sheet` | side="right" | Framing note applies — see nuance above. Use for header/body/footer layout and field order reference, not for the interaction itself |
-| Dialog / DropdownMenu / Tabs / Popover / Command | — | respective shadcn primitives | — | **Zero representation in either file.** Build from shadcn's own default structure/behavior per the framing note verbatim above |
+| Dialog / DropdownMenu / Popover / Command | — | respective shadcn primitives | — | **Zero representation in either file**, in markup or behavior. Build from shadcn's own default structure/behavior per the framing note verbatim above |
+| Tabs | — | `Tabs` | — | No real `Tabs` markup or behavior anywhere — but see the framing note above: the filter chips (`role="tablist"`) are the one tablist-flavored reference in either file, even though their actual interaction is `ToggleGroup`-shaped, not `Tabs`-shaped. Build `Tabs` from shadcn's own default structure/behavior; don't mistake the chips for a `Tabs` reference |
 
 ## Composed list/feed patterns (no new primitives — documented for reference)
 
