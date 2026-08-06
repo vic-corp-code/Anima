@@ -64,9 +64,9 @@ Field labels, table headers, KPI labels, sidebar nav labels, etc. are all built 
 
 The 8-step token scale itself is not touched or redeclared by `admin-dashboard.html`, but its own inline `<style>` block hardcodes several **new pixel sizes below `--text-xs` (12px) that aren't on the scale at all**, instead of reusing the smallest token:
 
-- `10px` — `.side-brand .brand-sub`, `.donut-hole .l`
-- `11px` — `.side-nav-label`, `.side-profile .who span`, `.topbar-crumb`, `.kpi-label`, `.feed-item .when`, `.field label`, `.field-hint`, table `th`
-- `12px` — `.kpi-delta`, `.bar-row .month`, `.attn-row .body span`, `table.data td.mono`, `.field-error`, `.content-card .meta`, `.stage-name`, `.toggle-row .tx span`, `.illus-note`
+- `10px` — `.side-brand .brand-sub`, `.side-group-label` (line 35), `.donut-hole .l`
+- `11px` — `.side-link .count` (line 58), `.side-profile .who span`, `.topbar-crumb`, `.kpi-label`, `.feed-item .when`, `.field label`, `.field-hint`, table `th`, `.demo-pill` (line 126), `.media-tile .meta .dim` (line 353), plus two inline `style="font-size:11px"` labels (lines 629, 857)
+- `12px` — `.kpi-delta`, `.bar-row .month`, `.attn-row .body span`, `table.data td.mono`, `.field-error`, `.content-card .meta`, `.stage-name`, `.toggle-row .tx span`, `.illus-note`, `.msg-row .when` (line 361)
 - `13px` — `.btn-sm`
 
 None of `10px`/`11px`/`13px` exist as a token; `12px` duplicates `--text-xs` by value but bypasses the variable. This is real scale fragmentation in the admin surface specifically (`ui-kit.html` doesn't do this — every size in it traces back to a `--text-*` var). Worth a decision before BO build: either fold these into `--text-xs` (nearest match, 12px) or add an explicit smaller token (e.g. `--text-2xs`, ~11px) if the admin density genuinely needs something under 12px. Recommend the latter only if legibility at 11–13px is validated; otherwise snap everything to `--text-xs`.
@@ -81,7 +81,7 @@ Yes for the shared tokens, with one semantic note: every in-page `<h1>` in `admi
 
 Grep across both files and `site.css` for `<link`, `@font-face`, icon-font class patterns (`fa-`, `material-icons`, etc.), and icon libraries turned up nothing beyond the one `<link rel="stylesheet" href="assets/site.css">` in each file's `<head>`. No Font Awesome, no Material Icons, no Lucide, no icon webfont.
 
-Both files embed the same mechanism: a single hidden `<svg width="0" height="0" style="position:absolute">` sprite sheet near the top of `<body>`, containing hand-authored `<symbol id="...">` definitions (24×24 viewBox for UI glyphs, 64×64 for the animal glyphs), each referenced elsewhere via `<svg><use href="#id"/></svg>`. All strokes use `stroke="currentColor"` so they inherit text color / accent color contextually.
+Both files embed the same mechanism: a single hidden `<svg width="0" height="0" style="position:absolute">` sprite sheet near the top of `<body>`, containing hand-authored `<symbol id="...">` definitions (24×24 viewBox for UI glyphs, two chevrons — `i-up`/`i-down`, admin-only — at 12×12; 64×64 for the three animal glyphs, `g-paw` is 24×24 fill not stroke), each referenced elsewhere via `<svg><use href="#id"/></svg>`. Most UI glyphs use `stroke="currentColor"` so they inherit text/accent color contextually; the fill-based ones (`g-paw`, `i-up`, `i-down`) use `fill="currentColor"` for the same effect.
 
 - `ui-kit.html` defines the base set (lines 320–338): `g-dog`, `g-cat`, `g-rabbit`, `g-paw` (animal/brand glyphs), `i-heart`, `i-arrow`, `i-check` (generic UI glyphs).
 - `admin-dashboard.html` defines a superset (lines 420–476), the same 4 animal/brand glyphs plus a fuller admin UI set: `i-heart`, `i-arrow`, `i-check`, `i-grid`, `i-search`, `i-plus`, `i-bell`, `i-gear`, `i-menu`, `i-close`, `i-edit`, `i-image`, `i-mail`, `i-doc`, `i-up`, `i-down`. This is not shared/deduplicated between the two files — each HTML file inlines its own copy of the sprite (with `admin-dashboard.html`'s being a superset, not a fork with diverging paths, from a visual check of the shared symbol IDs).
@@ -111,7 +111,7 @@ Confirmed by Victoria; documented here with exact values pulled from `assets/sit
 - `font-family: var(--font-body)` → `Inter, system-ui, sans-serif`
 - Base body: `font-size: 17px` (`--text-base`), `font-weight` unset (defaults to 400 via inherited normal weight), `line-height: 1.62` (`--leading-body`)
 - Weight 500–600 shows up pervasively for labels/nav/emphasis (e.g. `.eyebrow` 600, `.field-label` 600, `.side-link` 500) — all standard steps, no off-scale weights found in these two files (contrast with the older mockup set, where `design-system.md` flags a `font-weight: 510` one-off — not present in `ui-kit.html`/`admin-dashboard.html`).
-- Letter-spacing ranges from tight headline-adjacent contexts (`-0.015em` on `.type-sample`) to tracked uppercase micro-labels (`0.06em`–`0.12em`, e.g. `.eyebrow` at `0.09em`, `.side-nav-label` at `0.12em`).
+- Letter-spacing ranges from tight headline-adjacent contexts (`-0.015em` on `.type-sample`) to tracked uppercase micro-labels (`0.06em`–`0.12em`, e.g. `.eyebrow` at `0.09em`, `.side-group-label` at `0.12em`).
 
 No `@font-face` or Google Fonts `<link>` exists in either file — the mockup relies on Georgia/Inter being present as system/pre-installed fonts in the browser rendering it. That's fine for a static reference file but means BO-Shelter must load both explicitly via `next/font` (Google) rather than assume availability — Georgia is a system font on most platforms as a fallback but not guaranteed on all; Inter is not a system font anywhere and needs actual loading.
 
