@@ -351,6 +351,8 @@
     "signInToAccept": "Inicia sesión para aceptar"
   },
   "orgChat": {
+    "title": "Asistente",
+    "description": "Puedo gestionar animales, anuncios, recaudaciones y noticias.",
     "greeting": "¡Hola! ¿Cómo puedo ayudarte? Puedo gestionar animales, anuncios, recaudaciones y noticias.",
     "inputPlaceholder": "ej: crea un anuncio para Max...",
     "send": "Enviar",
@@ -360,6 +362,7 @@
     "loadingThread": "Iniciando la conversación…",
     "loadMore": "Cargar más",
     "proposal": {
+      "pending": "En espera de aprobación",
       "approve": "Aprobar",
       "deny": "Rechazar",
       "denyReasonPlaceholder": "Motivo del rechazo (opcional)…",

@@ -11,8 +11,15 @@ import type { ToolUIPart } from "ai";
 import { useLocale, useTranslations } from "next-intl";
 import { api } from "@anima/backend/convex/_generated/api";
 import { Id } from "@anima/backend/convex/_generated/dataModel";
-import { useRouter } from "@/i18n/navigation";
-import { Button, Card, Input } from "@anima/ui";
+import { Bot, Check, Clock3, Send, Sparkles, X } from "lucide-react";
+import {
+  Badge,
+  Button,
+  Input,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@anima/ui";
 
 interface OrgChatProps {
   organizationId: Id<"organizations">;
@@ -85,23 +92,36 @@ export function OrgChat({ organizationId }: OrgChatProps) {
     void createThread({ organizationId }).then(setThreadId);
   }, [isAuthenticated, createThread, organizationId]);
 
-  if (!threadId) {
-    return (
-      <div className="flex h-full items-center justify-center text-muted-foreground">
-        {t("loadingThread")}
-      </div>
-    );
-  }
+  return (
+    <div className="flex h-full flex-col">
+      <SheetHeader className="shrink-0 gap-0.5 border-b border-border-soft px-4 py-3 pr-12">
+        <div className="flex items-center gap-2.5">
+          <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-muted text-primary">
+            <Bot className="size-4" />
+          </span>
+          <SheetTitle className="text-sm font-semibold">{t("title")}</SheetTitle>
+        </div>
+        <SheetDescription className="text-xs">{t("description")}</SheetDescription>
+      </SheetHeader>
 
-  return <Chat threadId={threadId} organizationId={organizationId} />;
+      {threadId ? (
+        <Chat threadId={threadId} />
+      ) : (
+        <div className="flex flex-1 items-center justify-center text-sm text-muted-foreground">
+          <span className="flex items-center gap-2">
+            <Clock3 className="size-4 animate-pulse" />
+            {t("loadingThread")}
+          </span>
+        </div>
+      )}
+    </div>
+  );
 }
 
 function Chat({
   threadId,
-  organizationId,
 }: {
   threadId: string;
-  organizationId: Id<"organizations">;
 }) {
   const t = useTranslations("orgChat");
   const locale = useLocale() as "fr" | "es";
@@ -181,29 +201,26 @@ function Chat({
   }
 
   return (
-    <div className="flex h-full flex-col">
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+    <div className="flex min-h-0 flex-1 flex-col">
+      <div className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
         {messages.length === 0 ? (
-          <div className="flex h-full items-center justify-center text-center text-sm text-muted-foreground">
+          <div className="flex h-full items-center justify-center px-4 text-center text-sm text-muted-foreground">
             {t("greeting")}
           </div>
         ) : (
           <>
             {status === "CanLoadMore" && (
-              <button
-                className="mx-auto block text-sm text-muted-foreground hover:underline"
+              <Button
+                variant="link"
+                size="sm"
+                className="mx-auto block h-auto p-0 text-muted-foreground"
                 onClick={() => loadMore(10)}
               >
                 {t("loadMore")}
-              </button>
+              </Button>
             )}
             {messages.map((m) => (
-              <Message
-                key={m.key}
-                message={m}
-                organizationId={organizationId}
-                onApproval={handleApproval}
-              />
+              <Message key={m.key} message={m} onApproval={handleApproval} />
             ))}
           </>
         )}
@@ -211,14 +228,17 @@ function Chat({
       </div>
 
       {hasPendingApprovals && (
-        <p className="border-t px-4 py-2 text-sm text-muted-foreground">
+        <div className="flex shrink-0 items-center gap-2 border-t border-border-soft bg-warn/10 px-4 py-2 text-xs font-medium text-warn dark:bg-warn/20">
+          <Clock3 className="size-3.5 shrink-0" />
           {t("waitingForApproval")}
-        </p>
+        </div>
       )}
 
-      {sendError && <p className="px-4 text-sm text-red-600">{sendError}</p>}
+      {sendError && (
+        <p className="shrink-0 px-4 py-1.5 text-xs text-destructive">{sendError}</p>
+      )}
 
-      <div className="border-t p-4">
+      <div className="shrink-0 border-t border-border-soft p-3">
         <div className="flex gap-2">
           <Input
             value={prompt}
@@ -230,14 +250,23 @@ function Chat({
               }
             }}
             placeholder={t("inputPlaceholder")}
+            aria-label={t("inputPlaceholder")}
             disabled={isSending || hasPendingApprovals}
             className="flex-1"
           />
           <Button
             onClick={() => void onSendClicked()}
             disabled={isSending || hasPendingApprovals || !prompt.trim()}
+            className="shrink-0"
           >
-            {isSending ? t("sending") : t("send")}
+            {isSending ? (
+              t("sending")
+            ) : (
+              <>
+                <Send />
+                {t("send")}
+              </>
+            )}
           </Button>
         </div>
       </div>
@@ -247,11 +276,9 @@ function Chat({
 
 function Message({
   message,
-  organizationId,
   onApproval,
 }: {
   message: UIMessage;
-  organizationId: Id<"organizations">;
   onApproval: (args: { approvalId: string; approved: boolean; reason?: string }) => Promise<void>;
 }) {
   const isUser = message.role === "user";
@@ -259,37 +286,39 @@ function Message({
 
   return (
     <div className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
-      <Card
-        className={`max-w-[85%] p-3 ${
-          isUser ? "bg-primary text-primary-foreground" : "bg-muted"
+      <div
+        className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm shadow-xs ${
+          isUser
+            ? "rounded-br-md bg-primary text-primary-foreground"
+            : "rounded-bl-md border border-border-soft bg-muted text-foreground"
         }`}
       >
         {toolParts.map((tool) => (
           <ToolProposal
             key={tool.toolCallId}
             tool={tool}
-            organizationId={organizationId}
             onApproval={onApproval}
           />
         ))}
-        {message.text && <div className="whitespace-pre-wrap text-sm">{message.text}</div>}
-        {!message.text && toolParts.length === 0 && "…"}
-      </Card>
+        {message.text && (
+          <p className="whitespace-pre-wrap leading-relaxed">{message.text}</p>
+        )}
+        {!message.text && toolParts.length === 0 && (
+          <p className="text-muted-foreground">…</p>
+        )}
+      </div>
     </div>
   );
 }
 
 function ToolProposal({
   tool,
-  organizationId,
   onApproval,
 }: {
   tool: ToolUIPart;
-  organizationId: Id<"organizations">;
   onApproval: (args: { approvalId: string; approved: boolean; reason?: string }) => Promise<void>;
 }) {
   const t = useTranslations("orgChat");
-  const router = useRouter();
 
   const [denyReason, setDenyReason] = useState("");
   const [showDenyInput, setShowDenyInput] = useState(false);
@@ -330,78 +359,116 @@ function ToolProposal({
     }
   }
 
+  const statusBadge = getStatusBadge(tool, t);
+
   return (
-    <div className="mb-2 rounded border bg-background p-3 text-sm">
-      <p className="mb-2 font-medium">{displayName}</p>
-      {input && (
-        <div className="mb-2 grid grid-cols-2 gap-x-3 gap-y-1">
-          {Object.entries(input).map(([key, value]) => {
-            if (value === undefined || value === null || value === "") return null;
-            const label = labelMap[key] ?? key;
-            return (
-              <div key={key}>
-                <span className="text-xs text-muted-foreground">{label}: </span>
-                <span>{String(value)}</span>
-              </div>
-            );
-          })}
-        </div>
-      )}
+    <div className="mb-2 overflow-hidden rounded-xl border border-border-soft bg-card shadow-xs last:mb-0">
+      <div className="flex items-center justify-between gap-2 border-b border-border-soft bg-background/60 px-3 py-2">
+        <p className="flex min-w-0 items-center gap-1.5 text-[13px] font-medium">
+          <Sparkles className="size-3.5 shrink-0 text-primary" />
+          <span className="truncate">{displayName}</span>
+        </p>
+        {statusBadge}
+      </div>
 
-      {tool.state === "approval-requested" && approvalId && (
-        <div className="mt-2">
-          {showDenyInput ? (
-            <div className="flex items-center gap-2">
-              <Input
-                value={denyReason}
-                onChange={(e) => setDenyReason((e.target as HTMLInputElement).value)}
-                placeholder={t("proposal.denyReasonPlaceholder")}
-                className="flex-1"
-              />
-              <Button size="sm" variant="outline" onClick={handleDeny} disabled={isResponding}>
-                {t("proposal.deny")}
-              </Button>
-              <Button size="sm" variant="ghost" onClick={() => setShowDenyInput(false)}>
-                {t("proposal.cancelDeny")}
-              </Button>
-            </div>
-          ) : (
-            <div className="flex gap-2">
-              <Button size="sm" onClick={handleApprove} disabled={isResponding}>
-                {isResponding ? t("proposal.approving") : t("proposal.approve")}
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => setShowDenyInput(true)}
-                disabled={isResponding}
-              >
-                {t("proposal.deny")}
-              </Button>
-            </div>
-          )}
-          {respondError && <p className="mt-1 text-xs text-red-600">{respondError}</p>}
-        </div>
-      )}
-
-      {tool.state === "output-denied" && (
-        <p className="mt-1 text-xs text-red-600">{t("proposal.denied")}</p>
-      )}
-
-      {tool.state === "output-available" &&
-        (isToolOutputError(tool) ? (
-          <p className="mt-1 text-xs text-red-600">{t("error")}</p>
-        ) : (
-          <div className="mt-1 flex items-center gap-2 text-xs text-green-700">
-            <span>&#10003; {t("proposal.done")}</span>
+      <div className="p-3">
+        {input && (
+          <div className="mb-2 grid grid-cols-2 gap-x-3 gap-y-1.5">
+            {Object.entries(input).map(([key, value]) => {
+              if (value === undefined || value === null || value === "") return null;
+              const label = labelMap[key] ?? key;
+              return (
+                <div key={key} className="min-w-0">
+                  <span className="text-xs text-muted-foreground">{label}: </span>
+                  <span className="break-words font-medium">{String(value)}</span>
+                </div>
+              );
+            })}
           </div>
-        ))}
+        )}
 
-      {tool.state === "output-error" && (
-        <p className="mt-1 text-xs text-red-600">{t("error")}</p>
-      )}
+        {tool.state === "approval-requested" && approvalId && (
+          <div className="mt-2">
+            {showDenyInput ? (
+              <div className="flex items-center gap-2">
+                <Input
+                  value={denyReason}
+                  onChange={(e) => setDenyReason((e.target as HTMLInputElement).value)}
+                  placeholder={t("proposal.denyReasonPlaceholder")}
+                  className="flex-1"
+                />
+                <Button size="sm" variant="destructive" onClick={handleDeny} disabled={isResponding}>
+                  {t("proposal.deny")}
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => setShowDenyInput(false)}>
+                  {t("proposal.cancelDeny")}
+                </Button>
+              </div>
+            ) : (
+              <div className="flex gap-2">
+                <Button size="sm" onClick={handleApprove} disabled={isResponding}>
+                  <Check />
+                  {isResponding ? t("proposal.approving") : t("proposal.approve")}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setShowDenyInput(true)}
+                  disabled={isResponding}
+                >
+                  <X />
+                  {t("proposal.deny")}
+                </Button>
+              </div>
+            )}
+            {respondError && <p className="mt-1.5 text-xs text-destructive">{respondError}</p>}
+          </div>
+        )}
+      </div>
     </div>
   );
+}
+
+function getStatusBadge(
+  tool: ToolUIPart,
+  t: (key: string) => string,
+): React.ReactNode {
+  if (tool.state === "approval-requested") {
+    return (
+      <Badge variant="secondary" className="shrink-0 bg-warn/10 text-warn dark:bg-warn/20">
+        <Clock3 className="size-3" />
+        {t("proposal.pending")}
+      </Badge>
+    );
+  }
+  if (tool.state === "output-denied") {
+    return (
+      <Badge variant="secondary" className="shrink-0 bg-destructive/10 text-destructive dark:bg-destructive/20">
+        <X className="size-3" />
+        {t("proposal.denied")}
+      </Badge>
+    );
+  }
+  if (tool.state === "output-available") {
+    return isToolOutputError(tool) ? (
+      <Badge variant="secondary" className="shrink-0 bg-destructive/10 text-destructive dark:bg-destructive/20">
+        {t("error")}
+      </Badge>
+    ) : (
+      <Badge variant="secondary" className="shrink-0 bg-success/10 text-success dark:bg-success/20">
+        <Check className="size-3" />
+        {t("proposal.done")}
+      </Badge>
+    );
+  }
+  if (tool.state === "output-error") {
+    return (
+      <Badge variant="secondary" className="shrink-0 bg-destructive/10 text-destructive dark:bg-destructive/20">
+        {t("error")}
+      </Badge>
+    );
+  }
+  return null;
 }
 
 function getApprovalId(tool: ToolUIPart): string | undefined {
