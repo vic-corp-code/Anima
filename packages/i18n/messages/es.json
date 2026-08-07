@@ -172,7 +172,10 @@
       "backToList": "Volver a los anuncios",
       "noAnimals": "No hay animales registrados. Añade primero un animal.",
       "creating": "Creando…"
-    }
+    },
+    "rowActions": "Acciones del anuncio",
+    "edit": "Editar",
+    "archive": "Archivar"
   },
   "animals": {
     "loading": "Cargando…",

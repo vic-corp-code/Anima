@@ -172,7 +172,10 @@
       "backToList": "Retour aux annonces",
       "noAnimals": "Aucun animal enregistré. Ajoutez d'abord un animal.",
       "creating": "Création…"
-    }
+    },
+    "rowActions": "Actions de l'annonce",
+    "edit": "Modifier",
+    "archive": "Archiver"
   },
   "animals": {
     "loading": "Chargement…",
