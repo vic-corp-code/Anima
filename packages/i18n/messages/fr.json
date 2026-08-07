@@ -84,6 +84,10 @@
     "empty": "Aucune cagnotte pour le moment.",
     "create": "Créer une cagnotte",
     "creating": "Création en cours…",
+    "dialogTitle": "Nouvelle cagnotte",
+    "dialogDescription": "Le montant déjà collecté se met à jour depuis la fiche de la cagnotte.",
+    "cancel": "Annuler",
+    "progressOf": "sur",
     "statusFilterLabel": "Statut",
     "allStatuses": "Tous les statuts",
     "status": {

@@ -2,14 +2,16 @@ import { v } from "convex/values";
 import { internalMutation, internalQuery, mutation, query } from "./_generated/server";
 import { assertOrgAccess, assertAdminAccess } from "./access";
 
-// Create a cagnotte. Progress starts at 0 and is updated manually by the
-// org — Anima never touches money (ADR-005), this only links out.
+// Create a cagnotte. Progress starts at 0 (or the seeded currentAmount) and
+// is updated manually by the org — Anima never touches money (ADR-005),
+// this only links out.
 export const create = mutation({
   args: {
     organizationId: v.id("organizations"),
     title: v.string(),
     goalDescription: v.string(),
     targetAmount: v.optional(v.number()),
+    currentAmount: v.optional(v.number()),
     externalUrl: v.string(),
     photoUrl: v.optional(v.string()),
     deadline: v.optional(v.string()),
@@ -22,7 +24,7 @@ export const create = mutation({
       title: args.title,
       goalDescription: args.goalDescription,
       targetAmount: args.targetAmount,
-      currentAmount: 0,
+      currentAmount: args.currentAmount ?? 0,
       externalUrl: args.externalUrl,
       photoUrl: args.photoUrl,
       deadline: args.deadline,
@@ -189,6 +191,7 @@ export const createInternal = internalMutation({
     title: v.string(),
     goalDescription: v.string(),
     targetAmount: v.optional(v.number()),
+    currentAmount: v.optional(v.number()),
     externalUrl: v.string(),
     photoUrl: v.optional(v.string()),
     deadline: v.optional(v.string()),
@@ -199,7 +202,7 @@ export const createInternal = internalMutation({
       title: args.title,
       goalDescription: args.goalDescription,
       targetAmount: args.targetAmount,
-      currentAmount: 0,
+      currentAmount: args.currentAmount ?? 0,
       externalUrl: args.externalUrl,
       photoUrl: args.photoUrl,
       deadline: args.deadline,
