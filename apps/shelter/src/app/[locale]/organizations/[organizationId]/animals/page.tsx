@@ -8,12 +8,13 @@ import { useTranslations } from "next-intl";
 import { CircleX } from "lucide-react";
 import { api } from "@anima/backend/convex/_generated/api";
 import { Id } from "@anima/backend/convex/_generated/dataModel";
-import { useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import {
   Alert,
   AlertDescription,
   AlertTitle,
   Badge,
+  badgeVariants,
   Button,
   Card,
   CardContent,
@@ -31,17 +32,8 @@ import {
   TableHeader,
   TableRow,
 } from "@anima/ui";
+import type { VariantProps } from "class-variance-authority";
 import type { AnimalSpecies, AnimalStatus } from "@anima/domain";
-
-const STATUS_OPTIONS: AnimalStatus[] = [
-  "in_care",
-  "adoptable",
-  "adoption_pending",
-  "adopted",
-  "fostered",
-  "transferred",
-  "deceased",
-];
 
 const SPECIES_OPTIONS: AnimalSpecies[] = ["dog", "cat"];
 
@@ -54,7 +46,7 @@ const META_TINT =
 
 const STATUS_BADGE: Record<
   AnimalStatus,
-  { variant: "default" | "secondary" | "destructive" | "outline"; className?: string }
+  { variant: VariantProps<typeof badgeVariants>["variant"]; className?: string }
 > = {
   in_care: { variant: "secondary" },
   adoptable: { variant: "outline", className: SUCCESS_TINT },
@@ -64,6 +56,8 @@ const STATUS_BADGE: Record<
   transferred: { variant: "default" },
   deceased: { variant: "destructive" },
 };
+
+const STATUS_OPTIONS = Object.keys(STATUS_BADGE) as AnimalStatus[];
 
 const SKELETON_ROWS = Array.from({ length: 6 }, (_, index) => index);
 
@@ -274,7 +268,13 @@ export default function AnimalsListPage() {
                           )}
                         </TableCell>
                         <TableCell>
-                          <div className="font-medium">{animal.name}</div>
+                          <Link
+                            className="font-medium hover:underline"
+                            href={`/organizations/${organizationId}/animals/${animal._id}`}
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            {animal.name}
+                          </Link>
                           {animal.breed && (
                             <div className="text-xs text-muted-foreground">
                               {animal.breed}
