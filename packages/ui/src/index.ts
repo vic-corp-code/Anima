@@ -3,6 +3,11 @@
 
 export { cn } from "./lib/utils"
 
+// Form stack re-exports — apps build RHF forms without importing from the
+// resolver/zod packages directly (established pattern: VerificationCard).
+export { z } from "zod"
+export { zodResolver } from "@hookform/resolvers/zod"
+
 export {
   Alert,
   AlertTitle,
@@ -79,7 +84,7 @@ export {
   FormMessage,
   useForm,
   useFormField,
-  zodResolver,
+  useWatch,
 } from "./components/ui/form"
 export { Label } from "./components/ui/label"
 export {

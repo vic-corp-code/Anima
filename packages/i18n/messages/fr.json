@@ -191,14 +191,71 @@
     "notFound": "Annonce non trouvée",
     "new": {
       "title": "Nouvelle annonce",
-      "subtitle": "Choisissez un animal pour créer un brouillon d'annonce",
+      "subtitle": "Rédigez l'annonce : l'animal, son histoire, et l'aperçu des publications",
       "backToList": "Retour aux annonces",
       "noAnimals": "Aucun animal enregistré. Ajoutez d'abord un animal.",
-      "creating": "Création…"
+      "creating": "Création…",
+      "selectLabel": "Sélectionner un animal du registre",
+      "selectPlaceholder": "Choisir un animal…",
+      "titleLabel": "Titre de l'annonce",
+      "titleDraft": "{name} cherche une famille",
+      "storyLabel": "Racontez son histoire",
+      "storyHint": "Ce texte sera utilisé pour toutes les publications",
+      "storyPlaceholder": "D'où vient-il ? Que lui est-il arrivé ?",
+      "storyFallback": "{name}, {species}{breed}, recherche une famille aimante. Contactez-nous pour en savoir plus.",
+      "personalityLabel": "Personnalité et comportement",
+      "personalityPlaceholder": "Calme, sociable, joueuse…",
+      "idealHomeLabel": "Foyer idéal",
+      "idealHomePlaceholder": "Famille calme, sans jeunes enfants…",
+      "photosLabel": "Photos de l'animal",
+      "photosHint": "La première photo servira d'image principale",
+      "saveDraft": "Enregistrer le brouillon",
+      "saving": "Enregistrement…",
+      "titleRequired": "Le titre est requis",
+      "animalRequired": "Choisissez un animal du registre",
+      "sectionAnimal": "Animal",
+      "sectionStory": "Histoire",
+      "sectionPhotos": "Photos"
     },
     "rowActions": "Actions de l'annonce",
     "edit": "Modifier",
-    "archive": "Archiver"
+    "archive": "Archiver",
+    "editPage": {
+      "title": "Modifier l'annonce",
+      "subtitle": "Rédigez le contenu qui sera publié sur toutes les plateformes",
+      "backToList": "Retour à l'annonce",
+      "save": "Enregistrer les modifications",
+      "locked": "Cette annonce est fermée et ne peut plus être modifiée."
+    },
+    "preview": {
+      "title": "Aperçu des publications",
+      "subtitle": "Voici comment votre annonce apparaîtra sur chaque plateforme",
+      "empty": "Sélectionnez un animal pour voir l'aperçu",
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "site": "Site web du refuge",
+      "personality": "Personnalité",
+      "idealHome": "Foyer idéal",
+      "igCta": "Adoptez {name} !",
+      "igHashtags": "#adoption #chat #chien #adoptdontshop",
+      "noPhoto": "Aucune photo",
+      "ageUnknown": "Âge inconnu",
+      "ageYears": "{count, plural, one {# an} other {# ans}}",
+      "ageMonths": "{count, plural, one {# mois} other {# mois}}",
+      "sterilized": "stérilisé",
+      "chip": "pucé",
+      "sex": {
+        "male": "Mâle",
+        "female": "Femelle",
+        "unknown": "Sexe inconnu"
+      },
+      "compat": {
+        "kids": "Enfants",
+        "cats": "Chats",
+        "dogs": "Chiens"
+      },
+      "today": "Aujourd'hui"
+    }
   },
   "animals": {
     "loading": "Chargement…",

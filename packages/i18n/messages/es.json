@@ -191,14 +191,71 @@
     "notFound": "Anuncio no encontrado",
     "new": {
       "title": "Nuevo anuncio",
-      "subtitle": "Elige un animal para crear un borrador de anuncio",
+      "subtitle": "Redacta el anuncio: el animal, su historia y la vista previa de las publicaciones",
       "backToList": "Volver a los anuncios",
       "noAnimals": "No hay animales registrados. Añade primero un animal.",
-      "creating": "Creando…"
+      "creating": "Creando…",
+      "selectLabel": "Seleccionar un animal del registro",
+      "selectPlaceholder": "Elegir un animal…",
+      "titleLabel": "Título del anuncio",
+      "titleDraft": "{name} busca una familia",
+      "storyLabel": "Cuenta su historia",
+      "storyHint": "Este texto se usará en todas las publicaciones",
+      "storyPlaceholder": "¿De dónde viene? ¿Qué le ha pasado?",
+      "storyFallback": "{name}, {species}{breed}, busca una familia cariñosa. Contáctanos para saber más.",
+      "personalityLabel": "Personalidad y comportamiento",
+      "personalityPlaceholder": "Tranquilo, sociable, juguetón…",
+      "idealHomeLabel": "Hogar ideal",
+      "idealHomePlaceholder": "Familia tranquila, sin niños pequeños…",
+      "photosLabel": "Fotos del animal",
+      "photosHint": "La primera foto se usará como imagen principal",
+      "saveDraft": "Guardar borrador",
+      "saving": "Guardando…",
+      "titleRequired": "El título es requerido",
+      "animalRequired": "Elige un animal del registro",
+      "sectionAnimal": "Animal",
+      "sectionStory": "Historia",
+      "sectionPhotos": "Fotos"
     },
     "rowActions": "Acciones del anuncio",
     "edit": "Editar",
-    "archive": "Archivar"
+    "archive": "Archivar",
+    "editPage": {
+      "title": "Editar el anuncio",
+      "subtitle": "Redacta el contenido que se publicará en todas las plataformas",
+      "backToList": "Volver al anuncio",
+      "save": "Guardar cambios",
+      "locked": "Este anuncio está cerrado y ya no se puede modificar."
+    },
+    "preview": {
+      "title": "Vista previa de las publicaciones",
+      "subtitle": "Así se verá tu anuncio en cada plataforma",
+      "empty": "Selecciona un animal para ver la vista previa",
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "site": "Sitio web del refugio",
+      "personality": "Personalidad",
+      "idealHome": "Hogar ideal",
+      "igCta": "¡Adopta a {name}!",
+      "igHashtags": "#adopcion #gato #perro #adoptdontshop",
+      "noPhoto": "Sin foto",
+      "ageUnknown": "Edad desconocida",
+      "ageYears": "{count, plural, one {# año} other {# años}}",
+      "ageMonths": "{count, plural, one {# mes} other {# meses}}",
+      "sterilized": "esterilizado",
+      "chip": "con chip",
+      "sex": {
+        "male": "Macho",
+        "female": "Hembra",
+        "unknown": "Sexo desconocido"
+      },
+      "compat": {
+        "kids": "Niños",
+        "cats": "Gatos",
+        "dogs": "Perros"
+      },
+      "today": "Hoy"
+    }
   },
   "animals": {
     "loading": "Cargando…",
