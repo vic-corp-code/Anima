@@ -272,6 +272,59 @@
       "noEvents": "No hay eventos registrados",
       "identificationPendingNotice": "Este animal aún no tiene identificación (chip o tatuaje). Recuerda identificarlo lo antes posible."
     },
+    "show": {
+      "back": "Volver",
+      "notFound": "Animal no encontrado",
+      "tabs": {
+        "overview": "Resumen",
+        "history": "Historial"
+      },
+      "actions": {
+        "announcements": "Anuncios",
+        "edit": "Modificar",
+        "delete": "Eliminar",
+        "deleting": "Eliminando…",
+        "deleteConfirm": "¿Eliminar a {name}? Esta acción es irreversible."
+      },
+      "gallery": {
+        "title": "Fotos",
+        "empty": "Sin fotos",
+        "alt": "{name} - Foto {index}",
+        "previous": "Foto anterior",
+        "next": "Foto siguiente"
+      },
+      "facts": {
+        "title": "Identificación",
+        "species": "Especie",
+        "sex": "Sexo",
+        "sterilized": "Esterilizado",
+        "chipId": "N.º I-CAD",
+        "method": "Método",
+        "birthDate": "Fecha de nacimiento",
+        "estimatedAge": "Edad estimada",
+        "arrivalDate": "Fecha de llegada",
+        "identificationPending": "Este animal aún no tiene identificación (chip o tatuaje). Recuerda identificarlo lo antes posible."
+      },
+      "status": {
+        "title": "Estado actual",
+        "change": "Cambiar el estado"
+      },
+      "health": {
+        "title": "Salud y carácter",
+        "healthNotes": "Notas de salud",
+        "character": "Carácter",
+        "compatibility": "Compatibilidad",
+        "kids": "Niños",
+        "cats": "Gatos",
+        "dogs": "Perros",
+        "story": "Historia",
+        "none": "Sin notas"
+      },
+      "timeline": {
+        "title": "Historial",
+        "empty": "No hay eventos registrados"
+      }
+    },
     "new": {
       "title": "Añadir un animal",
       "subtitle": "Completa la información del animal, o usa el asistente de IA (abajo a la derecha) para una entrada rápida.",
