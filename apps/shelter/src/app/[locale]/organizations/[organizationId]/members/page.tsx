@@ -77,25 +77,29 @@ export default function MembersPage() {
   const [generating, setGenerating] = useState(false);
   const [roleError, setRoleError] = useState<string | null>(null);
   const [removeError, setRemoveError] = useState<string | null>(null);
+  const [revokeError, setRevokeError] = useState<string | null>(null);
   const [inviteError, setInviteError] = useState<string | null>(null);
 
   const membersQuery = useQuery({
     query: api.memberships.listForOrg,
     args: !isAuthenticated ? "skip" : { organizationId },
   });
+
+  const data = membersQuery.status === "success" ? membersQuery.data : undefined;
+  const isAdmin = data?.callerRole === "admin";
+
   const invitesQuery = useQuery({
     query: api.invites.listForOrg,
-    args: !isAuthenticated ? "skip" : { organizationId },
+    args: !isAuthenticated || !isAdmin ? "skip" : { organizationId },
   });
 
   const updateRole = useMutation(api.memberships.updateRole);
   const removeMember = useMutation(api.memberships.remove);
   const createInvite = useMutation(api.invites.create);
+  const revokeInvite = useMutation(api.invites.revoke);
 
-  const data = membersQuery.status === "success" ? membersQuery.data : undefined;
   const pendingInvites =
     invitesQuery.status === "success" ? invitesQuery.data : undefined;
-  const isAdmin = data?.callerRole === "admin";
 
   const filteredMembers = useMemo(() => {
     if (!data) return [];
@@ -114,10 +118,9 @@ export default function MembersPage() {
 
   const filteredInvites = useMemo(() => {
     if (!pendingInvites) return [];
-    const query = searchQuery.trim().toLowerCase();
     return pendingInvites.filter((invite) => {
       if (roleFilter && invite.role !== roleFilter) return false;
-      if (query) return false;
+      if (searchQuery.trim()) return false;
       return true;
     });
   }, [pendingInvites, roleFilter, searchQuery]);
@@ -141,6 +144,15 @@ export default function MembersPage() {
       await removeMember({ membershipId });
     } catch {
       setRemoveError(t("error"));
+    }
+  };
+
+  const handleRevokeInvite = async (inviteId: Id<"invites">) => {
+    setRevokeError(null);
+    try {
+      await revokeInvite({ inviteId });
+    } catch {
+      setRevokeError(t("error"));
     }
   };
 
@@ -352,7 +364,15 @@ export default function MembersPage() {
                               {t(`role.${invite.role}`)}
                             </Badge>
                           </TableCell>
-                          <TableCell />
+                          <TableCell className="text-right">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleRevokeInvite(invite.inviteId)}
+                            >
+                              {t("revoke")}
+                            </Button>
+                          </TableCell>
                         </TableRow>
                       ))}
                   </>
@@ -363,10 +383,12 @@ export default function MembersPage() {
         </Card>
       )}
 
-      {(roleError || removeError) && (
+      {(roleError || removeError || revokeError) && (
         <Alert variant="destructive" className="mt-4">
           <CircleX className="size-4" aria-hidden="true" />
-          <AlertDescription>{roleError ?? removeError}</AlertDescription>
+          <AlertDescription>
+            {roleError ?? removeError ?? revokeError}
+          </AlertDescription>
         </Alert>
       )}
 

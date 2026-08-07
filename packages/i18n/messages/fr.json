@@ -342,6 +342,7 @@
     },
     "remove": "Retirer",
     "removeConfirm": "Retirer ce membre ?",
+    "revoke": "Révoquer",
     "invitePending": "Invitation en attente",
     "invite": {
       "title": "Inviter un membre",

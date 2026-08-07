@@ -44,6 +44,19 @@ export const listForOrg = query({
   },
 });
 
+// Revoke a pending invite (admin-only). The link immediately stops working.
+export const revoke = mutation({
+  args: { inviteId: v.id("invites") },
+  handler: async (ctx, { inviteId }) => {
+    const invite = await ctx.db.get(inviteId);
+    if (!invite) throw new Error("Invite not found");
+
+    await assertAdminAccess(ctx, invite.organizationId);
+
+    await ctx.db.delete(inviteId);
+  },
+});
+
 // Public: look up an invite by token to show "you've been invited to X"
 // before the visitor is necessarily signed in.
 export const getByToken = query({
