@@ -42,7 +42,6 @@
       "error": "Une erreur est survenue. Réessayez."
     },
     "show": {
-      "createdTitle": "Organisation créée",
       "subtitle": "Vue d'ensemble de l'organisation",
       "orgInfoTitle": "Informations",
       "statsTitle": "Statistiques",

@@ -26,8 +26,20 @@ export default async function OrganizationPage({
   // new queries, no new tables. Urgent needs are derived client-side of the
   // backend (see below): active cagnottes still under their goal + animals
   // with health notes.
-  const [organization, animals, announcements, cagnottes] = await Promise.all([
-    fetchQuery(api.organizations.get, { organizationId: orgId }, { token }),
+  //
+  // Org first, then the lists: organizations.get returns null (not a throw)
+  // for a nonexistent org, so notFound() below restores the 404 contract. The
+  // list queries call assertOrgAccess and would throw on a bad id — they must
+  // not run until the org is known to exist.
+  const organization = await fetchQuery(
+    api.organizations.get,
+    { organizationId: orgId },
+    { token },
+  );
+
+  if (!organization) notFound();
+
+  const [animals, announcements, cagnottes] = await Promise.all([
     fetchQuery(api.animals.list, { organizationId: orgId }, { token }),
     fetchQuery(
       api.announcements.list,
@@ -36,8 +48,6 @@ export default async function OrganizationPage({
     ),
     fetchQuery(api.cagnottes.list, { organizationId: orgId, status: "active" }, { token }),
   ]);
-
-  if (!organization) notFound();
 
   const urgentNeeds: UrgentNeedItem[] = [
     // Cagnottes still under their goal — "urgent" (funding need).
