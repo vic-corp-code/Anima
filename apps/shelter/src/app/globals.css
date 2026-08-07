@@ -66,15 +66,22 @@
   --input: #fffdf8; /* kit --surface, per decision 6 */
   --ring: #9b5b32; /* kit --accent, plain-color fallback (decision 3) */
 
-  /* ---- chart placeholder ----
-     No kit source at all. Mechanical fallback per decision 7 — nothing
-     consumes these yet (charts explicitly deferred); real palette pass
-     tracked as a follow-up issue, see PR body. */
-  --chart-1: #9b5b32; /* == --primary/--accent */
-  --chart-2: #4f8a4f; /* == --success */
-  --chart-3: #c9822f; /* == --warn */
-  --chart-4: #9b5b32; /* == --meta (same hex as --accent in the kit) */
-  --chart-5: #b33a3a; /* == --danger */
+  /* ---- chart palette (#169) ----
+     Real design pass replacing the #155 mechanical fill-in (duplicate
+     --chart-1/--chart-4; warn/danger warm adjacency). One warm hue only
+     (chart-1); the other four are cool and spread across lightness + blue
+     content, so no pair relies on the red-green axis that deuteranopia and
+     protanopia collapse. Verified pairwise with CIEDE2000 (Sharma 2005) in
+     Machado et al. 2009 dichromacy-simulated space (the algorithm behind
+     color-blindness.com's Coblis): every pair ≥ 21 ΔE under BOTH axes, in
+     both modes. Blue/yellow anchor pair: chart-1 ↔ chart-2/3. The two
+     blues (2/3) separate by lightness, Okabe-Ito style. Full pair table
+     and the Viénot cross-check caveat in the PR body. */
+  --chart-1: #c1842b; /* amber gold — the set's single warm hue; brand-warm, --primary family */
+  --chart-2: #a8d4f0; /* pale ice blue — light end of the lightness-separated blue pair */
+  --chart-3: #0d3b66; /* deep navy — dark end of the blue pair; the only fill taking white text at AA */
+  --chart-4: #8f6bb4; /* muted violet — blue content + lightness clear it of navy in CVD space */
+  --chart-5: #28705f; /* deep teal — green that reads yellow-side in CVD space, away from all blues */
 
   /* ---- sidebar ----
      4.1 rows grounded in admin-dashboard.html's real sidebar markup; 4.2 rows
@@ -200,11 +207,18 @@
   --input: #1f1913; /* kit --surface, per decision 6 */
   --ring: #d9925c;
 
-  --chart-1: #d9925c;
-  --chart-2: #7cbb7c;
-  --chart-3: #e0a24f;
-  --chart-4: #dda06d;
-  --chart-5: #e58079;
+  /* Chart palette dark values: same five hue families, lightened with the
+     within-set lightness order preserved and chroma eased where the CVD
+     gap allows — the same treatment the kit applies to its semantic tokens
+     under dark mode. Exact lifts are tuned per hue because the CVD
+     separation is binding: sky sits at the L* ceiling, violet can't rise
+     as far or it closes on sky, navy needs +12 to clear the background.
+     All ten simulated pairs stay ≥ 21 ΔE here too. */
+  --chart-1: #e1a556;
+  --chart-2: #b9e2fd;
+  --chart-3: #395680;
+  --chart-4: #a57fca;
+  --chart-5: #478978;
 
   --sidebar: #1f1913;
   --sidebar-foreground: #d3c6b6;
