@@ -385,6 +385,7 @@
     },
     "accept": "Accepter l'invitation",
     "accepting": "Acceptation en cours…",
+    "acceptError": "Impossible d'accepter l'invitation. Elle est peut-être expirée ou déjà utilisée.",
     "signInToAccept": "Se connecter pour accepter"
   },
   "orgChat": {

@@ -385,6 +385,7 @@
     },
     "accept": "Aceptar la invitación",
     "accepting": "Aceptando…",
+    "acceptError": "No se pudo aceptar la invitación. Puede que haya caducado o ya se haya utilizado.",
     "signInToAccept": "Inicia sesión para aceptar"
   },
   "orgChat": {
