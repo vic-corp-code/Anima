@@ -433,6 +433,10 @@ function getStatusBadge(
   tool: ToolUIPart,
   t: (key: string) => string,
 ): React.ReactNode {
+  const isError =
+    tool.state === "output-error" ||
+    (tool.state === "output-available" && isToolOutputError(tool));
+
   if (tool.state === "approval-requested") {
     return (
       <Badge variant="secondary" className="shrink-0 bg-warn/10 text-warn dark:bg-warn/20">
@@ -449,22 +453,18 @@ function getStatusBadge(
       </Badge>
     );
   }
-  if (tool.state === "output-available") {
-    return isToolOutputError(tool) ? (
-      <Badge variant="secondary" className="shrink-0 bg-destructive/10 text-destructive dark:bg-destructive/20">
-        {t("error")}
-      </Badge>
-    ) : (
-      <Badge variant="secondary" className="shrink-0 bg-success/10 text-success dark:bg-success/20">
-        <Check className="size-3" />
-        {t("proposal.done")}
-      </Badge>
-    );
-  }
-  if (tool.state === "output-error") {
+  if (isError) {
     return (
       <Badge variant="secondary" className="shrink-0 bg-destructive/10 text-destructive dark:bg-destructive/20">
         {t("error")}
+      </Badge>
+    );
+  }
+  if (tool.state === "output-available") {
+    return (
+      <Badge variant="secondary" className="shrink-0 bg-success/10 text-success dark:bg-success/20">
+        <Check className="size-3" />
+        {t("proposal.done")}
       </Badge>
     );
   }

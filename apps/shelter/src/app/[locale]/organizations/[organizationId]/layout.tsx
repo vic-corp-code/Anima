@@ -96,19 +96,21 @@ export default function OrganizationLayout({
         {children}
       </SidebarInset>
 
-      {/* Floating chat button */}
+      {/* Floating chat button — opens the drawer; the Sheet owns its close */}
       <Button
         className="fixed bottom-20 right-4 md:bottom-6 md:right-6 z-50 h-14 w-14 rounded-full shadow-lg"
         size="icon"
-        onClick={() => setChatOpen(!chatOpen)}
+        onClick={() => setChatOpen(true)}
       >
-        {chatOpen ? "✕" : "💬"}
+        💬
       </Button>
 
-      {/* Chat panel — right-hand drawer; the toggle button above stays the
-          single source of truth for open state */}
+      {/* Chat panel — right-hand drawer */}
       <Sheet open={chatOpen} onOpenChange={setChatOpen}>
-        <SheetContent side="right" className="w-full gap-0 p-0 sm:max-w-sm">
+        <SheetContent
+          side="right"
+          className="data-[side=right]:w-full gap-0 p-0"
+        >
           <OrgChat organizationId={organizationId} />
         </SheetContent>
       </Sheet>
