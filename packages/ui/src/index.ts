@@ -77,6 +77,7 @@ export {
   FormItem,
   FormLabel,
   FormMessage,
+  useForm,
   useFormField,
 } from "./components/ui/form"
 export { Label } from "./components/ui/label"

@@ -62,7 +62,10 @@
       "registryNumberSaving": "Enregistrement…",
       "markVerified": "Marquer comme vérifiée",
       "unmarkVerified": "Annuler la vérification",
-      "markVerifiedRequiresNumber": "Renseignez un numéro de registre avant de marquer l'organisation comme vérifiée."
+      "markVerifiedRequiresNumber": "Renseignez un numéro de registre avant de marquer l'organisation comme vérifiée.",
+      "registryNumberEdit": "Modifier",
+      "registryNumberCancel": "Annuler",
+      "registryNumberEmpty": "Non renseigné"
     },
     "nav": {
       "overview": "Vue d'ensemble",
