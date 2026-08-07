@@ -43,6 +43,22 @@
     },
     "show": {
       "createdTitle": "Organisation créée",
+      "subtitle": "Vue d'ensemble de l'organisation",
+      "orgInfoTitle": "Informations",
+      "statsTitle": "Statistiques",
+      "statAnimalsTitle": "Animaux accueillis",
+      "statAnimalsDescription": "Animaux enregistrés",
+      "statAnnouncementsTitle": "Annonces actives",
+      "statAnnouncementsDescription": "Annonces publiées en cours",
+      "urgentNeedsTitle": "Besoins urgents",
+      "urgentNeedsEmpty": "Aucun besoin urgent pour le moment.",
+      "urgentNeedsCreateCagnotte": "Créer une cagnotte",
+      "urgentNeedsCagnotteProgress": "{progress} % de l'objectif",
+      "urgentNeedsAnimalMeta": "Suivi médical",
+      "urgentNeedsPriority": {
+        "urgent": "Urgent",
+        "high": "Prioritaire"
+      },
       "typeLabel": "Type",
       "countryLabel": "Pays",
       "addressLabel": "Adresse",
