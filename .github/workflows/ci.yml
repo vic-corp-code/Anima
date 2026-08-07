@@ -19,7 +19,7 @@ jobs:
 
       - name: Get Bun cache hash
         id: bun-cache-hash
-        run: echo "hash=$(hashFiles('bun.lockb'))" >> $GITHUB_OUTPUT
+        run: echo "hash=${{ hashFiles('bun.lock') }}" >> $GITHUB_OUTPUT
 
       - name: Cache Turbo
         uses: actions/cache@v4
