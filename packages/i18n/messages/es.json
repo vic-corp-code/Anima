@@ -37,6 +37,9 @@
         "ES": "España (próximamente)"
       },
       "addressLabel": "Dirección",
+      "nameRequired": "El nombre de la organización es requerido.",
+      "addressRequired": "La dirección es requerida.",
+      "countryHint": "Solo Francia está disponible en el lanzamiento; España llegará pronto.",
       "submit": "Crear",
       "submitting": "Creando…",
       "error": "Ha ocurrido un error. Inténtalo de nuevo."

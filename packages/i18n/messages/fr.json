@@ -37,6 +37,9 @@
         "ES": "Espagne (bientôt disponible)"
       },
       "addressLabel": "Adresse",
+      "nameRequired": "Le nom de l'organisation est requis.",
+      "addressRequired": "L'adresse est requise.",
+      "countryHint": "Seule la France est disponible au lancement ; l'Espagne arrive bientôt.",
       "submit": "Créer",
       "submitting": "Création en cours…",
       "error": "Une erreur est survenue. Réessayez."
