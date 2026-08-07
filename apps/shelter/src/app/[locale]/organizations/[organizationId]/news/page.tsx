@@ -2,12 +2,31 @@
 
 import { useState } from "react";
 import { useParams } from "next/navigation";
-import { useConvexAuth, useMutation, useQuery } from "convex/react";
+import {
+  useConvexAuth,
+  useMutation,
+  useQuery,
+  useQuery_experimental,
+} from "convex/react";
 import { useTranslations } from "next-intl";
+import { CircleX } from "lucide-react";
 import { api } from "@anima/backend/convex/_generated/api";
 import { Id } from "@anima/backend/convex/_generated/dataModel";
 import { useRouter } from "@/i18n/navigation";
-import { Button, Card, CardContent, Input, NewsPostCard } from "@anima/ui";
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  Button,
+  Card,
+  CardContent,
+  Input,
+  NewsPostCard,
+  Skeleton,
+  Textarea,
+} from "@anima/ui";
+
+const SKELETON_COUNT = 6;
 
 export default function NewsListPage() {
   const t = useTranslations("news");
@@ -17,10 +36,12 @@ export default function NewsListPage() {
   const { isAuthenticated } = useConvexAuth();
   const [showForm, setShowForm] = useState(false);
 
-  const newsPosts = useQuery(
-    api.newsPosts.list,
-    isAuthenticated ? { organizationId } : "skip"
-  );
+  const newsPostsQuery = useQuery_experimental({
+    query: api.newsPosts.list,
+    args: isAuthenticated ? { organizationId } : "skip",
+  });
+  const newsPosts =
+    newsPostsQuery.status === "success" ? newsPostsQuery.data : undefined;
   const animals = useQuery(
     api.animals.list,
     isAuthenticated ? { organizationId } : "skip"
@@ -82,7 +103,7 @@ export default function NewsListPage() {
 
   return (
     <div className="container mx-auto p-4">
-      <div className="mb-6 flex items-start justify-between">
+      <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold">{t("title")}</h1>
           <p className="text-muted-foreground">{t("subtitle")}</p>
@@ -95,31 +116,29 @@ export default function NewsListPage() {
           <CardContent className="pt-6">
             <form onSubmit={handleCreate} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-1">{t("titleLabel")}</label>
+                <label className="mb-1 block text-sm font-medium">{t("titleLabel")}</label>
                 <Input value={title} onChange={(e) => setTitle((e.target as HTMLInputElement).value)} required />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">{t("textLabel")}</label>
-                <textarea
+                <label className="mb-1 block text-sm font-medium">{t("textLabel")}</label>
+                <Textarea
                   value={text}
                   onChange={(e) => setText(e.target.value)}
                   rows={4}
                   required
-                  className="w-full rounded border px-3 py-2"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">{t("photoUrlsLabel")}</label>
-                <textarea
+                <label className="mb-1 block text-sm font-medium">{t("photoUrlsLabel")}</label>
+                <Textarea
                   value={photoUrlsText}
                   onChange={(e) => setPhotoUrlsText(e.target.value)}
                   rows={2}
-                  className="w-full rounded border px-3 py-2"
                 />
               </div>
               {animals && animals.length > 0 && (
                 <div>
-                  <label className="block text-sm font-medium mb-1">{t("linkedAnimalsLabel")}</label>
+                  <label className="mb-1 block text-sm font-medium">{t("linkedAnimalsLabel")}</label>
                   <div className="flex flex-wrap gap-3">
                     {animals.map((animal) => (
                       <label key={animal._id} className="flex items-center gap-1 text-sm">
@@ -137,7 +156,7 @@ export default function NewsListPage() {
               )}
               {cagnottes && cagnottes.length > 0 && (
                 <div>
-                  <label className="block text-sm font-medium mb-1">{t("linkedCagnotteLabel")}</label>
+                  <label className="mb-1 block text-sm font-medium">{t("linkedCagnotteLabel")}</label>
                   <select
                     value={linkedCagnotteId}
                     onChange={(e) => setLinkedCagnotteId(e.target.value as Id<"cagnottes"> | "")}
@@ -152,7 +171,7 @@ export default function NewsListPage() {
                   </select>
                 </div>
               )}
-              {createError && <p className="text-sm text-red-600">{createError}</p>}
+              {createError && <p className="text-sm text-destructive">{createError}</p>}
               <Button type="submit" disabled={isCreating}>
                 {isCreating ? t("creating") : t("create")}
               </Button>
@@ -161,14 +180,31 @@ export default function NewsListPage() {
         </Card>
       )}
 
-      {newsPosts === undefined ? (
-        <p className="text-muted-foreground">{t("loading")}</p>
+      {newsPostsQuery.status === "error" ? (
+        <Alert variant="destructive">
+          <CircleX className="size-4" aria-hidden="true" />
+          <AlertTitle>{t("errorTitle")}</AlertTitle>
+          <AlertDescription>{t("errorDescription")}</AlertDescription>
+        </Alert>
+      ) : newsPosts === undefined ? (
+        <div className="grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(260px,1fr))]">
+          {Array.from({ length: SKELETON_COUNT }, (_, index) => (
+            <Card key={index}>
+              <CardContent className="space-y-3 pt-6">
+                <Skeleton className="h-4 w-2/3" />
+                <Skeleton className="h-3 w-full" />
+                <Skeleton className="h-3 w-4/5" />
+                <Skeleton className="h-2 w-full" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       ) : newsPosts.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center text-muted-foreground">{t("empty")}</CardContent>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(260px,1fr))]">
           {newsPosts.map((post) => (
             <NewsPostCard
               key={post._id}
