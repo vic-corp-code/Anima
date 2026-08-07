@@ -99,6 +99,9 @@
     "empty": "Todavía no hay recaudaciones.",
     "create": "Crear una recaudación",
     "creating": "Creando…",
+    "dialogTitle": "Nueva recaudación",
+    "cancel": "Cancelar",
+    "progressOf": "de",
     "statusFilterLabel": "Estado",
     "allStatuses": "Todos los estados",
     "status": {
