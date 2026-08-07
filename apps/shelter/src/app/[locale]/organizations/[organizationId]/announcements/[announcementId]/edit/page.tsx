@@ -75,7 +75,6 @@ export default function EditAnnouncementPage() {
       <AnnouncementForm
         mode="edit"
         organizationId={organizationId}
-        animals={[announcement.animal]}
         announcement={announcement}
         orgName={organization?.name}
         uploadFile={uploadFile}

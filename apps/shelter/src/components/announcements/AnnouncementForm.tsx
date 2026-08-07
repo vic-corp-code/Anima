@@ -155,7 +155,6 @@ export function AnnouncementForm({
 
   const handleAnimalChange = (animalId: string) => {
     form.setValue("animalId", animalId, { shouldValidate: true });
-    if (mode !== "create") return;
     const animal = animals?.find((a) => a._id === animalId);
     if (!animal) return;
     const breed = animal.breed ? ` (${animal.breed})` : "";
@@ -175,6 +174,10 @@ export function AnnouncementForm({
   };
 
   const handleSubmit = async (values: FormValues) => {
+    // Re-entry guard: the submit button's `disabled` doesn't stop
+    // Enter-key submission, and createAnnouncement is not idempotent —
+    // a second call while the first is in flight would duplicate the draft.
+    if (isSubmitting) return;
     setSubmitError(null);
     setIsSubmitting(true);
     try {
@@ -185,13 +188,19 @@ export function AnnouncementForm({
       const animalId = values.animalId as Id<"animals">;
       // The announcements table has no media field of its own, so the
       // form's photos persist to the registry record (animals.update).
-      // Story/personality/ideal-home live in the announcement's composed
-      // description — the registry's own story fields stay untouched.
-      // Photos are written first so a failure can't leave a half-created
-      // announcement (the create mutation makes a draft immediately).
-      await updateAnimal({ animalId, photoUrls: values.photoUrls });
-
+      // An empty array is never written — clearing the photos in the
+      // composer must not wipe the photos shown on the animal's profile.
+      // Ordering differs by mode so a failure never leaves a half-applied
+      // change:
+      // - create: photos first — if the photo write fails nothing was
+      //   created, a clean abort that leaves no draft behind.
+      // - edit: announcement first — the announcement write can throw
+      //   (closed/archived between render and submit), so no animal photo
+      //   change is left behind if it does.
       if (mode === "create") {
+        if (values.photoUrls.length > 0) {
+          await updateAnimal({ animalId, photoUrls: values.photoUrls });
+        }
         const announcementId = await createAnnouncement({ animalId });
         await updateAnnouncement({
           announcementId,
@@ -207,6 +216,9 @@ export function AnnouncementForm({
           title: values.title.trim(),
           description,
         });
+        if (values.photoUrls.length > 0) {
+          await updateAnimal({ animalId, photoUrls: values.photoUrls });
+        }
         router.push(
           `/organizations/${organizationId}/announcements/${announcement._id}`
         );
@@ -245,23 +257,49 @@ export function AnnouncementForm({
                   <FormItem>
                     <FormLabel>{t("new.selectLabel")}</FormLabel>
                     <FormControl>
-                      <Select
-                        value={field.value || undefined}
-                        onValueChange={handleAnimalChange}
-                        disabled={isLocked}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder={t("new.selectPlaceholder")} />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {(animals ?? []).map((animal) => (
-                            <SelectItem key={animal._id} value={animal._id}>
-                              {animal.species === "dog" ? "🐶" : "🐱"} {animal.name}
-                              {animal.breed ? ` — ${animal.breed}` : ""}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      {mode === "create" ? (
+                        <Select
+                          value={field.value || undefined}
+                          onValueChange={handleAnimalChange}
+                          disabled={isLocked}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue
+                              placeholder={t("new.selectPlaceholder")}
+                            />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {(animals ?? []).map((animal) => (
+                              <SelectItem key={animal._id} value={animal._id}>
+                                {animal.species === "dog" ? "🐶" : "🐱"}{" "}
+                                {animal.name}
+                                {animal.breed ? ` — ${animal.breed}` : ""}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      ) : (
+                        // The announcement's animal is fixed when editing —
+                        // updateAnnouncement takes no animalId, so an
+                        // enabled-looking Select would do nothing.
+                        <div className="flex items-center gap-3 rounded-lg border border-border bg-muted/50 px-3 py-2">
+                          <span className="text-lg leading-none">
+                            {announcement?.animal?.species === "dog"
+                              ? "🐶"
+                              : "🐱"}
+                          </span>
+                          <div className="min-w-0">
+                            <p className="truncate text-sm font-medium">
+                              {announcement?.animal?.name}
+                            </p>
+                            {announcement?.animal?.breed && (
+                              <p className="truncate text-xs text-muted-foreground">
+                                {announcement.animal.breed}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      )}
                     </FormControl>
                     <FormMessage />
                   </FormItem>

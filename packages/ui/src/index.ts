@@ -85,7 +85,6 @@ export {
   useForm,
   useFormField,
   useWatch,
-  zodResolver,
 } from "./components/ui/form"
 export { Label } from "./components/ui/label"
 export {

@@ -82,54 +82,44 @@ export function composeDescription(
   return parts.join("\n\n");
 }
 
+const MARKER = /^([✨🏡])\s*[^:]*:\s*(.*)$/u;
+
 export function splitDescription(description: string): {
   story: string;
   personality: string;
   idealHome: string;
 } {
-  const lines = description.split("\n");
-  const personalityMark = /^✨\s*[^:]*:/;
-  const idealHomeMark = /^🏡\s*[^:]*:/;
-  const firstMark = lines.findIndex((line) => {
-    const trimmed = line.trim();
-    return personalityMark.test(trimmed) || idealHomeMark.test(trimmed);
-  });
-  if (firstMark === -1) {
-    return { story: description.trim(), personality: "", idealHome: "" };
-  }
+  // The composer appends at most one 🏡 block, then at most one ✨ block,
+  // at the very end of the description — so the parser accepts exactly
+  // that shape from the trailing region and treats everything before it
+  // as story. Marker-looking lines anywhere inside the story (pet stories
+  // use emoji bullets all the time, AI drafts too) are never touched,
+  // keeping the round trip lossless. Only ambiguity left: a story whose
+  // own last line matches the marker format with no real block behind it
+  // is re-emitted as a block on the next save (text preserved, boundary
+  // shifted).
+  const lines = description.trimEnd().split("\n");
   let personality = "";
   let idealHome = "";
-  // Blocks are separated by blank lines (composeDescription joins with
-  // "\n\n"), so the marker phases skip blanks while collecting values.
-  let i = firstMark;
-  while (i < lines.length) {
-    const trimmed = lines[i].trim();
-    if (!trimmed) {
-      i++;
-      continue;
+  let i = lines.length - 1;
+  while (i >= 0 && !lines[i].trim()) i--;
+  if (i >= 0) {
+    const match = MARKER.exec(lines[i].trim());
+    if (match && match[1] === "🏡") {
+      idealHome = match[2];
+      i--;
     }
-    if (personalityMark.test(trimmed)) {
-      personality = trimmed.replace(/^✨\s*[^:]*:\s*/, "");
-      i++;
-      continue;
-    }
-    break;
   }
-  while (i < lines.length) {
-    const trimmed = lines[i].trim();
-    if (!trimmed) {
-      i++;
-      continue;
+  while (i >= 0 && !lines[i].trim()) i--;
+  if (i >= 0) {
+    const match = MARKER.exec(lines[i].trim());
+    if (match && match[1] === "✨") {
+      personality = match[2];
+      i--;
     }
-    if (idealHomeMark.test(trimmed)) {
-      idealHome = trimmed.replace(/^🏡\s*[^:]*:\s*/, "");
-      i++;
-      continue;
-    }
-    break;
   }
   return {
-    story: lines.slice(0, firstMark).join("\n").trim(),
+    story: lines.slice(0, i + 1).join("\n").trim(),
     personality,
     idealHome,
   };
