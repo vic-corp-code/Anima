@@ -32,6 +32,12 @@ jobs:
 
       - run: bun install --frozen-lockfile
 
+      - name: Convex codegen
+        working-directory: packages/backend
+        run: npx convex codegen --typecheck disable
+        env:
+          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
+
       - run: bun run typecheck
 
       - run: bun run lint
