@@ -18,6 +18,7 @@ import {
   Progress,
   Skeleton,
   Textarea,
+  computeProgressPercent,
 } from "@anima/ui";
 
 // Kit tag semantics (EXTRACTION.md §1): active = success, closed = neutral
@@ -82,12 +83,7 @@ export default function CagnotteDetailPage() {
     );
   }
 
-  // Same derivation as CagnotteCard: percent of target, capped at 100,
-  // with no bar when there's no target to measure against.
-  const progressPercent =
-    cagnotte.targetAmount && cagnotte.targetAmount > 0
-      ? Math.min(100, Math.round((cagnotte.currentAmount / cagnotte.targetAmount) * 100))
-      : 0;
+  const progressPercent = computeProgressPercent(cagnotte.currentAmount, cagnotte.targetAmount);
 
   const isClosed = cagnotte.status === "closed";
   const title = titleEdit ?? cagnotte.title;
@@ -244,7 +240,7 @@ export default function CagnotteDetailPage() {
             <CardTitle>{t("currentAmountLabel")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            {cagnotte.targetAmount && cagnotte.targetAmount > 0 && (
+            {progressPercent !== null && (
               <div className="space-y-1 pb-1">
                 <div className="flex items-baseline justify-between gap-2">
                   <span className="text-2xl font-semibold">{cagnotte.currentAmount}</span>

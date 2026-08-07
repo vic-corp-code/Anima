@@ -14,7 +14,6 @@ import {
   CardContent,
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -121,7 +120,6 @@ export default function CagnottesListPage() {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>{t("dialogTitle")}</DialogTitle>
-              <DialogDescription>{t("dialogDescription")}</DialogDescription>
             </DialogHeader>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(handleCreate)} className="space-y-4">

@@ -19,6 +19,14 @@ export const create = mutation({
   handler: async (ctx, args) => {
     await assertOrgAccess(ctx, args.organizationId);
 
+    // Amounts are the trust boundary — the UI only hints with min="0".
+    if (args.targetAmount !== undefined && args.targetAmount < 0) {
+      throw new Error("targetAmount must not be negative");
+    }
+    if (args.currentAmount !== undefined && args.currentAmount < 0) {
+      throw new Error("currentAmount must not be negative");
+    }
+
     return await ctx.db.insert("cagnottes", {
       organizationId: args.organizationId,
       title: args.title,
@@ -50,6 +58,10 @@ export const update = mutation({
 
     await assertOrgAccess(ctx, cagnotte.organizationId);
 
+    if (args.targetAmount !== undefined && args.targetAmount < 0) {
+      throw new Error("targetAmount must not be negative");
+    }
+
     const updates: Record<string, string | number> = {};
     if (args.title !== undefined) updates.title = args.title;
     if (args.goalDescription !== undefined) updates.goalDescription = args.goalDescription;
@@ -76,6 +88,10 @@ export const updateProgress = mutation({
     if (!cagnotte) throw new Error("Cagnotte not found");
 
     await assertOrgAccess(ctx, cagnotte.organizationId);
+
+    if (currentAmount < 0) {
+      throw new Error("currentAmount must not be negative");
+    }
 
     await ctx.db.patch(cagnotteId, { currentAmount });
     return cagnotteId;
@@ -197,6 +213,13 @@ export const createInternal = internalMutation({
     deadline: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
+    if (args.targetAmount !== undefined && args.targetAmount < 0) {
+      throw new Error("targetAmount must not be negative");
+    }
+    if (args.currentAmount !== undefined && args.currentAmount < 0) {
+      throw new Error("currentAmount must not be negative");
+    }
+
     return await ctx.db.insert("cagnottes", {
       organizationId: args.organizationId,
       title: args.title,
@@ -224,6 +247,9 @@ export const updateInternal = internalMutation({
   handler: async (ctx, args) => {
     const cagnotte = await ctx.db.get(args.cagnotteId);
     if (!cagnotte) throw new Error("Cagnotte not found");
+    if (args.targetAmount !== undefined && args.targetAmount < 0) {
+      throw new Error("targetAmount must not be negative");
+    }
     const { cagnotteId, ...rest } = args;
     const updates: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(rest)) {
@@ -239,6 +265,9 @@ export const updateProgressInternal = internalMutation({
   handler: async (ctx, { cagnotteId, currentAmount }) => {
     const cagnotte = await ctx.db.get(cagnotteId);
     if (!cagnotte) throw new Error("Cagnotte not found");
+    if (currentAmount < 0) {
+      throw new Error("currentAmount must not be negative");
+    }
     await ctx.db.patch(cagnotteId, { currentAmount });
     return cagnotteId;
   },
