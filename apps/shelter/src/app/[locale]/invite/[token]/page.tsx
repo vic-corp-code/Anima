@@ -85,7 +85,11 @@ export default function InvitePage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
-          {error && <p className="text-sm text-destructive">{t("acceptError")}</p>}
+          {error && (
+            <p role="alert" className="text-sm text-destructive">
+              {t("acceptError")}
+            </p>
+          )}
           {isAuthenticated ? (
             <Button onClick={handleAccept} disabled={accepting} className="w-full">
               {accepting ? t("accepting") : t("accept")}

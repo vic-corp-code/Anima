@@ -80,7 +80,8 @@ export default function AnnouncementDetailPage() {
   }
 
   const badge = STATUS_BADGE[announcement.status];
-  const isClosed = announcement.status === "closed";
+  const isClosed =
+    announcement.status === "closed" || announcement.status === "archived";
   const title = titleEdit ?? announcement.title;
   const description = descriptionEdit ?? announcement.description;
 

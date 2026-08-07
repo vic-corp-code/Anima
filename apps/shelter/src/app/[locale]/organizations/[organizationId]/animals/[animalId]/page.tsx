@@ -423,7 +423,12 @@ export default function AnimalDetailPage() {
                 </CardHeader>
                 <CardContent>
                   {!animal.identificationMethod && (
-                    <div className="mb-4 rounded-md border border-[color-mix(in_oklab,var(--warn)_30%,var(--card))] bg-[color-mix(in_oklab,var(--warn)_14%,var(--card))] px-3 py-2 text-sm text-[color-mix(in_oklab,var(--warn)_74%,var(--foreground))]">
+                    <div
+                      className={cn(
+                        "mb-4 rounded-md border px-3 py-2 text-sm",
+                        WARN_TINT
+                      )}
+                    >
                       {t("show.facts.identificationPending")}
                     </div>
                   )}
@@ -467,7 +472,10 @@ export default function AnimalDetailPage() {
                   <CardTitle>{t("show.status.title")}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <label className="mb-1 block text-sm font-medium">
+                  <label
+                    htmlFor="animal-status-select"
+                    className="mb-1 block text-sm font-medium"
+                  >
                     {t("show.status.change")}
                   </label>
                   <Select
@@ -475,7 +483,7 @@ export default function AnimalDetailPage() {
                     onValueChange={(value) => handleStatusChange(value as AnimalStatus)}
                     disabled={isUpdating}
                   >
-                    <SelectTrigger className="w-full">
+                    <SelectTrigger id="animal-status-select" className="w-full">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>

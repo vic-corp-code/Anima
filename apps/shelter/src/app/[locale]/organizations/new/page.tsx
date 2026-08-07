@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import { useMutation } from "convex/react";
-import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { z } from "zod";
 import { api } from "@anima/backend/convex/_generated/api";
+import { useRouter } from "@/i18n/navigation";
 import {
   Button,
   Card,

@@ -5,7 +5,6 @@ import { useParams } from "next/navigation";
 import {
   useConvexAuth,
   useMutation,
-  useQuery,
   useQuery_experimental,
 } from "convex/react";
 import { useTranslations } from "next-intl";
@@ -42,14 +41,18 @@ export default function NewsListPage() {
   });
   const newsPosts =
     newsPostsQuery.status === "success" ? newsPostsQuery.data : undefined;
-  const animals = useQuery(
-    api.animals.list,
-    isAuthenticated ? { organizationId } : "skip"
-  );
-  const cagnottes = useQuery(
-    api.cagnottes.list,
-    isAuthenticated ? { organizationId } : "skip"
-  );
+  const animalsQuery = useQuery_experimental({
+    query: api.animals.list,
+    args: isAuthenticated ? { organizationId } : "skip",
+  });
+  const animals =
+    animalsQuery.status === "success" ? animalsQuery.data : undefined;
+  const cagnottesQuery = useQuery_experimental({
+    query: api.cagnottes.list,
+    args: isAuthenticated ? { organizationId } : "skip",
+  });
+  const cagnottes =
+    cagnottesQuery.status === "success" ? cagnottesQuery.data : undefined;
   const createNewsPost = useMutation(api.newsPosts.create);
 
   const [title, setTitle] = useState("");
