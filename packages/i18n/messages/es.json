@@ -37,12 +37,30 @@
         "ES": "España (próximamente)"
       },
       "addressLabel": "Dirección",
+      "nameRequired": "El nombre de la organización es requerido.",
+      "addressRequired": "La dirección es requerida.",
+      "countryHint": "Solo Francia está disponible en el lanzamiento; España llegará pronto.",
       "submit": "Crear",
       "submitting": "Creando…",
       "error": "Ha ocurrido un error. Inténtalo de nuevo."
     },
     "show": {
-      "createdTitle": "Organización creada",
+      "subtitle": "Resumen de la organización",
+      "orgInfoTitle": "Información",
+      "statsTitle": "Estadísticas",
+      "statAnimalsTitle": "Animales acogidos",
+      "statAnimalsDescription": "Animales registrados",
+      "statAnnouncementsTitle": "Anuncios activos",
+      "statAnnouncementsDescription": "Anuncios publicados en curso",
+      "urgentNeedsTitle": "Necesidades urgentes",
+      "urgentNeedsEmpty": "No hay necesidades urgentes por ahora.",
+      "urgentNeedsCreateCagnotte": "Crear una recaudación",
+      "urgentNeedsCagnotteProgress": "{progress} % del objetivo",
+      "urgentNeedsAnimalMeta": "Seguimiento médico",
+      "urgentNeedsPriority": {
+        "urgent": "Urgente",
+        "high": "Prioritario"
+      },
       "typeLabel": "Tipo",
       "countryLabel": "País",
       "addressLabel": "Dirección",
@@ -84,6 +102,9 @@
     "empty": "Todavía no hay recaudaciones.",
     "create": "Crear una recaudación",
     "creating": "Creando…",
+    "dialogTitle": "Nueva recaudación",
+    "cancel": "Cancelar",
+    "progressOf": "de",
     "statusFilterLabel": "Estado",
     "allStatuses": "Todos los estados",
     "status": {
@@ -114,6 +135,8 @@
     "subtitle": "Gestiona las noticias de tu organización",
     "loading": "Cargando…",
     "error": "Se produjo un error.",
+    "errorTitle": "No se pudieron cargar las noticias",
+    "errorDescription": "Comprueba tu conexión e inténtalo de nuevo.",
     "empty": "Todavía no hay noticias.",
     "create": "Publicar una noticia",
     "creating": "Publicando…",
@@ -168,10 +191,70 @@
     "notFound": "Anuncio no encontrado",
     "new": {
       "title": "Nuevo anuncio",
-      "subtitle": "Elige un animal para crear un borrador de anuncio",
+      "subtitle": "Redacta el anuncio: el animal, su historia y la vista previa de las publicaciones",
       "backToList": "Volver a los anuncios",
       "noAnimals": "No hay animales registrados. Añade primero un animal.",
-      "creating": "Creando…"
+      "creating": "Creando…",
+      "selectLabel": "Seleccionar un animal del registro",
+      "selectPlaceholder": "Elegir un animal…",
+      "titleLabel": "Título del anuncio",
+      "titleDraft": "{name} busca una familia",
+      "storyLabel": "Cuenta su historia",
+      "storyHint": "Este texto se usará en todas las publicaciones",
+      "storyPlaceholder": "¿De dónde viene? ¿Qué le ha pasado?",
+      "storyFallback": "{name}, {species}{breed}, busca una familia cariñosa. Contáctanos para saber más.",
+      "personalityLabel": "Personalidad y comportamiento",
+      "personalityPlaceholder": "Tranquilo, sociable, juguetón…",
+      "idealHomeLabel": "Hogar ideal",
+      "idealHomePlaceholder": "Familia tranquila, sin niños pequeños…",
+      "photosLabel": "Fotos del animal",
+      "photosHint": "La primera foto se usará como imagen principal",
+      "saveDraft": "Guardar borrador",
+      "saving": "Guardando…",
+      "titleRequired": "El título es requerido",
+      "animalRequired": "Elige un animal del registro",
+      "sectionAnimal": "Animal",
+      "sectionStory": "Historia",
+      "sectionPhotos": "Fotos"
+    },
+    "rowActions": "Acciones del anuncio",
+    "edit": "Editar",
+    "archive": "Archivar",
+    "editPage": {
+      "title": "Editar el anuncio",
+      "subtitle": "Redacta el contenido que se publicará en todas las plataformas",
+      "backToList": "Volver al anuncio",
+      "save": "Guardar cambios",
+      "locked": "Este anuncio está cerrado y ya no se puede modificar."
+    },
+    "preview": {
+      "title": "Vista previa de las publicaciones",
+      "subtitle": "Así se verá tu anuncio en cada plataforma",
+      "empty": "Selecciona un animal para ver la vista previa",
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "site": "Sitio web del refugio",
+      "personality": "Personalidad",
+      "idealHome": "Hogar ideal",
+      "igCta": "¡Adopta a {name}!",
+      "igHashtags": "#adopcion #gato #perro #adoptdontshop",
+      "noPhoto": "Sin foto",
+      "ageUnknown": "Edad desconocida",
+      "ageYears": "{count, plural, one {# año} other {# años}}",
+      "ageMonths": "{count, plural, one {# mes} other {# meses}}",
+      "sterilized": "esterilizado",
+      "chip": "con chip",
+      "sex": {
+        "male": "Macho",
+        "female": "Hembra",
+        "unknown": "Sexo desconocido"
+      },
+      "compat": {
+        "kids": "Niños",
+        "cats": "Gatos",
+        "dogs": "Perros"
+      },
+      "today": "Hoy"
     }
   },
   "animals": {
@@ -243,34 +326,58 @@
       "errorTitle": "No se pudieron cargar los animales",
       "errorDescription": "Comprueba tu conexión e inténtalo de nuevo."
     },
-    "detail": {
-      "notFound": "Animal no encontrado",
+    "show": {
       "back": "Volver",
-      "announcementsButton": "Anuncios",
-      "edit": "Modificar",
-      "delete": "Eliminar",
-      "deleting": "Eliminando…",
-      "deleteConfirm": "¿Eliminar a {name}? Esta acción es irreversible.",
-      "statusTitle": "Estado actual",
-      "identificationTitle": "Identificación",
-      "chipIdLabel": "N.º I-CAD:",
-      "methodLabel": "Método:",
-      "birthDateLabel": "Fecha de nacimiento:",
-      "arrivalDateLabel": "Fecha de llegada:",
-      "healthTitle": "Salud y carácter",
-      "healthNotesLabel": "Notas de salud:",
-      "noNote": "Sin notas",
-      "characterLabel": "Carácter:",
-      "compatibilityLabel": "Compatibilidad:",
-      "compatibilityKids": "Niños",
-      "compatibilityCats": "Gatos",
-      "compatibilityDogs": "Perros",
-      "storyLabel": "Historia:",
-      "photosTitle": "Fotos",
-      "photoAlt": "{name} - Foto {index}",
-      "historyTitle": "Historial",
-      "noEvents": "No hay eventos registrados",
-      "identificationPendingNotice": "Este animal aún no tiene identificación (chip o tatuaje). Recuerda identificarlo lo antes posible."
+      "notFound": "Animal no encontrado",
+      "tabs": {
+        "overview": "Resumen",
+        "history": "Historial"
+      },
+      "actions": {
+        "announcements": "Anuncios",
+        "edit": "Modificar",
+        "delete": "Eliminar",
+        "deleting": "Eliminando…",
+        "deleteConfirm": "¿Eliminar a {name}? Esta acción es irreversible."
+      },
+      "gallery": {
+        "title": "Fotos",
+        "empty": "Sin fotos",
+        "alt": "{name} - Foto {index}",
+        "previous": "Foto anterior",
+        "next": "Foto siguiente"
+      },
+      "facts": {
+        "title": "Identificación",
+        "species": "Especie",
+        "sex": "Sexo",
+        "sterilized": "Esterilizado",
+        "chipId": "N.º I-CAD",
+        "method": "Método",
+        "birthDate": "Fecha de nacimiento",
+        "estimatedAge": "Edad estimada",
+        "arrivalDate": "Fecha de llegada",
+        "identificationPending": "Este animal aún no tiene identificación (chip o tatuaje). Recuerda identificarlo lo antes posible."
+      },
+      "status": {
+        "title": "Estado actual",
+        "change": "Cambiar el estado"
+      },
+      "health": {
+        "title": "Salud y carácter",
+        "healthNotes": "Notas de salud",
+        "character": "Carácter",
+        "compatibility": "Compatibilidad",
+        "kids": "Niños",
+        "cats": "Gatos",
+        "dogs": "Perros",
+        "story": "Historia",
+        "none": "Sin notas"
+      },
+      "timeline": {
+        "title": "Historial",
+        "empty": "No hay eventos registrados"
+      }
     },
     "new": {
       "title": "Añadir un animal",
@@ -320,25 +427,43 @@
     }
   },
   "members": {
-    "title": "Miembros",
-    "loading": "Cargando…",
+    "list": {
+      "title": "Miembros",
+      "subtitle": "Gestiona los miembros y las invitaciones de tu organización",
+      "searchLabel": "Buscar",
+      "searchPlaceholder": "Nombre, email...",
+      "roleFilterLabel": "Rol",
+      "allRoles": "Todos los roles",
+      "inviteMember": "+ Invitar a un miembro",
+      "colMember": "Miembro",
+      "colRole": "Rol",
+      "emptyNone": "No hay miembros. ¡Empieza invitando a alguien!",
+      "emptyFiltered": "Ningún miembro coincide con los filtros.",
+      "errorTitle": "No se pudieron cargar los miembros",
+      "errorDescription": "Comprueba tu conexión e inténtalo de nuevo."
+    },
     "error": "Se produjo un error.",
-    "roleLabel": "Rol",
     "role": {
       "admin": "Admin",
       "editor": "Editor"
     },
     "remove": "Eliminar",
     "removeConfirm": "¿Eliminar a este miembro?",
-    "generateInvite": "Generar enlace de invitación",
-    "inviteRoleLabel": "Rol para el invitado",
-    "inviteLinkLabel": "Enlace de invitación",
-    "copy": "Copiar",
-    "copied": "¡Copiado!"
+    "revoke": "Revocar",
+    "invitePending": "Invitación pendiente",
+    "invite": {
+      "title": "Invitar a un miembro",
+      "description": "Genera un enlace de invitación para compartir con la persona.",
+      "roleLabel": "Rol para el invitado",
+      "generate": "Generar enlace",
+      "linkLabel": "Enlace de invitación",
+      "copy": "Copiar",
+      "copied": "¡Copiado!",
+      "error": "No se pudo generar el enlace de invitación."
+    }
   },
   "invite": {
     "title": "Invitación",
-    "loading": "Cargando…",
     "invalid": "Esta invitación ya no es válida.",
     "invitedTo": "Has sido invitado/a a unirte a",
     "asRole": "como",
@@ -348,9 +473,12 @@
     },
     "accept": "Aceptar la invitación",
     "accepting": "Aceptando…",
+    "acceptError": "No se pudo aceptar la invitación. Puede que haya caducado o ya se haya utilizado.",
     "signInToAccept": "Inicia sesión para aceptar"
   },
   "orgChat": {
+    "title": "Asistente",
+    "description": "Puedo gestionar animales, anuncios, recaudaciones y noticias.",
     "greeting": "¡Hola! ¿Cómo puedo ayudarte? Puedo gestionar animales, anuncios, recaudaciones y noticias.",
     "inputPlaceholder": "ej: crea un anuncio para Max...",
     "send": "Enviar",
@@ -360,6 +488,7 @@
     "loadingThread": "Iniciando la conversación…",
     "loadMore": "Cargar más",
     "proposal": {
+      "pending": "En espera de aprobación",
       "approve": "Aprobar",
       "deny": "Rechazar",
       "denyReasonPlaceholder": "Motivo del rechazo (opcional)…",

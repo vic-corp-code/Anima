@@ -165,4 +165,5 @@ export {
   FormMessage,
   FormField,
 }
-export { useForm } from "react-hook-form"
+export { useForm, useWatch } from "react-hook-form"
+export { zodResolver } from "@hookform/resolvers/zod"

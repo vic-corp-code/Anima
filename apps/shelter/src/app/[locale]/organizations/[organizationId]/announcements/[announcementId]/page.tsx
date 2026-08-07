@@ -3,21 +3,41 @@
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import { useConvexAuth, useMutation, useQuery } from "convex/react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { api } from "@anima/backend/convex/_generated/api";
 import { Id } from "@anima/backend/convex/_generated/dataModel";
 import { useRouter } from "@/i18n/navigation";
-import { Button, Card, CardContent, CardHeader, CardTitle } from "@anima/ui";
+import {
+  Badge,
+  badgeVariants,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Input,
+  Textarea,
+} from "@anima/ui";
+import type { VariantProps } from "class-variance-authority";
 
-const STATUS_COLORS = {
-  draft: "bg-gray-100 text-gray-800",
-  published: "bg-green-100 text-green-800",
-  closed: "bg-slate-200 text-slate-700",
-  archived: "bg-slate-100 text-slate-500",
-} as const;
+const SUCCESS_TINT =
+  "border-[color-mix(in_oklab,var(--success)_32%,var(--card))] bg-[color-mix(in_oklab,var(--success)_16%,var(--card))] text-[color-mix(in_oklab,var(--success)_78%,var(--foreground))]";
+const META_TINT =
+  "border-[color-mix(in_oklab,var(--meta)_30%,var(--card))] bg-[color-mix(in_oklab,var(--meta)_14%,var(--card))] text-[color-mix(in_oklab,var(--meta)_74%,var(--foreground))]";
+
+const STATUS_BADGE: Record<
+  "draft" | "published" | "closed" | "archived",
+  { variant: VariantProps<typeof badgeVariants>["variant"]; className?: string }
+> = {
+  draft: { variant: "secondary" },
+  published: { variant: "outline", className: SUCCESS_TINT },
+  closed: { variant: "outline", className: META_TINT },
+  archived: { variant: "outline" },
+};
 
 export default function AnnouncementDetailPage() {
   const t = useTranslations("announcements");
+  const locale = useLocale();
   const router = useRouter();
   const params = useParams();
   const organizationId = params.organizationId as Id<"organizations">;
@@ -59,7 +79,9 @@ export default function AnnouncementDetailPage() {
     );
   }
 
-  const isClosed = announcement.status === "closed";
+  const badge = STATUS_BADGE[announcement.status];
+  const isClosed =
+    announcement.status === "closed" || announcement.status === "archived";
   const title = titleEdit ?? announcement.title;
   const description = descriptionEdit ?? announcement.description;
 
@@ -115,22 +137,24 @@ export default function AnnouncementDetailPage() {
         </Button>
         <div className="flex items-center gap-3">
           <h1 className="text-2xl font-bold">{announcement.title}</h1>
-          <span
-            className={`px-2 py-1 rounded text-xs font-medium ${STATUS_COLORS[announcement.status]}`}
-          >
+          <Badge variant={badge.variant} className={badge.className}>
             {t(`status.${announcement.status}`)}
-          </span>
+          </Badge>
         </div>
         {announcement.publishedAt && (
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="mt-1 text-sm text-muted-foreground">
             {t("publishedAt")}{" "}
-            {new Date(announcement.publishedAt).toLocaleDateString("fr-FR")}
+            <span className="font-medium text-foreground">
+              {new Date(announcement.publishedAt).toLocaleDateString(locale)}
+            </span>
           </p>
         )}
         {announcement.closedAt && (
           <p className="text-sm text-muted-foreground">
             {t("closedAt")}{" "}
-            {new Date(announcement.closedAt).toLocaleDateString("fr-FR")}
+            <span className="font-medium text-foreground">
+              {new Date(announcement.closedAt).toLocaleDateString(locale)}
+            </span>
           </p>
         )}
       </div>
@@ -141,31 +165,31 @@ export default function AnnouncementDetailPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1">
+            <label className="mb-1 block text-sm font-medium">
               {t("titleLabel")}
             </label>
-            <input
+            <Input
               value={title}
               onChange={(e) => setTitleEdit(e.target.value)}
               disabled={isClosed}
-              className="w-full rounded border px-3 py-2 disabled:opacity-60"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">
+            <label className="mb-1 block text-sm font-medium">
               {t("descriptionLabel")}
             </label>
-            <textarea
+            <Textarea
               value={description}
               onChange={(e) => setDescriptionEdit(e.target.value)}
               disabled={isClosed}
               rows={6}
-              className="w-full rounded border px-3 py-2 disabled:opacity-60"
             />
           </div>
 
-          {saveError && <p className="text-sm text-red-600">{saveError}</p>}
-          {transitionError && <p className="text-sm text-red-600">{transitionError}</p>}
+          {saveError && <p className="text-sm text-destructive">{saveError}</p>}
+          {transitionError && (
+            <p className="text-sm text-destructive">{transitionError}</p>
+          )}
           <div className="flex gap-2">
             {!isClosed && (
               <Button onClick={handleSave} disabled={isSaving}>

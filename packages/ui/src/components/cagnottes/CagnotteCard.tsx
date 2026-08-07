@@ -21,6 +21,15 @@ const STATUS_COLORS = {
   archived: "bg-slate-100 text-slate-500",
 } as const;
 
+// Shared by CagnotteCard and the cagnottes detail page — the single source
+// of truth for bar width. Returns `null` (no bar) when there's no target
+// to measure against, otherwise percent capped at 100.
+export function computeProgressPercent(currentAmount: number, targetAmount?: number): number | null {
+  return targetAmount && targetAmount > 0
+    ? Math.min(100, Math.round((currentAmount / targetAmount) * 100))
+    : null;
+}
+
 export function CagnotteCard({
   title,
   goalDescription,
@@ -33,10 +42,7 @@ export function CagnotteCard({
   photoUrl,
   onClick,
 }: CagnotteCardProps) {
-  const progressPercent =
-    targetAmount && targetAmount > 0
-      ? Math.min(100, Math.round((currentAmount / targetAmount) * 100))
-      : null;
+  const progressPercent = computeProgressPercent(currentAmount, targetAmount);
 
   return (
     <Card className={onClick ? "hover:shadow-lg transition-shadow cursor-pointer" : undefined}>

@@ -14,7 +14,6 @@ import {
   AlertDescription,
   AlertTitle,
   Badge,
-  badgeVariants,
   Button,
   Card,
   CardContent,
@@ -32,30 +31,10 @@ import {
   TableHeader,
   TableRow,
 } from "@anima/ui";
-import type { VariantProps } from "class-variance-authority";
+import { STATUS_BADGE } from "@/lib/animals/status-badge";
 import type { AnimalSpecies, AnimalStatus } from "@anima/domain";
 
 const SPECIES_OPTIONS: AnimalSpecies[] = ["dog", "cat"];
-
-const SUCCESS_TINT =
-  "border-[color-mix(in_oklab,var(--success)_32%,var(--card))] bg-[color-mix(in_oklab,var(--success)_16%,var(--card))] text-[color-mix(in_oklab,var(--success)_78%,var(--foreground))]";
-const WARN_TINT =
-  "border-[color-mix(in_oklab,var(--warn)_30%,var(--card))] bg-[color-mix(in_oklab,var(--warn)_14%,var(--card))] text-[color-mix(in_oklab,var(--warn)_74%,var(--foreground))]";
-const META_TINT =
-  "border-[color-mix(in_oklab,var(--meta)_30%,var(--card))] bg-[color-mix(in_oklab,var(--meta)_14%,var(--card))] text-[color-mix(in_oklab,var(--meta)_74%,var(--foreground))]";
-
-const STATUS_BADGE: Record<
-  AnimalStatus,
-  { variant: VariantProps<typeof badgeVariants>["variant"]; className?: string }
-> = {
-  in_care: { variant: "secondary" },
-  adoptable: { variant: "outline", className: SUCCESS_TINT },
-  adoption_pending: { variant: "outline", className: WARN_TINT },
-  fostered: { variant: "outline", className: META_TINT },
-  adopted: { variant: "outline" },
-  transferred: { variant: "default" },
-  deceased: { variant: "destructive" },
-};
 
 const STATUS_OPTIONS = Object.keys(STATUS_BADGE) as AnimalStatus[];
 
@@ -255,7 +234,7 @@ export default function AnimalsListPage() {
                             <div className="relative size-10 overflow-hidden rounded-md">
                               <Image
                                 src={animal.photoUrls[0]}
-                                alt={t("detail.photoAlt", {
+                                alt={t("show.gallery.alt", {
                                   name: animal.name,
                                   index: 1,
                                 })}

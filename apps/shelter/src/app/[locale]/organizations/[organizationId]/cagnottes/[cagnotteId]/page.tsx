@@ -7,13 +7,27 @@ import { useTranslations } from "next-intl";
 import { api } from "@anima/backend/convex/_generated/api";
 import { Id } from "@anima/backend/convex/_generated/dataModel";
 import { useRouter } from "@/i18n/navigation";
-import { Button, Card, CardContent, CardHeader, CardTitle, Input } from "@anima/ui";
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Input,
+  Progress,
+  Skeleton,
+  Textarea,
+  computeProgressPercent,
+} from "@anima/ui";
 
-const STATUS_COLORS = {
-  active: "bg-green-100 text-green-800",
-  closed: "bg-slate-200 text-slate-700",
-  archived: "bg-slate-100 text-slate-500",
-} as const;
+// Kit tag semantics (EXTRACTION.md §1): active = success, closed = neutral
+// secondary, archived = meta (the 5th tag color, no shadcn slot — tinted).
+const STATUS_BADGE: Record<"active" | "closed" | "archived", string | undefined> = {
+  active: "bg-success/10 text-success dark:bg-success/20",
+  closed: undefined,
+  archived: "bg-meta/10 text-meta dark:bg-meta/20",
+};
 
 export default function CagnotteDetailPage() {
   const t = useTranslations("cagnottes");
@@ -47,7 +61,16 @@ export default function CagnotteDetailPage() {
   const [transitionError, setTransitionError] = useState<string | null>(null);
 
   if (cagnotte === undefined) {
-    return <div className="container mx-auto p-4">{t("loading")}</div>;
+    return (
+      <div className="container mx-auto p-4">
+        <Card>
+          <CardContent className="space-y-3 pt-6">
+            <Skeleton className="h-6 w-1/3" />
+            <Skeleton className="h-3 w-2/3" />
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   if (cagnotte === null) {
@@ -59,6 +82,8 @@ export default function CagnotteDetailPage() {
       </div>
     );
   }
+
+  const progressPercent = computeProgressPercent(cagnotte.currentAmount, cagnotte.targetAmount);
 
   const isClosed = cagnotte.status === "closed";
   const title = titleEdit ?? cagnotte.title;
@@ -129,9 +154,9 @@ export default function CagnotteDetailPage() {
         </Button>
         <div className="flex items-center gap-3">
           <h1 className="text-2xl font-bold">{cagnotte.title}</h1>
-          <span className={`px-2 py-1 rounded text-xs font-medium ${STATUS_COLORS[cagnotte.status]}`}>
+          <Badge variant="secondary" className={STATUS_BADGE[cagnotte.status]}>
             {t(`status.${cagnotte.status}`)}
-          </span>
+          </Badge>
         </div>
       </div>
 
@@ -151,12 +176,11 @@ export default function CagnotteDetailPage() {
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">{t("goalDescriptionLabel")}</label>
-              <textarea
+              <Textarea
                 value={goalDescription}
                 onChange={(e) => setGoalDescriptionEdit(e.target.value)}
                 disabled={isClosed}
                 rows={4}
-                className="w-full rounded border px-3 py-2 disabled:opacity-60"
               />
             </div>
             <div>
@@ -196,8 +220,8 @@ export default function CagnotteDetailPage() {
               />
             </div>
 
-            {saveError && <p className="text-sm text-red-600">{saveError}</p>}
-            {transitionError && <p className="text-sm text-red-600">{transitionError}</p>}
+            {saveError && <p className="text-sm text-destructive">{saveError}</p>}
+            {transitionError && <p className="text-sm text-destructive">{transitionError}</p>}
             <div className="flex gap-2">
               {!isClosed && (
                 <Button onClick={handleSave} disabled={isSaving}>
@@ -216,6 +240,18 @@ export default function CagnotteDetailPage() {
             <CardTitle>{t("currentAmountLabel")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
+            {progressPercent !== null && (
+              <div className="space-y-1 pb-1">
+                <div className="flex items-baseline justify-between gap-2">
+                  <span className="text-2xl font-semibold">{cagnotte.currentAmount}</span>
+                  <span className="text-sm text-muted-foreground">
+                    {t("progressOf")} {cagnotte.targetAmount}
+                  </span>
+                </div>
+                <Progress value={progressPercent} />
+                <p className="text-right text-xs text-muted-foreground">{progressPercent}%</p>
+              </div>
+            )}
             <Input
               type="number"
               min="0"
@@ -225,7 +261,7 @@ export default function CagnotteDetailPage() {
             <Button onClick={handleSaveProgress} disabled={isSavingProgress} className="w-full">
               {isSavingProgress ? t("saving") : t("updateProgress")}
             </Button>
-            {progressError && <p className="text-sm text-red-600">{progressError}</p>}
+            {progressError && <p className="text-sm text-destructive">{progressError}</p>}
           </CardContent>
         </Card>
       </div>
