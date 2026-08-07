@@ -46,7 +46,7 @@
      color (used below as --muted-foreground instead) — do not conflate them,
      see audit-token-structure.md §1 note and §2. */
   --muted: #f1e3cf; /* kit --surface-warm */
-  --muted-foreground: #7a6d63; /* kit --muted */
+  --muted-foreground: #6f645a; /* kit --muted, deepened 3% for AA on the --muted wash (audit #154: 4.56:1 vs #f1e3cf; kit value 3.96:1) */
   --accent: #f1e3cf; /* kit --surface-warm — confirmed via sidebar hover/.btn-ghost/.mobile-nav a:hover */
   --accent-foreground: #201914; /* kit --fg */
 
@@ -90,8 +90,8 @@
   --sidebar: #fffdf8; /* kit --surface */
   --sidebar-foreground: #4c4037; /* kit --fg-2 */
   --sidebar-border: #eee4d7; /* kit --border-soft */
-  --sidebar-accent: color-mix(in oklab, var(--primary) 12%, var(--card));
-  --sidebar-accent-foreground: #9b5b32; /* kit --accent */
+  --sidebar-accent: color-mix(in oklab, var(--primary) 30%, var(--card)); /* kit used 12% — deepened by audit #154 so the active state reads against --sidebar (1.66:1 light / 1.38:1 dark, matching the kit's own hover-wash depth) */
+  --sidebar-accent-foreground: #784727; /* kit --accent, deepened for 4.5+ on the deepened wash (audit #154: 4.55:1; kit value 4.28:1) */
   --sidebar-primary: #9b5b32; /* placeholder: == --primary, unconfirmed (decision 8) */
   --sidebar-primary-foreground: #ffffff; /* placeholder: == --accent-on, unconfirmed (decision 8) */
   --sidebar-ring: #9b5b32; /* placeholder: == --primary, unconfirmed (decision 8) */
@@ -101,8 +101,8 @@
      in audit-token-structure.md §3). */
   --meta: #9b5b32;
   --border-soft: #eee4d7;
-  --success: #4f8a4f;
-  --warn: #c9822f;
+  --success: #447744; /* kit --success, deepened ~5% for AA on light badge tints (audit #154: 4.58:1 on bg-success/10; kit value 3.63:1) */
+  --warn: #946023; /* kit --warn, deepened ~10% for AA on light badge tints (audit #154: 4.57:1 on bg-warn/10; kit value 2.79:1) */
   --danger: #b33a3a;
 
   /* ---- elevation ----
@@ -223,7 +223,7 @@
   --sidebar: #1f1913;
   --sidebar-foreground: #d3c6b6;
   --sidebar-border: #33291f;
-  --sidebar-accent: color-mix(in oklab, var(--primary) 12%, var(--card));
+  --sidebar-accent: color-mix(in oklab, var(--primary) 30%, var(--card)); /* kit used 12% — deepened by audit #154, see light-side note; dark accent text still holds 4.94:1 on it */
   --sidebar-accent-foreground: #d9925c;
   --sidebar-primary: #d9925c; /* placeholder, unconfirmed (decision 8) */
   --sidebar-primary-foreground: #1a130d; /* placeholder, unconfirmed (decision 8) */
@@ -231,8 +231,8 @@
 
   --meta: #dda06d;
   --border-soft: #33291f;
-  --success: #7cbb7c;
-  --warn: #e0a24f;
+  --success: #7cbb7c; /* lightened for dark ground (kit) — 5.28:1 on its tint, audit #154 */
+  --warn: #e0a24f; /* lightened for dark ground (kit) — 5.34:1 on its tint, audit #154 */
   --danger: #e58079;
 
   --elev-raised: 0 20px 52px rgba(0, 0, 0, 0.55);
