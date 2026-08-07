@@ -2,11 +2,7 @@ import { badgeVariants } from "@anima/ui";
 import type { VariantProps } from "class-variance-authority";
 import type { AnimalStatus } from "@anima/domain";
 
-// Status badge mapping shared by animal pages. Mirrors the mapping first
-// established in `animals/page.tsx` (STATUS_BADGE) — keep both in sync.
-
-// Badge tints built from kit tokens (success/warn/meta), same pattern as the
-// list page's SUCCESS_TINT/WARN_TINT/META_TINT.
+// Badge tints built from kit tokens (success/warn/meta).
 export const SUCCESS_TINT =
   "border-[color-mix(in_oklab,var(--success)_32%,var(--card))] bg-[color-mix(in_oklab,var(--success)_16%,var(--card))] text-[color-mix(in_oklab,var(--success)_78%,var(--foreground))]";
 export const WARN_TINT =
