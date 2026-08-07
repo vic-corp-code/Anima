@@ -270,32 +270,16 @@ export const remove = mutation({
 export const list = query({
   args: {
     organizationId: v.id("organizations"),
-    status: v.optional(
-      v.union(
-        v.literal("in_care"),
-        v.literal("adoptable"),
-        v.literal("adoption_pending"),
-        v.literal("adopted"),
-        v.literal("fostered"),
-        v.literal("transferred"),
-        v.literal("deceased")
-      )
-    ),
   },
   handler: async (ctx, args) => {
     await assertOrgAccess(ctx, args.organizationId);
 
-    let query = ctx.db
+    return await ctx.db
       .query("animals")
       .withIndex("by_organization", (q) =>
         q.eq("organizationId", args.organizationId)
-      );
-
-    if (args.status) {
-      query = query.filter((q) => q.eq(q.field("status"), args.status));
-    }
-
-    return await query.collect();
+      )
+      .collect();
   },
 });
 

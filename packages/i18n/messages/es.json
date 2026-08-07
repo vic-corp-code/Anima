@@ -231,7 +231,14 @@
       "addAnimal": "+ Añadir un animal",
       "emptyNone": "Todavía no hay animales registrados. ¡Empieza añadiendo uno!",
       "emptyFiltered": "Ningún animal coincide con los filtros.",
-      "arrivalLabel": "Llegada:"
+      "arrivalLabel": "Llegada:",
+      "colName": "Nombre",
+      "colSpecies": "Especie",
+      "colSex": "Sexo",
+      "colStatus": "Estado",
+      "colSterilized": "Esterilizado",
+      "errorTitle": "No se pudieron cargar los animales",
+      "errorDescription": "Comprueba tu conexión e inténtalo de nuevo."
     },
     "detail": {
       "notFound": "Animal no encontrado",
