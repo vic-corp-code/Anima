@@ -5,6 +5,7 @@ import { getMessages } from "next-intl/server";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Inter, Geist_Mono } from "next/font/google";
 import { Toaster } from "@anima/ui";
+import { clerkAppearance } from "@/components/clerk-appearance";
 import { routing } from "@/i18n/routing";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ConvexClientProvider } from "../ConvexClientProvider";
@@ -47,7 +48,7 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   return (
-    <ClerkProvider>
+    <ClerkProvider appearance={clerkAppearance}>
       <ConvexClientProvider>
         <html
           lang={locale}
