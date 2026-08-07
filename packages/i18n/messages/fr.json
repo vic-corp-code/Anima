@@ -114,6 +114,8 @@
     "subtitle": "Gérez les actualités de votre organisation",
     "loading": "Chargement…",
     "error": "Une erreur est survenue.",
+    "errorTitle": "Impossible de charger les actualités",
+    "errorDescription": "Vérifiez votre connexion et réessayez.",
     "empty": "Aucune actualité pour le moment.",
     "create": "Publier une actualité",
     "creating": "Publication en cours…",

@@ -114,6 +114,8 @@
     "subtitle": "Gestiona las noticias de tu organización",
     "loading": "Cargando…",
     "error": "Se produjo un error.",
+    "errorTitle": "No se pudieron cargar las noticias",
+    "errorDescription": "Comprueba tu conexión e inténtalo de nuevo.",
     "empty": "Todavía no hay noticias.",
     "create": "Publicar una noticia",
     "creating": "Publicando…",
