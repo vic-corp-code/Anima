@@ -39,12 +39,16 @@ Hosted on Vercel — project `anima-shelter`, team `victorias-projects-10f9308b`
 ## Issue workflow: branches, PRs, project board
 
 - **`main` and `dev` require a PR — no direct pushes, including from you or an agent** (branch protection enabled 2026-08-05, `enforce_admins` on, 0 required approvals since this is solo). Work on a feature branch, open a PR, and merge it yourself explicitly — **never run `gh pr merge` or push straight to `main`/`dev` without being asked.** This is the actual mechanism that stops an agent from freely merging; it doesn't rely on convention alone.
-- **Project board**: ["Anima"](https://github.com/orgs/vic-corp-code/projects/3) tracks status across all open issues (org-level project, linked to this repo). Status field has 4 options: `Todo` → `In Progress` → `In Review` → `Done`. `Done` is automatic (issue closed / PR merged trigger it) — but **moving Todo → In Progress when starting work, and In Progress → In Review when you open a PR, is not automatic and must be done explicitly**, so Victoria can see what's actually in a PR waiting on her without opening every issue. To move an item:
+- **Project board**: ["Anima"](https://github.com/orgs/vic-corp-code/projects/3) tracks status across all open issues (org-level project, linked to this repo). Status field has 5 options: `Todo` → `In Progress` → `In Review` → `In Dev` → `Done`. **None of these transitions are automatic — not even on issue close** (confirmed 2026-08-07: GitHub's built-in "item closed → Done" project automation only fires when the closing merge lands on the repo's **default branch**, which is `main`, not `dev` — merging into `dev` never triggers it, even though closing keywords in a PR still close the linked issue itself). So every transition, including the final one, must be set explicitly:
+  - `Todo` → `In Progress` when starting work.
+  - `In Progress` → `In Review` when you open a PR.
+  - `In Review` → `In Dev` once the PR merges into `dev` (work is live on the `dev` Vercel deployment, but not yet released/versioned).
+  - `In Dev` → `Done` only once it's actually merged into `main` (production) — that's also the point where versioning/changelog thinking starts, not before.
   ```
   gh project item-edit --project-id PVT_kwDOELvlgc4BfecE --id <ITEM_ID> \
     --field-id PVTSSF_lADOELvlgc4BfecEzhZxEro --single-select-option-id <OPTION_ID>
   ```
-  Option IDs: Todo `e220bac3`, In Progress `5f26ab9c`, In Review `ab6a37db`, Done `0b8a567b`. Find `<ITEM_ID>` via `gh project item-list 3 --owner vic-corp-code --format json` (match on issue number/URL) — `gh project item-add` also prints it on add.
+  Option IDs: Todo `e220bac3`, In Progress `5f26ab9c`, In Review `ab6a37db`, In Dev `a15869a9`, Done `0b8a567b`. Find `<ITEM_ID>` via `gh project item-list 3 --owner vic-corp-code --format json` (match on issue number/URL) — `gh project item-add` also prints it on add.
 
 ## Conventions
 
