@@ -320,21 +320,39 @@
     }
   },
   "members": {
-    "title": "Membres",
-    "loading": "Chargement…",
+    "list": {
+      "title": "Membres",
+      "subtitle": "Gérez les membres et les invitations de votre organisation",
+      "searchLabel": "Rechercher",
+      "searchPlaceholder": "Nom, email...",
+      "roleFilterLabel": "Rôle",
+      "allRoles": "Tous les rôles",
+      "inviteMember": "+ Inviter un membre",
+      "colMember": "Membre",
+      "colRole": "Rôle",
+      "emptyNone": "Aucun membre. Commencez par inviter quelqu'un !",
+      "emptyFiltered": "Aucun membre ne correspond aux filtres.",
+      "errorTitle": "Impossible de charger les membres",
+      "errorDescription": "Vérifiez votre connexion et réessayez."
+    },
     "error": "Une erreur est survenue.",
-    "roleLabel": "Rôle",
     "role": {
       "admin": "Admin",
       "editor": "Éditeur"
     },
     "remove": "Retirer",
     "removeConfirm": "Retirer ce membre ?",
-    "generateInvite": "Générer un lien d'invitation",
-    "inviteRoleLabel": "Rôle pour l'invité",
-    "inviteLinkLabel": "Lien d'invitation",
-    "copy": "Copier",
-    "copied": "Copié !"
+    "invitePending": "Invitation en attente",
+    "invite": {
+      "title": "Inviter un membre",
+      "description": "Générez un lien d'invitation à partager avec la personne.",
+      "roleLabel": "Rôle pour l'invité",
+      "generate": "Générer le lien",
+      "linkLabel": "Lien d'invitation",
+      "copy": "Copier",
+      "copied": "Copié !",
+      "error": "Impossible de générer le lien d'invitation."
+    }
   },
   "invite": {
     "title": "Invitation",

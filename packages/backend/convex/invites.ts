@@ -23,6 +23,27 @@ export const create = mutation({
   },
 });
 
+// List pending (unused) invites for an organization (admin-only).
+export const listForOrg = query({
+  args: { organizationId: v.id("organizations") },
+  handler: async (ctx, { organizationId }) => {
+    await assertAdminAccess(ctx, organizationId);
+
+    const invites = await ctx.db
+      .query("invites")
+      .withIndex("by_organization", (q) => q.eq("organizationId", organizationId))
+      .collect();
+
+    return invites
+      .filter((invite) => !invite.usedAt)
+      .map((invite) => ({
+        inviteId: invite._id,
+        role: invite.role,
+        createdAt: invite._creationTime,
+      }));
+  },
+});
+
 // Public: look up an invite by token to show "you've been invited to X"
 // before the visitor is necessarily signed in.
 export const getByToken = query({
