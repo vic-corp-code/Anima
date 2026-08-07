@@ -19,7 +19,8 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@anima/ui/*": ["../../packages/ui/src/*"]
     }
   },
   "include": [

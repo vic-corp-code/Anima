@@ -1,0 +1,1632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paws &amp; Hearts Animal Shelter — Somebody here is already waiting for you</title>
+<style>
+:root {
+  --bg: #fbf6ee;
+  --surface: #fffdf8;
+  --surface-warm: #f1e3cf;
+  --fg: #201914;
+  --fg-2: #4c4037;
+  --muted: #7a6d63;
+  --meta: #9b5b32;
+  --border: #ded2c3;
+  --border-soft: #eee4d7;
+  --accent: #9b5b32;
+  --accent-on: #ffffff;
+  --accent-hover: color-mix(in oklab, var(--accent), black 8%);
+  --accent-active: color-mix(in oklab, var(--accent), black 14%);
+  --success: #4f8a4f;
+  --warn: #c9822f;
+  --danger: #b33a3a;
+  --font-display: Georgia, "Times New Roman", serif;
+  --font-body: Inter, system-ui, sans-serif;
+  --font-mono: "SF Mono", ui-monospace, Menlo, monospace;
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 17px;
+  --text-lg: 20px;
+  --text-xl: 28px;
+  --text-2xl: 42px;
+  --text-3xl: 64px;
+  --text-4xl: 88px;
+  --leading-body: 1.62;
+  --leading-tight: 1;
+  --tracking-display: -0.025em;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --section-y-desktop: 112px;
+  --section-y-tablet: 80px;
+  --section-y-phone: 56px;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-pill: 9999px;
+  --elev-flat: none;
+  --elev-ring: 0 0 0 1px var(--border);
+  --elev-raised: 0 20px 52px rgba(32, 25, 20, 0.12);
+  --focus-ring: 0 0 0 4px rgba(155, 91, 50, 0.24);
+  --motion-fast: 150ms;
+  --motion-base: 240ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --container-max: 1180px;
+  --container-gutter-desktop: 36px;
+  --container-gutter-tablet: 24px;
+  --container-gutter-phone: 16px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-body);
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3 { font-family: var(--font-display); font-weight: 400; margin: 0; }
+h1 { font-size: var(--text-4xl); line-height: 0.98; letter-spacing: var(--tracking-display); }
+h2 { font-size: var(--text-2xl); line-height: 1.06; letter-spacing: -0.02em; }
+h3 { font-size: var(--text-lg); line-height: 1.25; letter-spacing: -0.01em; }
+p { margin: 0; }
+a { color: inherit; }
+img, svg { display: block; max-width: 100%; }
+button, input, select, textarea { font: inherit; color: inherit; }
+
+.container { width: 100%; max-width: var(--container-max); margin: 0 auto; padding: 0 var(--container-gutter-desktop); }
+.band { padding: var(--section-y-desktop) 0; }
+.band--tight { padding: var(--section-y-tablet) 0; }
+
+.eyebrow {
+  font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.09em;
+  font-weight: 600; color: var(--meta); margin: 0 0 var(--space-4);
+}
+.lead { font-size: var(--text-lg); color: var(--fg-2); line-height: 1.55; max-width: 54ch; }
+.muted-note { color: var(--muted); font-size: var(--text-sm); letter-spacing: 0.01em; }
+
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: none; box-shadow: var(--focus-ring); border-radius: var(--radius-sm);
+}
+
+/* ---------- buttons ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+  min-height: 48px; padding: 0 var(--space-6); border-radius: var(--radius-pill);
+  font-size: var(--text-sm); font-weight: 600; letter-spacing: 0.02em;
+  text-decoration: none; cursor: pointer; border: 1px solid transparent;
+  transition: background var(--motion-fast) var(--ease-standard),
+              border-color var(--motion-fast) var(--ease-standard),
+              transform var(--motion-fast) var(--ease-standard);
+}
+.btn:active { transform: translateY(2px); }
+.btn-primary { background: var(--accent); color: var(--accent-on); }
+.btn-primary:hover { background: var(--accent-hover); color: var(--accent-on); }
+.btn-secondary { background: var(--surface); color: var(--fg); border-color: var(--border); }
+.btn-secondary:hover { background: var(--surface-warm); border-color: var(--muted); color: var(--fg); }
+.btn-quiet {
+  background: none; border: none; padding: 0; min-height: 44px;
+  font-size: var(--text-sm); font-weight: 600; letter-spacing: 0.02em; color: var(--fg);
+  text-decoration: none; display: inline-flex; align-items: center; gap: var(--space-2);
+  border-bottom: 1px solid var(--border); border-radius: 0; cursor: pointer;
+}
+.btn-quiet:hover { border-bottom-color: var(--fg); color: var(--fg); }
+.btn-quiet svg { transition: transform var(--motion-fast) var(--ease-standard); }
+.btn-quiet:hover svg { transform: translateX(3px); }
+
+/* ---------- header ---------- */
+.site-header {
+  position: sticky; top: 0; z-index: 60;
+  background: color-mix(in oklab, var(--bg) 88%, transparent);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--motion-base) var(--ease-standard);
+}
+.site-header.is-stuck { border-bottom-color: var(--border); }
+.site-header .container { position: relative; }
+.header-inner { display: flex; align-items: center; gap: var(--space-8); height: 76px; }
+.brand { display: flex; align-items: center; gap: var(--space-3); text-decoration: none; margin-right: auto; }
+.brand-mark {
+  width: 38px; height: 38px; border-radius: var(--radius-pill);
+  background: var(--surface-warm); color: var(--accent);
+  display: grid; place-items: center; flex: none;
+}
+.brand-name { font-family: var(--font-display); font-size: var(--text-lg); letter-spacing: -0.01em; }
+.brand-sub { display: block; font-family: var(--font-body); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
+.site-nav { display: flex; gap: var(--space-6); list-style: none; margin: 0; padding: 0; }
+.site-nav a {
+  font-size: var(--text-sm); font-weight: 500; letter-spacing: 0.02em;
+  text-decoration: none; color: var(--fg-2); padding: var(--space-2) 0;
+  border-bottom: 1px solid transparent;
+}
+.site-nav a:hover { color: var(--fg); border-bottom-color: var(--accent); }
+.saved-chip {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  min-height: 44px; padding: 0 var(--space-4); border-radius: var(--radius-pill);
+  border: 1px solid var(--border); background: var(--surface); cursor: pointer;
+  font-size: var(--text-sm); font-weight: 600; letter-spacing: 0.02em;
+}
+.saved-chip:hover { background: var(--surface-warm); border-color: var(--muted); }
+.saved-chip svg { color: var(--accent); }
+.nav-toggle {
+  display: none; align-items: center; justify-content: center;
+  width: 48px; height: 48px; border-radius: var(--radius-pill);
+  background: var(--surface); border: 1px solid var(--border); cursor: pointer; color: var(--fg);
+}
+.nav-toggle:hover { background: var(--surface-warm); border-color: var(--muted); }
+.mobile-nav {
+  display: none; position: absolute; left: 0; right: 0; top: 100%;
+  background: var(--surface); border-bottom: 1px solid var(--border); box-shadow: var(--elev-raised);
+}
+.mobile-nav[data-open="true"] { display: block; }
+.mobile-nav ul { list-style: none; margin: 0; padding: var(--space-3) 0; }
+.mobile-nav a {
+  display: block; padding: var(--space-4) var(--container-gutter-tablet);
+  font-size: var(--text-base); font-weight: 500; text-decoration: none; color: var(--fg-2);
+}
+.mobile-nav a:hover { background: var(--surface-warm); color: var(--fg); }
+
+/* ---------- hero ---------- */
+.hero { padding: var(--space-12) 0 var(--section-y-tablet); }
+.hero-grid { display: grid; grid-template-columns: 1.08fr 0.92fr; gap: 64px; align-items: center; }
+.hero h1 { margin-bottom: var(--space-6); }
+.hero h1 em { font-style: italic; }
+.hero-actions { display: flex; align-items: center; gap: var(--space-6); margin-top: var(--space-8); flex-wrap: wrap; }
+.stat-rail {
+  display: grid; grid-template-columns: repeat(3, auto); gap: var(--space-8);
+  margin-top: var(--space-12); padding-top: var(--space-6);
+  border-top: 1px solid var(--border); justify-content: start;
+}
+.stat-value { font-family: var(--font-display); font-size: var(--text-xl); line-height: 1.05; letter-spacing: -0.02em; }
+.stat-label { font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-top: var(--space-1); }
+
+.hero-collage { position: relative; }
+.hero-photo {
+  border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--elev-raised);
+  border: 1px solid var(--border-soft);
+}
+.hero-photo--main { aspect-ratio: 5 / 4; }
+.hero-photo--inset {
+  position: absolute; left: -34px; bottom: 40px; width: 42%; aspect-ratio: 1 / 1;
+  border-radius: var(--radius-md);
+}
+.hero-tagcard {
+  position: absolute; right: 20px; top: 20px;
+  background: var(--surface); border-radius: var(--radius-md); border: 1px solid var(--border-soft);
+  padding: var(--space-3) var(--space-4); box-shadow: var(--elev-raised); max-width: 210px;
+}
+.hero-tagcard .k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.09em; color: color-mix(in oklab, var(--success), black 22%); font-weight: 700; }
+.hero-tagcard .v { font-size: var(--text-sm); color: var(--fg-2); margin-top: 2px; }
+
+/* ---------- photo placeholder ---------- */
+.ph {
+  position: relative; display: grid; place-items: center; background: var(--surface-warm);
+  background-image: radial-gradient(circle at 30% 20%, color-mix(in oklab, var(--tint, var(--accent)) 34%, transparent), transparent 62%),
+                    linear-gradient(160deg, color-mix(in oklab, var(--tint, var(--accent)) 32%, var(--surface)) 0%, color-mix(in oklab, var(--tint, var(--accent)) 14%, var(--surface)) 100%);
+  overflow: hidden;
+}
+.ph svg { width: 46%; height: 46%; color: color-mix(in oklab, var(--tint, var(--accent)) 62%, var(--fg)); opacity: 0.55; }
+.ph::after {
+  content: attr(data-ph);
+  position: absolute; left: var(--space-3); bottom: var(--space-3);
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700;
+  color: var(--fg-2); background: color-mix(in oklab, var(--surface) 82%, transparent);
+  padding: 3px 8px; border-radius: var(--radius-pill);
+}
+
+/* ---------- ticker ---------- */
+.ticker {
+  border-block: 1px solid var(--border); background: var(--surface);
+  overflow: hidden; padding: var(--space-4) 0;
+}
+.ticker-track { display: flex; gap: var(--space-8); width: max-content; animation: slide 46s linear infinite; }
+.ticker:hover .ticker-track { animation-play-state: paused; }
+.ticker-item {
+  display: inline-flex; align-items: center; gap: var(--space-3);
+  font-size: var(--text-sm); letter-spacing: 0.01em; color: var(--fg-2); white-space: nowrap;
+}
+.ticker-item b { font-weight: 600; color: var(--fg); }
+.dot { width: 7px; height: 7px; border-radius: var(--radius-pill); background: var(--success); flex: none; }
+.dot--new { background: var(--warn); }
+@keyframes slide { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* ---------- section head ---------- */
+.section-head { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--space-8); margin-bottom: var(--space-12); }
+.section-head p { color: var(--fg-2); max-width: 46ch; margin-top: var(--space-3); }
+
+/* ---------- toolbar ---------- */
+.toolbar {
+  display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap;
+  margin-bottom: var(--space-8); padding-bottom: var(--space-6); border-bottom: 1px solid var(--border);
+}
+.search { position: relative; flex: 1 1 260px; max-width: 320px; }
+.search svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); width: 18px; height: 18px; }
+.search input {
+  width: 100%; min-height: 48px; padding: 0 var(--space-4) 0 42px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-pill);
+  font-size: var(--text-sm);
+}
+.search input::placeholder { color: var(--muted); }
+.search input:focus { border-color: var(--accent); }
+.chips { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+.chip {
+  min-height: 44px; padding: 0 var(--space-5); border-radius: var(--radius-pill);
+  background: var(--surface); border: 1px solid var(--border); color: var(--fg-2);
+  font-size: var(--text-sm); font-weight: 500; letter-spacing: 0.02em; cursor: pointer;
+  transition: background var(--motion-fast) var(--ease-standard), color var(--motion-fast) var(--ease-standard);
+}
+.chip:hover { background: var(--surface-warm); color: var(--fg); border-color: var(--muted); }
+.chip[aria-pressed="true"] { background: var(--fg); border-color: var(--fg); color: var(--bg); }
+.chip[aria-pressed="true"]:hover { background: var(--fg-2); border-color: var(--fg-2); color: var(--bg); }
+.sort { margin-left: auto; display: flex; align-items: center; gap: var(--space-3); }
+.sort label { font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; }
+.sort select {
+  min-height: 44px; padding: 0 var(--space-4); border-radius: var(--radius-pill);
+  border: 1px solid var(--border); background: var(--surface); font-size: var(--text-sm); cursor: pointer;
+}
+.sort select:hover { background: var(--surface-warm); }
+
+/* ---------- animal grid ---------- */
+.animal-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-6); }
+.animal-card {
+  display: flex; flex-direction: column; text-align: left; padding: 0; cursor: pointer;
+  background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-lg);
+  overflow: hidden; transition: transform var(--motion-base) var(--ease-standard),
+              box-shadow var(--motion-base) var(--ease-standard), border-color var(--motion-base) var(--ease-standard);
+}
+.animal-card:hover { transform: translateY(-4px); box-shadow: var(--elev-raised); border-color: var(--border); }
+.animal-media { position: relative; display: block; aspect-ratio: 4 / 3; }
+.animal-media > .ph { position: absolute; inset: 0; }
+.animal-media > .tag--wait {
+  position: absolute; left: var(--space-3); top: var(--space-3); z-index: 2;
+  background: color-mix(in oklab, var(--surface) 88%, transparent);
+  backdrop-filter: blur(6px);
+  border-color: color-mix(in oklab, var(--surface) 60%, transparent);
+  box-shadow: 0 2px 8px rgba(32, 25, 20, 0.12);
+  font-weight: 600;
+}
+.fav {
+  position: absolute; top: var(--space-3); right: var(--space-3); z-index: 2;
+  width: 44px; height: 44px; border-radius: var(--radius-pill);
+  display: grid; place-items: center; cursor: pointer;
+  background: color-mix(in oklab, var(--surface) 88%, transparent);
+  border: 1px solid var(--border-soft); color: var(--fg-2);
+  transition: background var(--motion-fast) var(--ease-standard), color var(--motion-fast) var(--ease-standard);
+}
+.fav:hover { background: var(--surface); color: var(--accent); }
+.fav[aria-pressed="true"] { color: var(--accent); }
+.fav[aria-pressed="true"] svg { fill: currentColor; }
+.fav svg { width: 20px; height: 20px; fill: none; transition: transform var(--motion-fast) var(--ease-standard); }
+.fav:active svg { transform: scale(0.82); }
+.animal-body { padding: var(--space-3) var(--space-4); display: flex; flex-direction: column; gap: 4px; flex: 1; }
+.animal-name-row { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); }
+.animal-name { font-family: var(--font-display); font-size: var(--text-lg); letter-spacing: -0.01em; }
+.animal-age { font-size: var(--text-xs); color: var(--muted); letter-spacing: 0.02em; white-space: nowrap; }
+.animal-breed { font-size: var(--text-sm); color: var(--fg-2); }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: var(--space-1); }
+.tag {
+  font-size: var(--text-xs); letter-spacing: 0.02em; padding: 4px 10px;
+  border-radius: var(--radius-pill); background: var(--bg); border: 1px solid var(--border-soft); color: var(--fg-2);
+}
+.tag--wait { background: color-mix(in oklab, var(--warn) 14%, var(--surface)); border-color: color-mix(in oklab, var(--warn) 30%, var(--surface)); color: color-mix(in oklab, var(--warn), black 26%); }
+.animal-foot {
+  margin-top: auto; padding-top: var(--space-3);
+  display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
+  font-size: var(--text-sm); font-weight: 600; letter-spacing: 0.02em;
+}
+.animal-foot span:last-child { color: var(--fg-2); transition: color var(--motion-fast) var(--ease-standard); }
+.animal-card:hover .animal-foot span:last-child { color: var(--accent); }
+.empty-state {
+  grid-column: 1 / -1; text-align: center; padding: var(--space-12) var(--space-6);
+  border: 1px dashed var(--border); border-radius: var(--radius-lg); color: var(--fg-2);
+}
+.empty-state h3 { margin-bottom: var(--space-2); }
+
+/* ---------- news ---------- */
+.news-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; }
+.feed-title {
+  display: flex; align-items: center; gap: var(--space-3); font-size: var(--text-xs);
+  text-transform: uppercase; letter-spacing: 0.09em; font-weight: 700; color: var(--fg-2);
+  padding-bottom: var(--space-4); border-bottom: 1px solid var(--border); margin-bottom: var(--space-2);
+}
+.feed { list-style: none; margin: 0; padding: 0; }
+.feed li { display: flex; align-items: flex-start; gap: var(--space-4); padding: var(--space-5) 0; border-bottom: 1px solid var(--border-soft); }
+.feed .ph { width: 60px; height: 60px; border-radius: var(--radius-pill); flex: none; }
+.feed .ph::after { display: none; }
+.feed-date { font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.04em; color: var(--muted); }
+.feed h3 { font-size: var(--text-base); font-family: var(--font-body); font-weight: 600; margin: 2px 0 4px; letter-spacing: 0; }
+.feed p { font-size: var(--text-sm); color: var(--fg-2); line-height: 1.5; min-height: 3em; }
+
+/* ---------- longest waiting ---------- */
+.waiting-band { background: var(--surface-warm); }
+.waiting-head { max-width: 58ch; margin-bottom: var(--space-12); }
+.waiting-head p { color: var(--fg-2); margin-top: var(--space-4); }
+.waiting-list { display: grid; gap: var(--space-4); }
+.waiting-row {
+  display: grid; grid-template-columns: 96px 1fr auto; gap: var(--space-6); align-items: center;
+  background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-lg);
+  padding: var(--space-5) var(--space-6);
+  transition: transform var(--motion-base) var(--ease-standard), box-shadow var(--motion-base) var(--ease-standard);
+}
+.waiting-row:hover { transform: translateY(-3px); box-shadow: var(--elev-raised); }
+.waiting-row .ph { width: 96px; height: 96px; border-radius: var(--radius-md); }
+.waiting-row .ph::after { display: none; }
+.waiting-name { font-family: var(--font-display); font-size: var(--text-xl); letter-spacing: -0.02em; line-height: 1.1; }
+.waiting-row p { font-size: var(--text-sm); color: var(--fg-2); margin-top: var(--space-2); max-width: 62ch; }
+.waiting-meter { text-align: right; }
+.waiting-num { font-family: var(--font-display); font-size: var(--text-xl); letter-spacing: -0.02em; color: var(--warn); }
+.waiting-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-weight: 700; }
+
+/* ---------- visit ---------- */
+.visit-grid { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 64px; align-items: start; }
+.info-block + .info-block { margin-top: var(--space-8); padding-top: var(--space-8); border-top: 1px solid var(--border); }
+.info-block h3 { font-size: var(--text-xs); font-family: var(--font-body); text-transform: uppercase; letter-spacing: 0.09em; font-weight: 700; color: var(--muted); margin-bottom: var(--space-3); }
+.info-block p { color: var(--fg-2); }
+.info-block a { color: var(--fg); text-decoration: none; border-bottom: 1px solid var(--border); }
+.info-block a:hover { border-bottom-color: var(--fg); }
+.hours { list-style: none; margin: 0; padding: 0; }
+.hours li { display: flex; align-items: baseline; gap: var(--space-3); padding: 6px 0; font-size: var(--text-sm); }
+.hours .d { color: var(--fg-2); }
+.hours .line { flex: 1; border-bottom: 1px dotted var(--border); }
+.hours .t { font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.02em; }
+.hours li.closed .t { color: var(--danger); }
+.socials { display: flex; gap: var(--space-3); }
+.social {
+  width: 48px; height: 48px; border-radius: var(--radius-pill); display: grid; place-items: center;
+  background: var(--surface); border: 1px solid var(--border); color: var(--fg-2); text-decoration: none;
+  transition: background var(--motion-fast) var(--ease-standard), color var(--motion-fast) var(--ease-standard);
+}
+.social:hover { background: var(--fg); border-color: var(--fg); color: var(--bg); }
+.map-frame {
+  border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border);
+  background: var(--surface); box-shadow: var(--elev-raised); position: relative;
+}
+.map-frame svg { width: 100%; height: auto; }
+.map-caption {
+  position: absolute; left: var(--space-4); bottom: var(--space-4);
+  background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4); box-shadow: var(--elev-raised); max-width: calc(100% - var(--space-8));
+}
+.map-caption strong { display: block; font-size: var(--text-sm); }
+.map-caption span { font-size: var(--text-xs); color: var(--muted); letter-spacing: 0.02em; }
+
+/* ---------- help ---------- */
+.help-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-6); }
+.help-card {
+  background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-lg);
+  padding: var(--space-8); display: flex; flex-direction: column; gap: var(--space-3);
+}
+.help-card h3 { margin-bottom: var(--space-1); }
+.help-card p { font-size: var(--text-sm); color: var(--fg-2); }
+.help-card .btn-quiet { margin-top: auto; padding-top: var(--space-5); align-self: flex-start; }
+.help-num { font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.08em; color: var(--meta); }
+.closer {
+  margin-top: var(--space-12); background: var(--fg); color: var(--bg); border-radius: var(--radius-lg);
+  padding: var(--space-12); display: flex; align-items: center; justify-content: space-between; gap: var(--space-8);
+}
+.closer h2 { max-width: 18ch; }
+.closer p { color: color-mix(in oklab, var(--bg) 74%, var(--fg)); margin-top: var(--space-4); max-width: 42ch; }
+
+/* ---------- footer ---------- */
+.site-footer { background: var(--fg); color: var(--bg); padding: var(--section-y-tablet) 0 var(--space-8); }
+.footer-grid { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: var(--space-12); }
+.footer-grid h3 { font-family: var(--font-body); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.09em; font-weight: 700; color: color-mix(in oklab, var(--bg) 62%, var(--fg)); margin-bottom: var(--space-4); }
+.footer-links { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); }
+.footer-links a { font-size: var(--text-sm); text-decoration: none; color: color-mix(in oklab, var(--bg) 84%, var(--fg)); }
+.footer-links a:hover { color: var(--bg); text-decoration: underline; text-underline-offset: 4px; }
+.newsletter { display: flex; gap: var(--space-2); margin-top: var(--space-4); max-width: 380px; }
+.newsletter input {
+  flex: 1; min-height: 48px; padding: 0 var(--space-4); border-radius: var(--radius-pill);
+  background: color-mix(in oklab, var(--bg) 12%, var(--fg)); color: var(--bg);
+  border: 1px solid color-mix(in oklab, var(--bg) 26%, var(--fg));
+}
+.newsletter input::placeholder { color: color-mix(in oklab, var(--bg) 70%, var(--fg)); }
+.newsletter input:focus { border-color: var(--surface-warm); }
+.newsletter .btn { background: var(--bg); color: var(--fg); }
+.newsletter .btn:hover { background: var(--surface-warm); color: var(--fg); }
+.footer-note {
+  margin-top: var(--space-12); padding-top: var(--space-6);
+  border-top: 1px solid color-mix(in oklab, var(--bg) 20%, var(--fg));
+  display: flex; justify-content: space-between; gap: var(--space-6); flex-wrap: wrap;
+  font-size: var(--text-xs); color: color-mix(in oklab, var(--bg) 62%, var(--fg)); letter-spacing: 0.02em;
+}
+.form-msg { font-size: var(--text-xs); letter-spacing: 0.02em; margin-top: var(--space-3); min-height: 18px; }
+.form-msg[data-state="error"] { color: color-mix(in oklab, var(--danger), white 34%); }
+.form-msg[data-state="ok"] { color: color-mix(in oklab, var(--success), white 40%); }
+
+/* ---------- dialog ---------- */
+dialog {
+  border: none; padding: 0; background: transparent; max-width: 860px; width: calc(100% - 32px);
+  color: var(--fg);
+}
+dialog::backdrop { background: color-mix(in oklab, var(--fg) 62%, transparent); backdrop-filter: blur(3px); }
+.sheet {
+  background: var(--surface); border-radius: var(--radius-lg); overflow: hidden;
+  display: grid; grid-template-columns: 300px 1fr; box-shadow: var(--elev-raised);
+  max-height: min(86vh, 720px);
+}
+.sheet-media { position: relative; }
+.sheet-media .ph { width: 100%; height: 100%; }
+.sheet-body { padding: var(--space-8); overflow-y: auto; }
+.sheet-close {
+  position: absolute; top: var(--space-4); right: var(--space-4); z-index: 3;
+  width: 44px; height: 44px; border-radius: var(--radius-pill); cursor: pointer;
+  background: var(--surface); border: 1px solid var(--border); display: grid; place-items: center;
+}
+.sheet-close:hover { background: var(--surface-warm); border-color: var(--muted); }
+.vitals { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-4); margin: var(--space-6) 0; padding: var(--space-5) 0; border-block: 1px solid var(--border-soft); }
+.vitals dt { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-weight: 700; }
+.vitals dd { margin: 4px 0 0; font-size: var(--text-sm); font-weight: 600; }
+.sheet-body h2 { font-size: var(--text-xl); }
+.sheet-body > p { font-size: var(--text-sm); color: var(--fg-2); line-height: 1.6; }
+.field { display: grid; gap: 6px; margin-bottom: var(--space-4); }
+.field label { font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; color: var(--muted); }
+.field input, .field textarea {
+  min-height: 48px; padding: var(--space-3) var(--space-4); border-radius: var(--radius-sm);
+  border: 1px solid var(--border); background: var(--bg); font-size: var(--text-sm);
+}
+.field textarea { min-height: 84px; resize: vertical; }
+.field input:focus, .field textarea:focus { border-color: var(--accent); }
+.field input[aria-invalid="true"], .field textarea[aria-invalid="true"] { border-color: var(--danger); }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
+.sheet form .form-msg[data-state="error"] { color: var(--danger); }
+.sheet form .form-msg[data-state="ok"] { color: color-mix(in oklab, var(--success), black 24%); }
+.enquiry-head { font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.09em; font-weight: 700; color: var(--fg-2); margin: var(--space-6) 0 var(--space-4); }
+
+/* ---------- reveal ---------- */
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity 620ms var(--ease-standard), transform 620ms var(--ease-standard); }
+.reveal.in { opacity: 1; transform: none; }
+
+@media (max-width: 1080px) {
+  :root { --text-4xl: 64px; --text-3xl: 48px; --text-2xl: 34px; }
+  .container { padding: 0 var(--container-gutter-tablet); }
+  .band { padding: var(--section-y-tablet) 0; }
+  .hero-grid { grid-template-columns: 1fr; gap: var(--space-12); }
+  .hero-photo--main { aspect-ratio: 16 / 10; }
+  .hero-photo--inset { left: auto; right: 24px; bottom: -28px; width: 34%; }
+  .hero-collage { margin-bottom: var(--space-8); }
+  .animal-grid { grid-template-columns: repeat(2, 1fr); }
+  .news-grid, .visit-grid { grid-template-columns: 1fr; gap: var(--space-12); }
+  .help-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .site-nav { display: none; }
+  .nav-toggle { display: inline-flex; }
+  .header-inner { gap: var(--space-3); }
+}
+@media (max-width: 720px) {
+  :root { --text-4xl: 46px; --text-2xl: 30px; --text-xl: 24px; }
+  .container { padding: 0 var(--container-gutter-phone); }
+  .band { padding: var(--section-y-phone) 0; }
+  .section-head { flex-direction: column; align-items: flex-start; gap: var(--space-4); }
+  .animal-grid { grid-template-columns: 1fr; }
+  .stat-rail { grid-template-columns: 1fr 1fr; gap: var(--space-6); }
+  .waiting-row { grid-template-columns: 72px 1fr; }
+  .waiting-row .ph { width: 72px; height: 72px; }
+  .waiting-meter { grid-column: 2; text-align: left; }
+  .sheet { grid-template-columns: 1fr; }
+  .sheet-media { height: 200px; }
+  .sheet-body { padding: var(--space-6); }
+  .vitals { grid-template-columns: repeat(2, 1fr); }
+  .closer { flex-direction: column; align-items: flex-start; padding: var(--space-8); }
+  .footer-grid { grid-template-columns: 1fr; gap: var(--space-8); }
+  .field-row { grid-template-columns: 1fr; }
+  .hero-tagcard { right: 12px; top: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+  .reveal { opacity: 1; transform: none; }
+  .ticker-track { animation: none !important; }
+  .ticker { overflow-x: auto; }
+}
+</style>
+<style>
+  /* ---------- longest-waiting carousel (comparison view) ----------
+     Scoped under .lwc-* so the existing list layout is untouched. */
+  .lwc-head { max-width: 62ch; margin-bottom: var(--space-12); }
+  .lwc-head p { color: var(--fg-2); margin-top: var(--space-4); }
+  .lwc-note {
+    display: inline-flex; align-items: center; gap: var(--space-2); margin-top: var(--space-5);
+    font-size: var(--text-xs); letter-spacing: 0.06em; text-transform: uppercase; font-weight: 700; color: var(--muted);
+  }
+  .lwc-note b { color: var(--fg-2); font-weight: 700; }
+
+  .lwc {
+    position: relative; border: 1px solid var(--border-soft); border-radius: var(--radius-lg);
+    background: var(--surface); box-shadow: var(--elev-raised); overflow: hidden;
+  }
+  .lwc-viewport { overflow: hidden; }
+  .lwc-track { display: flex; will-change: transform; transition: transform var(--motion-base) var(--ease-standard); }
+  .lwc-slide { flex: 0 0 100%; min-width: 0; }
+  .lwc-card { display: grid; grid-template-columns: 0.92fr 1.08fr; align-items: stretch; }
+
+  .lwc-media { position: relative; aspect-ratio: 5 / 4; background: var(--surface-warm); }
+  .lwc-media .ph { position: absolute; inset: 0; }
+  .lwc-media .ph svg { width: 38%; height: 38%; }
+  .lwc-media .ph::after { display: none; }
+  .lwc-waitpill {
+    position: absolute; left: var(--space-5); top: var(--space-5); z-index: 2;
+    background: color-mix(in oklab, var(--surface) 90%, transparent);
+    border: 1px solid var(--border-soft); border-radius: var(--radius-pill);
+    padding: 6px 12px; font-size: var(--text-xs); letter-spacing: 0.02em; font-weight: 700; color: var(--warn);
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); box-shadow: 0 2px 8px rgba(32, 25, 20, 0.12);
+  }
+
+  .lwc-body { padding: var(--space-12); display: flex; flex-direction: column; gap: var(--space-3); }
+  .lwc-species { font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.09em; font-weight: 700; color: var(--muted); }
+  .lwc-name { font-family: var(--font-display); font-size: var(--text-2xl); letter-spacing: -0.02em; line-height: 1.05; }
+  .lwc-story { color: var(--fg-2); font-size: var(--text-base); line-height: var(--leading-body); max-width: 46ch; }
+  .lwc-tags { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-2); }
+  .lwc-actions { margin-top: auto; padding-top: var(--space-6); }
+
+  .lwc-controls {
+    display: flex; align-items: center; justify-content: space-between; gap: var(--space-4);
+    padding: var(--space-5) var(--space-6); border-top: 1px solid var(--border-soft);
+    background: color-mix(in oklab, var(--surface) 86%, var(--bg));
+  }
+  .lwc-arrows { display: flex; gap: var(--space-2); }
+  .lwc-arrow {
+    width: 48px; height: 48px; border-radius: var(--radius-pill); display: grid; place-items: center; cursor: pointer;
+    background: var(--surface); border: 1px solid var(--border); color: var(--fg);
+    transition: background var(--motion-fast) var(--ease-standard), color var(--motion-fast) var(--ease-standard),
+                border-color var(--motion-fast) var(--ease-standard);
+  }
+  .lwc-arrow:hover { background: var(--fg); border-color: var(--fg); color: var(--bg); }
+  .lwc-arrow:disabled { opacity: 0.35; cursor: default; background: var(--surface); color: var(--fg); border-color: var(--border); }
+  .lwc-arrow:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+  .lwc-arrow svg { width: 20px; height: 20px; }
+  .lwc-arrow[data-dir="prev"] svg { transform: scaleX(-1); }
+
+  .lwc-dots { display: flex; align-items: center; gap: var(--space-2); }
+  .lwc-dot {
+    width: 9px; height: 9px; border-radius: var(--radius-pill); padding: 0; cursor: pointer;
+    background: var(--border); border: 0;
+    transition: width var(--motion-fast) var(--ease-standard), background var(--motion-fast) var(--ease-standard);
+  }
+  .lwc-dot[aria-current="true"] { width: 26px; background: var(--accent); }
+  .lwc-dot:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+  .lwc-count { font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.08em; color: var(--muted); }
+
+  @media (max-width: 1080px) {
+    .lwc-card { grid-template-columns: 1fr; }
+    .lwc-media { aspect-ratio: 16 / 10; }
+    .lwc-body { padding: var(--space-8); }
+  }
+  @media (max-width: 720px) {
+    .lwc-body { padding: var(--space-6); gap: var(--space-2); }
+    .lwc-name { font-size: var(--text-xl); }
+    .lwc-controls { padding: var(--space-4) var(--space-5); flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" aria-hidden="true" style="position:absolute">
+  <symbol id="g-dog" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M14 16v14c0 11 8 20 18 20s18-9 18-20V16l-9 6H23z"/><circle cx="25" cy="32" r="1.6" fill="currentColor" stroke="none"/><circle cx="39" cy="32" r="1.6" fill="currentColor" stroke="none"/><path d="M32 38v4M28 44c1.6 1.6 6.4 1.6 8 0"/>
+  </symbol>
+  <symbol id="g-cat" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M16 14l4 12M48 14l-4 12M16 14c-1 8 0 14 0 16 0 10 7 18 16 18s16-8 16-18c0-2 1-8 0-16l-8 12H24z"/><circle cx="25" cy="33" r="1.6" fill="currentColor" stroke="none"/><circle cx="39" cy="33" r="1.6" fill="currentColor" stroke="none"/><path d="M30 39h4M32 39v3M20 36h6M38 36h6"/>
+  </symbol>
+  <symbol id="g-rabbit" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M24 26c-3-6-4-13-2-16s6 2 7 9M40 26c3-6 4-13 2-16s-6 2-7 9"/><path d="M32 26c-8 0-14 6-14 13s6 11 14 11 14-4 14-11-6-13-14-13z"/><circle cx="26" cy="38" r="1.6" fill="currentColor" stroke="none"/><circle cx="38" cy="38" r="1.6" fill="currentColor" stroke="none"/><path d="M30 44h4"/>
+  </symbol>
+  <symbol id="g-paw" viewBox="0 0 24 24" fill="currentColor">
+    <ellipse cx="7" cy="8" rx="2.1" ry="2.8"/><ellipse cx="12" cy="6.4" rx="2.1" ry="2.9"/><ellipse cx="17" cy="8" rx="2.1" ry="2.8"/><path d="M12 11.4c2.9 0 5.4 2.2 5.4 4.6 0 2-1.6 3.2-3.4 3.2-.9 0-1.4-.4-2-.4s-1.1.4-2 .4c-1.8 0-3.4-1.2-3.4-3.2 0-2.4 2.5-4.6 5.4-4.6z"/>
+  </symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 20.2 4.6 13a4.6 4.6 0 0 1 6.5-6.5l.9.9.9-.9A4.6 4.6 0 1 1 19.4 13z"/>
+  </symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5 12h14M13 6l6 6-6 6"/>
+  </symbol>
+</svg>
+
+<header class="site-header" id="top" data-od-id="site-header">
+  <div class="container header-inner">
+    <a href="#top" class="brand" data-od-id="brand-logo">
+      <span class="brand-mark"><svg width="20" height="20" aria-hidden="true"><use href="#g-paw"/></svg></span>
+      <span>
+        <span class="brand-name">Paws &amp; Hearts</span>
+        <span class="brand-sub">Shelter · Est. 1998</span>
+      </span>
+    </a>
+    <nav aria-label="Main">
+      <ul class="site-nav">
+        <li><a href="#animals">Meet the animals</a></li>
+        <li><a href="#news">News</a></li>
+        <li><a href="#waiting">Still waiting</a></li>
+        <li><a href="#visit">Visit</a></li>
+        <li><a href="#help">Help out</a></li>
+      </ul>
+    </nav>
+    <button class="saved-chip" id="savedChip" type="button" data-od-id="saved-counter">
+      <svg width="18" height="18" aria-hidden="true"><use href="#i-heart"/></svg>
+      <span id="savedCount">0</span> saved
+    </button>
+    <button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="mobileNav" aria-label="Open menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <nav class="mobile-nav" id="mobileNav" data-open="false" aria-label="Main, compact">
+      <ul>
+        <li><a href="#animals">Meet the animals</a></li>
+        <li><a href="#news">News</a></li>
+        <li><a href="#waiting">Still waiting</a></li>
+        <li><a href="#visit">Visit</a></li>
+        <li><a href="#help">Help out</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero container" data-od-id="hero">
+    <div class="hero-grid">
+      <div>
+        <p class="eyebrow">38 animals in our care today</p>
+        <h1>Somebody here is <em>already</em> waiting for you.</h1>
+        <p class="lead">We are a small no-kill shelter on the north side of Rockford. Every animal on this page is vaccinated, microchipped, health-checked and looking straight at the door every time it opens.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#animals" data-od-id="cta-primary-adopt">Start an adoption</a>
+          <a class="btn-quiet" href="#visit" data-od-id="cta-book-visit">Plan a visit <svg width="18" height="18" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        </div>
+        <div class="stat-rail" data-od-id="hero-stats">
+          <div><div class="stat-value">38</div><div class="stat-label">In care now</div></div>
+          <div><div class="stat-value">214</div><div class="stat-label">Adopted in 2025</div></div>
+          <div><div class="stat-value">61</div><div class="stat-label">Foster homes</div></div>
+        </div>
+      </div>
+      <div class="hero-collage" data-od-id="hero-collage">
+        <div class="ph hero-photo hero-photo--main" data-ph="Photo slot" style="--tint: var(--accent)">
+          <svg aria-hidden="true"><use href="#g-dog"/></svg>
+        </div>
+        <div class="ph hero-photo hero-photo--inset" data-ph="Photo" style="--tint: var(--success)">
+          <svg aria-hidden="true"><use href="#g-cat"/></svg>
+        </div>
+        <div class="hero-tagcard">
+          <div class="k">Went home Tuesday</div>
+          <div class="v">Rocky, 9, after 241 days with us.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="ticker" aria-label="Recent shelter news" data-od-id="news-ticker">
+    <div class="ticker-track" id="tickerTrack">
+      <span class="ticker-item"><span class="dot"></span><b>Rocky</b> went home after 241 days</span>
+      <span class="ticker-item"><span class="dot dot--new"></span><b>Three kittens</b> arrived from a farm in Byron</span>
+      <span class="ticker-item"><span class="dot"></span><b>Pepper &amp; Sage</b> adopted together</span>
+      <span class="ticker-item"><span class="dot dot--new"></span><b>Daisy</b>, 6 months, found near Keeler Park</span>
+      <span class="ticker-item"><span class="dot"></span><b>Marbles</b> went home with her foster family</span>
+      <span class="ticker-item"><span class="dot dot--new"></span><b>Winter coat drive</b> — blankets needed</span>
+    </div>
+  </div>
+
+  <section class="band container reveal" id="animals" data-od-id="available-animals">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Available for adoption</p>
+        <h2>Everyone currently looking</h2>
+        <p>Meet them here, then come say hello in person — no appointment needed on weekends.</p>
+      </div>
+      <p class="muted-note" id="resultCount">Showing 8 of 8</p>
+    </div>
+
+    <div class="toolbar" data-od-id="animal-toolbar">
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5" stroke-linecap="round"/></svg>
+        <label class="sr-only" for="animalSearch" hidden>Search animals</label>
+        <input id="animalSearch" type="search" placeholder="Search by name or breed" aria-label="Search animals by name or breed">
+      </div>
+      <div class="chips" role="group" aria-label="Filter by species">
+        <button class="chip" type="button" data-filter="all" aria-pressed="true">All</button>
+        <button class="chip" type="button" data-filter="dog" aria-pressed="false">Dogs</button>
+        <button class="chip" type="button" data-filter="cat" aria-pressed="false">Cats</button>
+        <button class="chip" type="button" data-filter="small" aria-pressed="false">Small pets</button>
+      </div>
+      <div class="sort">
+        <label for="sortBy">Sort</label>
+        <select id="sortBy">
+          <option value="wait">Longest waiting</option>
+          <option value="new">Newest arrivals</option>
+          <option value="age">Youngest first</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="animal-grid" id="animalGrid">
+
+      <button class="animal-card" type="button" data-type="dog" data-glyph="g-dog" data-tint="var(--accent)"
+        data-name="Max" data-breed="Golden retriever mix" data-age="3 years" data-agemonths="36" data-sex="Male"
+        data-size="Large · 29 kg" data-wait="4" data-arrived="12"
+        data-good="Kids · Other dogs · Car rides"
+        data-story="Max came to us when his family moved abroad. He knows sit, down and wait, walks politely on a lead, and will lean his whole body against your legs the second you stop moving. He would love a household that is home most evenings.">
+        <span class="animal-media">
+          <span class="ph" data-ph="Photo slot" style="--tint: var(--accent)"><svg aria-hidden="true"><use href="#g-dog"/></svg></span>
+        </span>
+        <span class="animal-body">
+          <span class="animal-name-row"><span class="animal-name">Max</span><span class="animal-age">3 years</span></span>
+          <span class="animal-breed">Golden retriever mix</span>
+          <span class="tags"><span class="tag">Good with kids</span><span class="tag">House-trained</span><span class="tag tag--wait">4 months here</span></span>
+          <span class="animal-foot"><span>Meet Max</span><span>→</span></span>
+        </span>
+      </button>
+
+      <button class="animal-card" type="button" data-type="cat" data-glyph="g-cat" data-tint="var(--success)"
+        data-name="Luna" data-breed="Domestic shorthair" data-age="2 years" data-agemonths="24" data-sex="Female"
+        data-size="Small · 3.8 kg" data-wait="2" data-arrived="18"
+        data-good="Quiet homes · Older children"
+        data-story="Luna was a stray who decided a garden shed in Loves Park was hers. She is shy for the first hour and a shameless lap cat after that. She would do best as the only cat, somewhere without a lot of foot traffic.">
+        <span class="animal-media">
+          <span class="ph" data-ph="Photo slot" style="--tint: var(--success)"><svg aria-hidden="true"><use href="#g-cat"/></svg></span>
+        </span>
+        <span class="animal-body">
+          <span class="animal-name-row"><span class="animal-name">Luna</span><span class="animal-age">2 years</span></span>
+          <span class="animal-breed">Domestic shorthair</span>
+          <span class="tags"><span class="tag">Quiet home</span><span class="tag">Indoor only</span><span class="tag tag--wait">2 months here</span></span>
+          <span class="animal-foot"><span>Meet Luna</span><span>→</span></span>
+        </span>
+      </button>
+
+      <button class="animal-card" type="button" data-type="dog" data-glyph="g-dog" data-tint="var(--warn)"
+        data-name="Bella" data-breed="Labrador retriever" data-age="5 years" data-agemonths="60" data-sex="Female"
+        data-size="Large · 31 kg" data-wait="1" data-arrived="22"
+        data-good="Active homes · Hiking · Other dogs"
+        data-story="Bella has the energy of a dog half her age and the manners of one twice it. She was surrendered when her owner's health changed. Two good walks a day and she will sleep at your feet until morning.">
+        <span class="animal-media">
+          <span class="ph" data-ph="Photo slot" style="--tint: var(--warn)"><svg aria-hidden="true"><use href="#g-dog"/></svg></span>
+        </span>
+        <span class="animal-body">
+          <span class="animal-name-row"><span class="animal-name">Bella</span><span class="animal-age">5 years</span></span>
+          <span class="animal-breed">Labrador retriever</span>
+          <span class="tags"><span class="tag">Energetic</span><span class="tag">Lead-trained</span><span class="tag tag--wait">1 month here</span></span>
+          <span class="animal-foot"><span>Meet Bella</span><span>→</span></span>
+        </span>
+      </button>
+
+      <button class="animal-card" type="button" data-type="cat" data-glyph="g-cat" data-tint="var(--meta)"
+        data-name="Oliver" data-breed="Maine coon" data-age="4 years" data-agemonths="48" data-sex="Male"
+        data-size="Large · 7.2 kg" data-wait="6" data-arrived="6"
+        data-good="Other cats · Teenagers · Sunny windows"
+        data-story="Oliver is a magnificent, slightly dramatic cat who will supervise everything you do. He needs weekly brushing and a household that finds long conversations at 6am charming. He has lived happily with another cat before.">
+        <span class="animal-media">
+          <span class="ph" data-ph="Photo slot" style="--tint: var(--meta)"><svg aria-hidden="true"><use href="#g-cat"/></svg></span>
+        </span>
+        <span class="animal-body">
+          <span class="animal-name-row"><span class="animal-name">Oliver</span><span class="animal-age">4 years</span></span>
+          <span class="animal-breed">Maine coon</span>
+          <span class="tags"><span class="tag">Talkative</span><span class="tag">Loves brushing</span><span class="tag tag--wait">6 months here</span></span>
+          <span class="animal-foot"><span>Meet Oliver</span><span>→</span></span>
+        </span>
+      </button>
+
+      <button class="animal-card" type="button" data-type="dog" data-glyph="g-dog" data-tint="var(--success)"
+        data-name="Charlie" data-breed="Beagle mix" data-age="1 year" data-agemonths="12" data-sex="Male"
+        data-size="Medium · 14 kg" data-wait="1" data-arrived="24"
+        data-good="Gardens · Other dogs · Patient people"
+        data-story="Charlie is a year old and entirely made of enthusiasm. He is still learning that shoes are not food. Puppy classes are included with his adoption, and honestly, he needs them."
+        >
+        <span class="animal-media">
+          <span class="ph" data-ph="Photo slot" style="--tint: var(--success)"><svg aria-hidden="true"><use href="#g-dog"/></svg></span>
+        </span>
+        <span class="animal-body">
+          <span class="animal-name-row"><span class="animal-name">Charlie</span><span class="animal-age">1 year</span></span>
+          <span class="animal-breed">Beagle mix</span>
+          <span class="tags"><span class="tag">Puppy energy</span><span class="tag">In training</span><span class="tag tag--wait">1 month here</span></span>
+          <span class="animal-foot"><span>Meet Charlie</span><span>→</span></span>
+        </span>
+      </button>
+
+      <button class="animal-card" type="button" data-type="small" data-glyph="g-rabbit" data-tint="var(--warn)"
+        data-name="Thumper" data-breed="Holland lop rabbit" data-age="2 years" data-agemonths="24" data-sex="Male"
+        data-size="Small · 1.6 kg" data-wait="3" data-arrived="14"
+        data-good="Indoor pens · Calm households"
+        data-story="Thumper is litter-trained, neutered and extremely opinionated about parsley. He needs an indoor pen with daily free-roaming time, and would be happiest bonded with a second rabbit."
+        >
+        <span class="animal-media">
+          <span class="ph" data-ph="Photo slot" style="--tint: var(--warn)"><svg aria-hidden="true"><use href="#g-rabbit"/></svg></span>
+        </span>
+        <span class="animal-body">
+          <span class="animal-name-row"><span class="animal-name">Thumper</span><span class="animal-age">2 years</span></span>
+          <span class="animal-breed">Holland lop rabbit</span>
+          <span class="tags"><span class="tag">Litter-trained</span><span class="tag">Indoor</span><span class="tag tag--wait">3 months here</span></span>
+          <span class="animal-foot"><span>Meet Thumper</span><span>→</span></span>
+        </span>
+      </button>
+
+      <button class="animal-card" type="button" data-type="cat" data-glyph="g-cat" data-tint="var(--accent)"
+        data-name="Pepper" data-breed="Tuxedo shorthair" data-age="7 months" data-agemonths="7" data-sex="Female"
+        data-size="Small · 2.4 kg" data-wait="1" data-arrived="26"
+        data-good="Kids · Dogs · Other kittens"
+        data-story="Pepper is one of the farm kittens who arrived in January. She is fully socialised, fearless with dogs, and can be adopted alongside her brother Sage if you have room for two."
+        >
+        <span class="animal-media">
+          <span class="ph" data-ph="Photo slot" style="--tint: var(--accent)"><svg aria-hidden="true"><use href="#g-cat"/></svg></span>
+        </span>
+        <span class="animal-body">
+          <span class="animal-name-row"><span class="animal-name">Pepper</span><span class="animal-age">7 months</span></span>
+          <span class="animal-breed">Tuxedo shorthair</span>
+          <span class="tags"><span class="tag">Kitten</span><span class="tag">Pair available</span><span class="tag tag--wait">1 month here</span></span>
+          <span class="animal-foot"><span>Meet Pepper</span><span>→</span></span>
+        </span>
+      </button>
+
+      <button class="animal-card" type="button" data-type="small" data-glyph="g-rabbit" data-tint="var(--meta)"
+        data-name="Clover" data-breed="Guinea pig" data-age="3 years" data-agemonths="36" data-sex="Female"
+        data-size="Small · 0.9 kg" data-wait="5" data-arrived="9"
+        data-good="Pairs · Gentle handling · School holidays"
+        data-story="Clover came in with her cage-mate, who has since been adopted. She whistles whenever the fridge opens and needs a companion guinea pig — we can help you find the right match."
+        >
+        <span class="animal-media">
+          <span class="ph" data-ph="Photo slot" style="--tint: var(--meta)"><svg aria-hidden="true"><use href="#g-rabbit"/></svg></span>
+        </span>
+        <span class="animal-body">
+          <span class="animal-name-row"><span class="animal-name">Clover</span><span class="animal-age">3 years</span></span>
+          <span class="animal-breed">Guinea pig</span>
+          <span class="tags"><span class="tag">Needs a friend</span><span class="tag">Gentle</span><span class="tag tag--wait">5 months here</span></span>
+          <span class="animal-foot"><span>Meet Clover</span><span>→</span></span>
+        </span>
+      </button>
+
+      <div class="empty-state" id="emptyState" hidden>
+        <h3>No matches yet</h3>
+        <p>Nobody here fits that search right now — try another name, or clear the filters to see everyone.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band container reveal" id="news" data-od-id="latest-news">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">The last few weeks</p>
+        <h2>Who arrived, who went home</h2>
+      </div>
+      <a class="btn-quiet" href="#animals" data-od-id="news-to-animals">See everyone available <svg width="18" height="18" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+    </div>
+
+    <div class="news-grid">
+      <div data-od-id="feed-arrivals">
+        <h3 class="feed-title"><span class="dot dot--new"></span>Latest arrivals</h3>
+        <ul class="feed">
+          <li>
+            <span class="ph" style="--tint: var(--warn)"><svg aria-hidden="true"><use href="#g-dog"/></svg></span>
+            <div>
+              <p class="feed-date">28 Jan 2026</p>
+              <h3>Daisy, 6 months</h3>
+              <p>Found near Keeler Park with no chip. Fully vaccinated now and available from 8 February.</p>
+            </div>
+          </li>
+          <li>
+            <span class="ph" style="--tint: var(--accent)"><svg aria-hidden="true"><use href="#g-cat"/></svg></span>
+            <div>
+              <p class="feed-date">20 Jan 2026</p>
+              <h3>Three kittens from Byron</h3>
+              <p>Pepper, Sage and Marbles arrived from a farm. Pepper is listed; the other two are still in foster care.</p>
+            </div>
+          </li>
+          <li>
+            <span class="ph" style="--tint: var(--meta)"><svg aria-hidden="true"><use href="#g-rabbit"/></svg></span>
+            <div>
+              <p class="feed-date">14 Jan 2026</p>
+              <h3>Clover, guinea pig</h3>
+              <p>Surrendered after a house move. Looking for a bonded pairing before she goes home.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div data-od-id="feed-adoptions">
+        <h3 class="feed-title"><span class="dot"></span>Recently adopted</h3>
+        <ul class="feed">
+          <li>
+            <span class="ph" style="--tint: var(--success)"><svg aria-hidden="true"><use href="#g-dog"/></svg></span>
+            <div>
+              <p class="feed-date">25 Jan 2026</p>
+              <h3>Rocky found his people</h3>
+              <p>Nine years old, 241 days with us, and now the only dog in a very quiet house in Machesney Park.</p>
+            </div>
+          </li>
+          <li>
+            <span class="ph" style="--tint: var(--accent)"><svg aria-hidden="true"><use href="#g-cat"/></svg></span>
+            <div>
+              <p class="feed-date">22 Jan 2026</p>
+              <h3>Marbles stayed with her foster</h3>
+              <p>A classic foster fail. Her paperwork took eleven minutes.</p>
+            </div>
+          </li>
+          <li>
+            <span class="ph" style="--tint: var(--warn)"><svg aria-hidden="true"><use href="#g-cat"/></svg></span>
+            <div>
+              <p class="feed-date">11 Jan 2026</p>
+              <h3>Sage and Willow, together</h3>
+              <p>Adopted as a pair by a family who came in for one cat and reconsidered in the car park.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="band waiting-band reveal" id="waiting" data-od-id="longest-waiting">
+    <div class="container">
+      <div class="waiting-head">
+        <p class="eyebrow">Here the longest</p>
+        <h2>Three animals nobody has asked about yet</h2>
+        <p>Older, larger or simply overlooked. Their adoption fee is waived, and every one of them comes with a month of food and a vet check already paid for.</p>
+      </div>
+
+      <div class="waiting-list">
+        <article class="waiting-row" data-od-id="waiting-duke">
+          <span class="ph" style="--tint: var(--accent)"><svg aria-hidden="true"><use href="#g-dog"/></svg></span>
+          <div>
+            <h3 class="waiting-name">Duke</h3>
+            <p>Pit bull mix, 7 years. Duke is calm, house-trained and completely uninterested in other dogs — he needs to be the only pet, which is the single reason he is still here.</p>
+          </div>
+          <div class="waiting-meter">
+            <div class="waiting-num">14 mo</div>
+            <div class="waiting-label">With us</div>
+          </div>
+        </article>
+
+        <article class="waiting-row" data-od-id="waiting-whiskers">
+          <span class="ph" style="--tint: var(--warn)"><svg aria-hidden="true"><use href="#g-cat"/></svg></span>
+          <div>
+            <h3 class="waiting-name">Whiskers</h3>
+            <p>Domestic shorthair, 12 years. Healthy apart from a managed thyroid condition. Sleeps eighteen hours a day and asks only for a warm windowsill and a lap in the evening.</p>
+          </div>
+          <div class="waiting-meter">
+            <div class="waiting-num">11 mo</div>
+            <div class="waiting-label">With us</div>
+          </div>
+        </article>
+
+        <article class="waiting-row" data-od-id="waiting-buddy">
+          <span class="ph" style="--tint: var(--success)"><svg aria-hidden="true"><use href="#g-dog"/></svg></span>
+          <div>
+            <h3 class="waiting-name">Buddy</h3>
+            <p>Terrier mix, 8 years. Deaf since birth and trained entirely on hand signals — he learns faster than most hearing dogs we see. Great with cats.</p>
+          </div>
+          <div class="waiting-meter">
+            <div class="waiting-num">9 mo</div>
+            <div class="waiting-label">With us</div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="band container reveal" id="waiting-carousel" data-od-id="longest-carousel">
+    <div class="lwc-head">
+      <p class="eyebrow">Compare layouts</p>
+      <h2>Same three, one at a time</h2>
+      <p>The list above shows everyone at a glance. This carousel gives each animal the whole panel — useful when the story matters more than the scan.</p>
+      <span class="lwc-note"><b>List view ↑</b>&nbsp;·&nbsp;<b>Carousel view ↓</b></span>
+    </div>
+
+    <div class="lwc" id="longestCarousel" aria-roledescription="carousel" aria-label="Longest waiting animals">
+      <div class="lwc-viewport">
+        <div class="lwc-track">
+
+          <article class="lwc-slide" data-od-id="carousel-duke" aria-label="1 of 3, Duke">
+            <div class="lwc-card">
+              <div class="lwc-media">
+                <span class="lwc-waitpill">14 months here</span>
+                <span class="ph" style="--tint: var(--accent)"><svg aria-hidden="true"><use href="#g-dog"/></svg></span>
+              </div>
+              <div class="lwc-body">
+                <p class="lwc-species">Dog · Pit bull mix · 7 years</p>
+                <h3 class="lwc-name">Duke</h3>
+                <p class="lwc-story">Calm, house-trained and completely uninterested in other dogs — he needs to be the only pet, which is the single reason he is still here.</p>
+                <div class="lwc-tags">
+                  <span class="tag">House-trained</span>
+                  <span class="tag">Only pet</span>
+                  <span class="tag">Fee waived</span>
+                </div>
+                <div class="lwc-actions">
+                  <a class="btn-quiet" href="#visit" data-od-id="carousel-ask-duke">Ask about Duke <svg width="18" height="18" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="lwc-slide" data-od-id="carousel-whiskers" aria-label="2 of 3, Whiskers">
+            <div class="lwc-card">
+              <div class="lwc-media">
+                <span class="lwc-waitpill">11 months here</span>
+                <span class="ph" style="--tint: var(--warn)"><svg aria-hidden="true"><use href="#g-cat"/></svg></span>
+              </div>
+              <div class="lwc-body">
+                <p class="lwc-species">Cat · Domestic shorthair · 12 years</p>
+                <h3 class="lwc-name">Whiskers</h3>
+                <p class="lwc-story">Healthy apart from a managed thyroid condition. Sleeps eighteen hours a day and asks only for a warm windowsill and a lap in the evening.</p>
+                <div class="lwc-tags">
+                  <span class="tag">Senior</span>
+                  <span class="tag">Indoor only</span>
+                  <span class="tag">Fee waived</span>
+                </div>
+                <div class="lwc-actions">
+                  <a class="btn-quiet" href="#visit" data-od-id="carousel-ask-whiskers">Ask about Whiskers <svg width="18" height="18" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="lwc-slide" data-od-id="carousel-buddy" aria-label="3 of 3, Buddy">
+            <div class="lwc-card">
+              <div class="lwc-media">
+                <span class="lwc-waitpill">9 months here</span>
+                <span class="ph" style="--tint: var(--success)"><svg aria-hidden="true"><use href="#g-dog"/></svg></span>
+              </div>
+              <div class="lwc-body">
+                <p class="lwc-species">Dog · Terrier mix · 8 years</p>
+                <h3 class="lwc-name">Buddy</h3>
+                <p class="lwc-story">Deaf since birth and trained entirely on hand signals — he learns faster than most hearing dogs we see. Great with cats.</p>
+                <div class="lwc-tags">
+                  <span class="tag">Hand-signal trained</span>
+                  <span class="tag">Good with cats</span>
+                  <span class="tag">Fee waived</span>
+                </div>
+                <div class="lwc-actions">
+                  <a class="btn-quiet" href="#visit" data-od-id="carousel-ask-buddy">Ask about Buddy <svg width="18" height="18" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+                </div>
+              </div>
+            </div>
+          </article>
+
+        </div>
+      </div>
+
+      <div class="lwc-controls" tabindex="-1">
+        <div class="lwc-arrows">
+          <button class="lwc-arrow" type="button" data-dir="prev" aria-label="Previous animal" data-od-id="carousel-prev"><svg aria-hidden="true"><use href="#i-arrow"/></svg></button>
+          <button class="lwc-arrow" type="button" data-dir="next" aria-label="Next animal" data-od-id="carousel-next"><svg aria-hidden="true"><use href="#i-arrow"/></svg></button>
+        </div>
+        <div class="lwc-dots" role="tablist" aria-label="Choose animal" data-od-id="carousel-dots"></div>
+        <div class="lwc-count"><span data-count="cur">01</span> / <span data-count="tot">03</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band container reveal" id="visit" data-od-id="visit-us">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Where to find us</p>
+        <h2>Come in and say hello</h2>
+        <p>Walk-ins are welcome at weekends. On weekdays, ring ahead so a staff member can take you round.</p>
+      </div>
+    </div>
+
+    <div class="visit-grid">
+      <div>
+        <div class="info-block" data-od-id="visit-address">
+          <h3>Address</h3>
+          <p>1240 Compassion Street<br>Rockford, IL 61103</p>
+          <p class="muted-note" style="margin-top:var(--space-3)">Free parking behind the building, off Wexler Lane.</p>
+        </div>
+
+        <div class="info-block" data-od-id="visit-hours">
+          <h3>Visiting hours</h3>
+          <ul class="hours">
+            <li><span class="d">Mon – Thu</span><span class="line"></span><span class="t">10:00 – 18:00</span></li>
+            <li><span class="d">Friday</span><span class="line"></span><span class="t">10:00 – 16:00</span></li>
+            <li><span class="d">Sat – Sun</span><span class="line"></span><span class="t">09:00 – 17:00</span></li>
+            <li class="closed"><span class="d">Public holidays</span><span class="line"></span><span class="t">Closed</span></li>
+          </ul>
+        </div>
+
+        <div class="info-block" data-od-id="visit-contact">
+          <h3>Contact</h3>
+          <p><a href="tel:+15551234567">(555) 123-4567</a></p>
+          <p><a href="mailto:adopt@pawsandhearts.org">adopt@pawsandhearts.org</a></p>
+          <p class="muted-note" style="margin-top:var(--space-3)">Found an animal after hours? Call the same number — it forwards to the on-call warden.</p>
+        </div>
+
+        <div class="info-block" data-od-id="visit-socials">
+          <h3>Follow the daily photos</h3>
+          <div class="socials">
+            <a class="social" href="#" aria-label="Paws &amp; Hearts on Instagram">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none"/></svg>
+            </a>
+            <a class="social" href="#" aria-label="Paws &amp; Hearts on Facebook">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h-2.5A4.5 4.5 0 0 0 8 7.5V10H5.5v4H8v7h4v-7h3l1-4h-4V7.5A.5.5 0 0 1 12.5 7H15z"/></svg>
+            </a>
+            <a class="social" href="#" aria-label="Paws &amp; Hearts on TikTok">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3v11.5a3.5 3.5 0 1 1-3.5-3.5"/><path d="M14 6.2A5 5 0 0 0 19 9"/></svg>
+            </a>
+            <a class="social" href="#" aria-label="Paws &amp; Hearts on YouTube">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5.5" width="19" height="13" rx="4"/><path d="m10.5 9.5 5 2.5-5 2.5z"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="map-frame" data-od-id="visit-map">
+        <svg viewBox="0 0 640 440" role="img" aria-label="Simplified map: the shelter sits on Compassion Street, one block east of Keeler Park.">
+          <rect width="640" height="440" fill="var(--bg)"/>
+          <rect x="0" y="40" width="250" height="180" rx="10" fill="color-mix(in oklab, var(--success) 22%, var(--surface))"/>
+          <path d="M40 90c40-18 90-10 120 14s70 26 60 62" fill="none" stroke="color-mix(in oklab, var(--success) 45%, var(--surface))" stroke-width="7" stroke-linecap="round"/>
+          <text x="24" y="72" font-family="Inter, system-ui, sans-serif" font-size="15" font-weight="600" fill="color-mix(in oklab, var(--success), black 24%)" letter-spacing="0.02em">Keeler Park</text>
+          <g fill="var(--surface-warm)">
+            <rect x="290" y="40" width="130" height="120" rx="8"/><rect x="450" y="40" width="160" height="120" rx="8"/>
+            <rect x="290" y="250" width="130" height="150" rx="8"/><rect x="450" y="250" width="160" height="150" rx="8"/>
+            <rect x="0" y="250" width="250" height="150" rx="8"/>
+          </g>
+          <g stroke="var(--border)" stroke-width="1.5" fill="none">
+            <rect x="290" y="40" width="130" height="120" rx="8"/><rect x="450" y="40" width="160" height="120" rx="8"/>
+            <rect x="290" y="250" width="130" height="150" rx="8"/><rect x="450" y="250" width="160" height="150" rx="8"/>
+            <rect x="0" y="250" width="250" height="150" rx="8"/>
+          </g>
+          <g stroke="var(--surface)" stroke-width="26" stroke-linecap="square">
+            <path d="M0 235h640"/><path d="M265 0v440"/><path d="M435 0v440"/>
+          </g>
+          <g stroke="var(--border-soft)" stroke-width="1.5">
+            <path d="M0 222h640M0 248h640M252 0v440M278 0v440M422 0v440M448 0v440"/>
+          </g>
+          <text x="470" y="228" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="600" fill="var(--muted)" letter-spacing="0.06em">COMPASSION ST</text>
+          <text x="288" y="30" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="600" fill="var(--muted)" letter-spacing="0.06em" transform="rotate(90 288 30)">WEXLER LN</text>
+          <rect x="300" y="176" width="118" height="42" rx="8" fill="var(--surface)" stroke="var(--border)" stroke-width="1.5"/>
+          <text x="316" y="202" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="600" fill="var(--fg-2)">Parking</text>
+          <g transform="translate(300 96)">
+            <rect x="0" y="0" width="118" height="70" rx="10" fill="color-mix(in oklab, var(--accent) 16%, var(--surface))" stroke="var(--accent)" stroke-width="2"/>
+            <path d="M59 -12 74 6H44z" fill="var(--accent)"/>
+          </g>
+          <g transform="translate(346 60)">
+            <path d="M13 34C13 34 26 21.6 26 13A13 13 0 1 0 0 13c0 8.6 13 21 13 21z" fill="var(--accent)"/>
+            <circle cx="13" cy="13" r="5" fill="var(--surface)"/>
+          </g>
+        </svg>
+        <div class="map-caption">
+          <strong>Paws &amp; Hearts, 1240 Compassion St</strong>
+          <span>Bus 12 stops outside · parking on Wexler Ln</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band container reveal" id="help" data-od-id="help-out">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Other ways in</p>
+        <h2>Not ready to adopt? There is still plenty to do</h2>
+      </div>
+    </div>
+
+    <div class="help-grid">
+      <article class="help-card" data-od-id="help-volunteer">
+        <span class="help-num">01</span>
+        <h3>Volunteer a morning</h3>
+        <p>Dog walking, laundry, kitten socialising, weekend reception. Training is one Saturday session and there is no minimum commitment beyond turning up when you say you will.</p>
+        <a class="btn-quiet" href="mailto:volunteer@pawsandhearts.org">Ask about shifts <svg width="18" height="18" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+      </article>
+
+      <article class="help-card" data-od-id="help-foster">
+        <span class="help-num">02</span>
+        <h3>Foster for a few weeks</h3>
+        <p>Kittens under eight weeks, dogs recovering from surgery, animals who simply do badly in kennels. We supply food, crates, medication and a phone number you can call at 2am.</p>
+        <a class="btn-quiet" href="mailto:foster@pawsandhearts.org">Join the foster list <svg width="18" height="18" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+      </article>
+
+      <article class="help-card" data-od-id="help-donate">
+        <span class="help-num">03</span>
+        <h3>Give, or send supplies</h3>
+        <p>Right now we need blankets, unopened kitten milk replacer and gravel cat litter. Cash goes straight into the veterinary fund — last year that covered 74 operations.</p>
+        <a class="btn-quiet" href="#">See the wishlist <svg width="18" height="18" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+      </article>
+    </div>
+
+    <div class="closer" data-od-id="closing-cta">
+      <div>
+        <h2>Meet somebody this weekend</h2>
+        <p>Open 09:00–17:00 Saturday and Sunday, no appointment needed. Bring the whole household — including the dog you already have.</p>
+      </div>
+      <a class="btn btn-primary" href="#animals" data-od-id="cta-primary-adopt-closing">Start an adoption</a>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer" data-od-id="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="#top" class="brand" style="color:var(--bg)">
+          <span class="brand-mark" style="background:color-mix(in oklab, var(--bg) 16%, var(--fg)); color:var(--surface-warm)">
+            <svg width="20" height="20" aria-hidden="true"><use href="#g-paw"/></svg>
+          </span>
+          <span>
+            <span class="brand-name">Paws &amp; Hearts</span>
+            <span class="brand-sub" style="color:color-mix(in oklab, var(--bg) 58%, var(--fg))">Shelter · Est. 1998</span>
+          </span>
+        </a>
+        <h3 style="margin-top:var(--space-8)">Monthly note from the kennels</h3>
+        <form class="newsletter" id="newsletterForm" novalidate>
+          <label for="newsletterEmail" hidden>Email address</label>
+          <input id="newsletterEmail" type="email" placeholder="you@example.com" autocomplete="email">
+          <button class="btn" type="submit">Subscribe</button>
+        </form>
+        <p class="form-msg" id="newsletterMsg" role="status"></p>
+      </div>
+
+      <div>
+        <h3>Adopt</h3>
+        <ul class="footer-links">
+          <li><a href="#animals">Available animals</a></li>
+          <li><a href="#waiting">Longest waiting</a></li>
+          <li><a href="#news">Recent adoptions</a></li>
+          <li><a href="#visit">Adoption process</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h3>The shelter</h3>
+        <ul class="footer-links">
+          <li><a href="#help">Volunteer &amp; foster</a></li>
+          <li><a href="#help">Donate</a></li>
+          <li><a href="#visit">Opening hours</a></li>
+          <li><a href="#visit">Lost &amp; found an animal</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-note">
+      <span>© 2026 Paws &amp; Hearts Animal Shelter · Registered 501(c)(3) nonprofit, EIN 00-0000000</span>
+      <span>Privacy · Terms · Accessibility</span>
+    </div>
+  </div>
+</footer>
+
+<dialog id="animalDialog" aria-labelledby="dlgName" data-od-id="animal-dialog">
+  <div class="sheet">
+    <div class="sheet-media">
+      <span class="ph" id="dlgPhoto" data-ph="Photo slot"><svg aria-hidden="true"><use href="#g-dog" id="dlgGlyph"/></svg></span>
+    </div>
+    <div class="sheet-body">
+      <button class="sheet-close" id="dlgClose" type="button" aria-label="Close">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <p class="eyebrow" id="dlgBreed">Breed</p>
+      <h2 id="dlgName">Name</h2>
+      <dl class="vitals">
+        <div><dt>Age</dt><dd id="dlgAge">—</dd></div>
+        <div><dt>Sex</dt><dd id="dlgSex">—</dd></div>
+        <div><dt>Size</dt><dd id="dlgSize">—</dd></div>
+        <div><dt>With us</dt><dd id="dlgWait">—</dd></div>
+      </dl>
+      <p id="dlgStory">Story</p>
+      <p class="muted-note" style="margin-top:var(--space-4)">Good with: <span id="dlgGood">—</span></p>
+
+      <p class="enquiry-head">Ask to meet <span id="dlgNameInline">them</span></p>
+      <form id="enquiryForm" novalidate>
+        <div class="field-row">
+          <div class="field">
+            <label for="enqName">Your name</label>
+            <input id="enqName" name="name" type="text" autocomplete="name">
+          </div>
+          <div class="field">
+            <label for="enqEmail">Email</label>
+            <input id="enqEmail" name="email" type="email" autocomplete="email">
+          </div>
+        </div>
+        <div class="field">
+          <label for="enqNote">Tell us about your home</label>
+          <textarea id="enqNote" name="note" placeholder="Garden, other pets, children, hours away from home…"></textarea>
+        </div>
+        <button class="btn btn-primary" type="submit">Send request</button>
+        <p class="form-msg" id="enqMsg" role="status"></p>
+      </form>
+    </div>
+  </div>
+</dialog>
+
+<script>
+(function () {
+  var grid = document.getElementById('animalGrid');
+  var cards = Array.prototype.slice.call(grid.querySelectorAll('.animal-card'));
+  var chips = Array.prototype.slice.call(document.querySelectorAll('.chip'));
+  var search = document.getElementById('animalSearch');
+  var sortBy = document.getElementById('sortBy');
+  var emptyState = document.getElementById('emptyState');
+  var resultCount = document.getElementById('resultCount');
+  var activeFilter = 'all';
+
+  /* ---- favourite buttons (injected so the card stays a single button in markup) ---- */
+  var saved = [];
+  try { saved = JSON.parse(localStorage.getItem('ph-saved') || '[]'); } catch (e) { saved = []; }
+
+  function syncSavedCount() {
+    document.getElementById('savedCount').textContent = saved.length;
+    try { localStorage.setItem('ph-saved', JSON.stringify(saved)); } catch (e) {}
+  }
+
+  cards.forEach(function (card) {
+    var name = card.dataset.name;
+    var fav = document.createElement('span');
+    fav.className = 'fav';
+    fav.setAttribute('role', 'button');
+    fav.setAttribute('tabindex', '0');
+    fav.setAttribute('aria-pressed', saved.indexOf(name) > -1 ? 'true' : 'false');
+    fav.setAttribute('aria-label', 'Save ' + name + ' to your shortlist');
+    fav.innerHTML = '<svg aria-hidden="true"><use href="#i-heart"/></svg>';
+    function toggle(ev) {
+      ev.preventDefault();
+      ev.stopPropagation();
+      var on = fav.getAttribute('aria-pressed') === 'true';
+      fav.setAttribute('aria-pressed', on ? 'false' : 'true');
+      if (on) { saved = saved.filter(function (n) { return n !== name; }); }
+      else if (saved.indexOf(name) === -1) { saved.push(name); }
+      syncSavedCount();
+    }
+    fav.addEventListener('click', toggle);
+    fav.addEventListener('keydown', function (ev) {
+      if (ev.key === 'Enter' || ev.key === ' ') { toggle(ev); }
+    });
+    var media = card.querySelector('.animal-media');
+    media.appendChild(fav);
+    var wait = card.querySelector('.animal-body .tag--wait');
+    if (wait) { media.appendChild(wait); }
+  });
+  syncSavedCount();
+
+  document.getElementById('savedChip').addEventListener('click', function () {
+    if (!saved.length) { return; }
+    search.value = '';
+    activeFilter = 'all';
+    chips.forEach(function (c) { c.setAttribute('aria-pressed', String(c.dataset.filter === 'all')); });
+    apply(saved);
+  });
+
+  /* ---- filter, search, sort ---- */
+  function apply(onlyNames) {
+    var q = search.value.trim().toLowerCase();
+    var shown = 0;
+    cards.forEach(function (card) {
+      var matchType = activeFilter === 'all' || card.dataset.type === activeFilter;
+      var haystack = (card.dataset.name + ' ' + card.dataset.breed + ' ' + card.dataset.good).toLowerCase();
+      var matchQuery = !q || haystack.indexOf(q) > -1;
+      var matchSaved = !onlyNames || onlyNames.indexOf(card.dataset.name) > -1;
+      var visible = matchType && matchQuery && matchSaved;
+      card.hidden = !visible;
+      card.style.display = visible ? '' : 'none';
+      if (visible) { shown++; }
+    });
+    emptyState.hidden = shown !== 0;
+    resultCount.textContent = 'Showing ' + shown + ' of ' + cards.length;
+  }
+
+  function sort() {
+    var mode = sortBy.value;
+    var ordered = cards.slice().sort(function (a, b) {
+      if (mode === 'wait') { return Number(b.dataset.wait) - Number(a.dataset.wait); }
+      if (mode === 'new') { return Number(b.dataset.arrived) - Number(a.dataset.arrived); }
+      return Number(a.dataset.agemonths) - Number(b.dataset.agemonths);
+    });
+    ordered.forEach(function (card, i) { card.style.order = String(i); });
+  }
+
+  chips.forEach(function (chip) {
+    chip.addEventListener('click', function () {
+      activeFilter = chip.dataset.filter;
+      chips.forEach(function (c) { c.setAttribute('aria-pressed', String(c === chip)); });
+      apply();
+    });
+  });
+  search.addEventListener('input', function () { apply(); });
+  sortBy.addEventListener('change', function () { sort(); apply(); });
+  sort();
+  apply();
+
+  /* ---- detail dialog ---- */
+  var dlg = document.getElementById('animalDialog');
+  var dlgPhoto = document.getElementById('dlgPhoto');
+  var dlgGlyph = document.getElementById('dlgGlyph');
+  var enquiry = document.getElementById('enquiryForm');
+  var enqMsg = document.getElementById('enqMsg');
+
+  function months(n) { return n === 1 ? '1 month' : n + ' months'; }
+
+  cards.forEach(function (card) {
+    card.addEventListener('click', function () {
+      var d = card.dataset;
+      document.getElementById('dlgName').textContent = d.name;
+      document.getElementById('dlgNameInline').textContent = d.name;
+      document.getElementById('dlgBreed').textContent = d.breed;
+      document.getElementById('dlgAge').textContent = d.age;
+      document.getElementById('dlgSex').textContent = d.sex;
+      document.getElementById('dlgSize').textContent = d.size;
+      document.getElementById('dlgWait').textContent = months(Number(d.wait));
+      document.getElementById('dlgStory').textContent = d.story;
+      document.getElementById('dlgGood').textContent = d.good;
+      dlgPhoto.style.setProperty('--tint', d.tint);
+      dlgGlyph.setAttribute('href', '#' + d.glyph);
+      enqMsg.textContent = '';
+      enqMsg.removeAttribute('data-state');
+      enquiry.reset();
+      Array.prototype.forEach.call(enquiry.querySelectorAll('[aria-invalid]'), function (el) { el.removeAttribute('aria-invalid'); });
+      if (typeof dlg.showModal === 'function') { dlg.showModal(); }
+    });
+  });
+
+  document.getElementById('dlgClose').addEventListener('click', function () { dlg.close(); });
+  dlg.addEventListener('click', function (ev) { if (ev.target === dlg) { dlg.close(); } });
+
+  function invalid(el, yes) {
+    if (yes) { el.setAttribute('aria-invalid', 'true'); } else { el.removeAttribute('aria-invalid'); }
+    return yes;
+  }
+  var emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+  enquiry.addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var name = document.getElementById('enqName');
+    var email = document.getElementById('enqEmail');
+    var bad = false;
+    bad = invalid(name, name.value.trim().length < 2) || bad;
+    bad = invalid(email, !emailRe.test(email.value.trim())) || bad;
+    if (bad) {
+      enqMsg.setAttribute('data-state', 'error');
+      enqMsg.textContent = 'We need your name and a valid email so we can call you back.';
+      (name.getAttribute('aria-invalid') ? name : email).focus();
+      return;
+    }
+    enqMsg.setAttribute('data-state', 'ok');
+    enqMsg.textContent = 'Sent. Someone from the adoptions team replies within two working days.';
+    enquiry.querySelector('button[type="submit"]').textContent = 'Request sent';
+  });
+
+  /* ---- newsletter ---- */
+  var news = document.getElementById('newsletterForm');
+  var newsMsg = document.getElementById('newsletterMsg');
+  news.addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var email = document.getElementById('newsletterEmail');
+    if (!emailRe.test(email.value.trim())) {
+      email.setAttribute('aria-invalid', 'true');
+      newsMsg.setAttribute('data-state', 'error');
+      newsMsg.textContent = 'That email address does not look right.';
+      return;
+    }
+    email.removeAttribute('aria-invalid');
+    newsMsg.setAttribute('data-state', 'ok');
+    newsMsg.textContent = 'You are on the list. One email a month, mostly photographs.';
+    news.reset();
+  });
+
+  /* ---- ticker: duplicate the track so the loop is seamless ---- */
+  var track = document.getElementById('tickerTrack');
+  track.innerHTML = track.innerHTML + track.innerHTML;
+
+  /* ---- compact menu ---- */
+  var navToggle = document.getElementById('navToggle');
+  var mobileNav = document.getElementById('mobileNav');
+  function setMenu(open) {
+    mobileNav.setAttribute('data-open', open ? 'true' : 'false');
+    navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    navToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  }
+  navToggle.addEventListener('click', function () {
+    setMenu(mobileNav.getAttribute('data-open') !== 'true');
+  });
+  mobileNav.addEventListener('click', function (ev) {
+    if (ev.target.tagName === 'A') { setMenu(false); }
+  });
+  document.addEventListener('keydown', function (ev) {
+    if (ev.key === 'Escape') { setMenu(false); }
+  });
+
+  /* ---- sticky header state + offset-aware in-page scrolling ---- */
+  var header = document.querySelector('.site-header');
+  window.addEventListener('scroll', function () {
+    header.classList.toggle('is-stuck', window.scrollY > 8);
+  }, { passive: true });
+
+  document.querySelectorAll('a[href^="#"]').forEach(function (link) {
+    link.addEventListener('click', function (ev) {
+      var id = link.getAttribute('href');
+      if (id === '#') { return; }
+      var target = document.querySelector(id);
+      if (!target) { return; }
+      ev.preventDefault();
+      var y = target.getBoundingClientRect().top + window.scrollY - header.offsetHeight - 16;
+      window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+    });
+  });
+
+  /* ---- reveal on scroll ---- */
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) { entry.target.classList.add('in'); io.unobserve(entry.target); }
+      });
+    }, { rootMargin: '0px 0px -12% 0px' });
+    document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+  } else {
+    document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+  }
+})();
+</script>
+<script>
+/* ---- longest-waiting carousel (self-contained; list layout unaffected) ---- */
+(function () {
+  var root = document.getElementById('longestCarousel');
+  if (!root) return;
+  var viewport = root.querySelector('.lwc-viewport');
+  var track = root.querySelector('.lwc-track');
+  var slides = Array.prototype.slice.call(track.children);
+  var prev = root.querySelector('[data-dir="prev"]');
+  var next = root.querySelector('[data-dir="next"]');
+  var dotsWrap = root.querySelector('.lwc-dots');
+  var countCur = root.querySelector('[data-count="cur"]');
+  var countTot = root.querySelector('[data-count="tot"]');
+  var controls = root.querySelector('.lwc-controls');
+  var idx = 0;
+  var n = slides.length;
+  if (!n) return;
+
+  function pad2(x) { return (x < 10 ? '0' : '') + x; }
+  function slideW() { return viewport.offsetWidth || 1; }
+
+  countTot.textContent = pad2(n);
+  slides.forEach(function (_, i) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'lwc-dot';
+    b.setAttribute('role', 'tab');
+    b.setAttribute('aria-label', 'Show ' + slides[i].getAttribute('aria-label').replace(/^[\d]+ of [\d]+, /, ''));
+    b.addEventListener('click', function () { go(i); });
+    dotsWrap.appendChild(b);
+  });
+  var dots = Array.prototype.slice.call(dotsWrap.children);
+
+  function paint() {
+    track.style.transform = 'translateX(' + (-idx * slideW()) + 'px)';
+    dots.forEach(function (d, i) { d.setAttribute('aria-current', i === idx ? 'true' : 'false'); });
+    countCur.textContent = pad2(idx + 1);
+    prev.disabled = idx <= 0;
+    next.disabled = idx >= n - 1;
+    slides.forEach(function (s, i) { s.setAttribute('aria-hidden', i === idx ? 'false' : 'true'); });
+  }
+  function go(i) { idx = Math.max(0, Math.min(n - 1, i)); paint(); }
+
+  prev.addEventListener('click', function () { go(idx - 1); });
+  next.addEventListener('click', function () { go(idx + 1); });
+
+  controls.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowLeft') { e.preventDefault(); go(idx - 1); }
+    else if (e.key === 'ArrowRight') { e.preventDefault(); go(idx + 1); }
+  });
+
+  window.addEventListener('resize', paint);
+
+  /* basic touch swipe (pixel-based; passive so page scroll still works) */
+  var startX = null, delta = 0, dragging = false;
+  viewport.addEventListener('touchstart', function (e) {
+    startX = e.touches[0].clientX; dragging = true; track.style.transition = 'none';
+  }, { passive: true });
+  viewport.addEventListener('touchmove', function (e) {
+    if (!dragging || startX === null) return;
+    delta = e.touches[0].clientX - startX;
+    track.style.transform = 'translateX(' + (-idx * slideW() + delta) + 'px)';
+  }, { passive: true });
+  function endDrag() {
+    if (!dragging) return;
+    dragging = false; track.style.transition = '';
+    if (Math.abs(delta) > slideW() * 0.18) { go(idx + (delta < 0 ? 1 : -1)); } else { paint(); }
+    delta = 0; startX = null;
+  }
+  viewport.addEventListener('touchend', endDrag);
+  viewport.addEventListener('touchcancel', endDrag);
+
+  paint();
+})();
+</script>
+</body>
+</html>

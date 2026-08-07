@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How adoption works — Paws &amp; Hearts</title>
+<meta name="description" content="How adoption works at Paws & Hearts — four simple steps from first browse to first night home, what's included, example fees, and answers to common questions.">
+<link rel="stylesheet" href="../assets/site.css">
+<style>
+.process-hero { padding-top: var(--section-y-desktop); padding-bottom: var(--section-y-desktop); }
+.process-hero h1 { max-width: 16ch; }
+.process-hero .lead { max-width: 58ch; margin-top: var(--space-6); }
+.process-hero .hero-meta {
+  margin-top: var(--space-6); display: inline-flex; align-items: center; gap: var(--space-3);
+  flex-wrap: wrap; font-size: var(--text-sm); color: var(--fg-2);
+  background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-pill);
+  padding: var(--space-2) var(--space-5);
+}
+.process-hero .hero-meta .dot { background: var(--success); flex: none; }
+.process-hero .hero-actions { margin-top: var(--space-8); display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-5); }
+.process-hero .btn-arrow { width: 18px; height: 18px; }
+
+.timeline { position: relative; display: grid; gap: var(--space-12); margin-top: var(--space-8); }
+.timeline::before {
+  content: ""; position: absolute; left: 30px; top: 18px; bottom: 18px;
+  width: 1px; background: var(--border);
+}
+.step { position: relative; display: grid; grid-template-columns: 60px 1fr; gap: var(--space-6); align-items: start; }
+.step-num {
+  width: 60px; height: 60px; border-radius: var(--radius-pill);
+  background: var(--surface-warm); color: var(--accent);
+  display: grid; place-items: center; position: relative; z-index: 1;
+  font-family: var(--font-mono); font-size: var(--text-lg); font-weight: 600;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  border: 1px solid var(--border-soft);
+}
+.step-body h3 { font-size: var(--text-xl); margin-bottom: var(--space-3); }
+.step-body p { color: var(--fg-2); max-width: 62ch; }
+.step-body p + p { margin-top: var(--space-2); }
+.step-when {
+  margin-top: var(--space-4); display: inline-flex; align-items: baseline; gap: var(--space-2);
+  font-size: var(--text-sm); color: var(--muted);
+}
+.step-when-label { text-transform: uppercase; letter-spacing: 0.08em; font-size: var(--text-xs); font-weight: 600; }
+.step-when-val { color: var(--fg); font-weight: 600; }
+
+.band--warm { background: var(--surface-warm); }
+.included-grid { list-style: none; margin: var(--space-8) 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-5); }
+.included-item {
+  display: flex; align-items: flex-start; gap: var(--space-3); padding: var(--space-5);
+  background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-md);
+}
+.included-item .ic {
+  flex: none; width: 30px; height: 30px; border-radius: var(--radius-pill);
+  background: color-mix(in oklab, var(--success) 16%, var(--surface));
+  color: color-mix(in oklab, var(--success), black 20%);
+  display: grid; place-items: center;
+}
+.included-item .ic svg { width: 16px; height: 16px; }
+.included-item .label { font-weight: 500; line-height: 1.4; padding-top: var(--space-1); }
+
+.fees-table-wrap { margin-top: var(--space-8); }
+.fees-table {
+  width: 100%; border-collapse: separate; border-spacing: 0;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-md); overflow: hidden;
+}
+.fees-table th, .fees-table td { text-align: left; padding: var(--space-5) var(--space-6); border-bottom: 1px solid var(--border-soft); vertical-align: top; }
+.fees-table thead th {
+  background: var(--surface-warm); font-family: var(--font-body);
+  font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--fg-2); font-weight: 700; border-bottom: 1px solid var(--border);
+}
+.fees-table tbody tr:last-child td { border-bottom: none; }
+.fees-table .col-animal { font-weight: 600; color: var(--fg); }
+.fees-table .fee { font-family: var(--font-mono); font-weight: 600; color: var(--fg); white-space: nowrap; }
+.fees-table .covers { color: var(--fg-2); }
+.fees-note { margin-top: var(--space-5); font-size: var(--text-sm); color: var(--muted); max-width: 72ch; line-height: 1.55; }
+
+.know-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-12); margin-top: var(--space-8); }
+.know-col h3 { font-size: var(--text-lg); margin-bottom: var(--space-5); }
+.know-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-4); }
+.know-list li { display: flex; align-items: flex-start; gap: var(--space-3); color: var(--fg-2); }
+.know-list .ic { flex: none; width: 22px; height: 22px; color: color-mix(in oklab, var(--success), black 12%); margin-top: 1px; }
+.know-list .ic svg { width: 100%; height: 100%; }
+
+.faq-list { display: grid; gap: var(--space-3); margin-top: var(--space-8); }
+.faq-item {
+  border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface);
+  overflow: hidden;
+  transition: background var(--motion-fast) var(--ease-standard), border-color var(--motion-fast) var(--ease-standard);
+}
+.faq-item[open] { background: var(--surface-warm); border-color: color-mix(in oklab, var(--border), var(--fg) 8%); }
+.faq-item summary {
+  list-style: none; cursor: pointer; padding: var(--space-5) var(--space-6);
+  display: flex; align-items: center; justify-content: space-between; gap: var(--space-4);
+  font-family: var(--font-display); font-size: var(--text-lg); color: var(--fg); letter-spacing: -0.01em;
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary:focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: var(--radius-sm); }
+.faq-item .chev { flex: none; width: 22px; height: 22px; color: var(--muted); transition: transform var(--motion-base) var(--ease-standard), color var(--motion-fast) var(--ease-standard); }
+.faq-item[open] .chev { transform: rotate(90deg); color: var(--fg); }
+.faq-item .answer { padding: 0 var(--space-6) var(--space-6); color: var(--fg-2); max-width: 72ch; margin-top: calc(-1 * var(--space-2)); }
+
+.cta-dark {
+  background: var(--fg); color: var(--bg); border-radius: var(--radius-lg);
+  padding: var(--space-12) var(--space-8); text-align: center;
+  display: grid; gap: var(--space-4); justify-items: center;
+}
+.cta-dark h2 { color: var(--bg); max-width: 18ch; }
+.cta-dark .cta-sub { color: color-mix(in oklab, var(--bg) 82%, var(--fg)); max-width: 52ch; }
+.cta-dark .cta-actions { display: flex; flex-wrap: wrap; gap: var(--space-5); align-items: center; justify-content: center; margin-top: var(--space-3); }
+.cta-dark .btn-quiet { color: var(--bg); border-bottom-color: color-mix(in oklab, var(--bg) 42%, var(--fg)); }
+.cta-dark .btn-quiet:hover { border-bottom-color: var(--bg); color: var(--bg); }
+.cta-dark .btn-arrow { width: 18px; height: 18px; }
+
+@media (max-width: 960px) {
+  .included-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 720px) {
+  .timeline::before { left: 24px; }
+  .step { grid-template-columns: 48px 1fr; gap: var(--space-4); }
+  .step-num { width: 48px; height: 48px; font-size: var(--text-base); }
+  .step-body h3 { font-size: var(--text-lg); }
+  .know-grid { grid-template-columns: 1fr; gap: var(--space-8); }
+  .included-grid { grid-template-columns: 1fr; }
+  .cta-dark { padding: var(--space-8) var(--space-5); }
+}
+@media (max-width: 640px) {
+  .fees-table thead { display: none; }
+  .fees-table, .fees-table tbody, .fees-table tr, .fees-table td { display: block; width: 100%; }
+  .fees-table { background: var(--surface); }
+  .fees-table tr { padding: var(--space-4) var(--space-5); border-bottom: 1px solid var(--border); }
+  .fees-table tbody tr:last-child { border-bottom: none; }
+  .fees-table td {
+    display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-4);
+    padding: var(--space-2) 0; border-bottom: none;
+  }
+  .fees-table td::before {
+    content: attr(data-label); font-size: var(--text-xs); text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--muted); font-weight: 600; flex: none;
+  }
+  .fees-table .fee { text-align: right; }
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" aria-hidden="true" style="position:absolute">
+  <symbol id="g-dog" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M14 16v14c0 11 8 20 18 20s18-9 18-20V16l-9 6H23z"/><circle cx="25" cy="32" r="1.6" fill="currentColor" stroke="none"/><circle cx="39" cy="32" r="1.6" fill="currentColor" stroke="none"/><path d="M32 38v4M28 44c1.6 1.6 6.4 1.6 8 0"/>
+  </symbol>
+  <symbol id="g-cat" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M16 14l4 12M48 14l-4 12M16 14c-1 8 0 14 0 16 0 10 7 18 16 18s16-8 16-18c0-2 1-8 0-16l-8 12H24z"/><circle cx="25" cy="33" r="1.6" fill="currentColor" stroke="none"/><circle cx="39" cy="33" r="1.6" fill="currentColor" stroke="none"/><path d="M30 39h4M32 39v3M20 36h6M38 36h6"/>
+  </symbol>
+  <symbol id="g-rabbit" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M24 26c-3-6-4-13-2-16s6 2 7 9M40 26c3-6 4-13 2-16s-6 2-7 9"/><path d="M32 26c-8 0-14 6-14 13s6 11 14 11 14-4 14-11-6-13-14-13z"/><circle cx="26" cy="38" r="1.6" fill="currentColor" stroke="none"/><circle cx="38" cy="38" r="1.6" fill="currentColor" stroke="none"/><path d="M30 44h4"/>
+  </symbol>
+  <symbol id="g-paw" viewBox="0 0 24 24" fill="currentColor">
+    <ellipse cx="7" cy="8" rx="2.1" ry="2.8"/><ellipse cx="12" cy="6.4" rx="2.1" ry="2.9"/><ellipse cx="17" cy="8" rx="2.1" ry="2.8"/><path d="M12 11.4c2.9 0 5.4 2.2 5.4 4.6 0 2-1.6 3.2-3.4 3.2-.9 0-1.4-.4-2-.4s-1.1.4-2 .4c-1.8 0-3.4-1.2-3.4-3.2 0-2.4 2.5-4.6 5.4-4.6z"/>
+  </symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 20.2 4.6 13a4.6 4.6 0 0 1 6.5-6.5l.9.9.9-.9A4.6 4.6 0 1 1 19.4 13z"/>
+  </symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5 12h14M13 6l6 6-6 6"/>
+  </symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 12.5 9 17.5 20 6.5"/>
+  </symbol>
+</svg>
+
+<header class="site-header" id="top" data-od-id="site-header">
+  <div class="container header-inner">
+    <a href="index.html" class="brand" data-od-id="brand-logo">
+      <span class="brand-mark"><svg width="20" height="20" aria-hidden="true"><use href="#g-paw"/></svg></span>
+      <span>
+        <span class="brand-name">Paws &amp; Hearts</span>
+        <span class="brand-sub">Shelter · Est. 1998</span>
+      </span>
+    </a>
+    <nav aria-label="Main">
+      <ul class="site-nav">
+        <li><a href="animal-shelter.html">Animals</a></li>
+        <li><a href="adopt-process.html" aria-current="page">Adopt</a></li>
+        <li><a href="happy-tails.html">Happy tails</a></li>
+        <li><a href="animal-shelter.html#visit">Visit</a></li>
+      </ul>
+    </nav>
+    <div class="header-cta">
+      <a class="btn btn-secondary" href="adopt-process.html#start">Start adoption</a>
+    </div>
+    <button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="mobileNav" aria-label="Open menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <nav class="mobile-nav" id="mobileNav" data-open="false" aria-label="Main, compact">
+      <ul>
+        <li><a href="animal-shelter.html">Animals</a></li>
+        <li><a href="adopt-process.html" aria-current="page">Adopt</a></li>
+        <li><a href="happy-tails.html">Happy tails</a></li>
+        <li><a href="animal-shelter.html#visit">Visit</a></li>
+        <li><a href="adopt-process.html#start">Start adoption</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<section class="band process-hero reveal" data-od-id="process-hero">
+  <div class="container">
+    <p class="eyebrow">Adoption</p>
+    <h1 data-od-id="process-hero-title">Four steps to bringing them home</h1>
+    <p class="lead">Adopting a shelter animal is a real decision, and we've made the path through it as calm and clear as we can. Here's exactly what happens, from the first browse to the first night home — no surprises, no pressure.</p>
+    <p class="hero-meta">
+      <span class="dot" aria-hidden="true"></span>
+      Most adoptions take 1–3 weeks
+      <span aria-hidden="true">·</span>
+      Fee waived for our longest-staying animals
+    </p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="animal-shelter.html#animals" data-od-id="process-hero-browse">Browse available animals</a>
+      <a class="btn-quiet" href="animal-shelter.html#waiting" data-od-id="process-hero-waiting">See who's been waiting longest <svg class="btn-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+    </div>
+  </div>
+</section>
+
+<section class="band reveal" data-od-id="process-steps">
+  <div class="container">
+    <div class="section-head section-head--start">
+      <div>
+        <p class="eyebrow">The process</p>
+        <h2 data-od-id="process-steps-title">From first look to first night</h2>
+        <p>Four small steps. We're with you at each one, and you can step back at any point — no hard feelings.</p>
+      </div>
+    </div>
+
+    <ol class="timeline" role="list">
+      <li class="step" data-od-id="process-step-1">
+        <span class="step-num" aria-hidden="true">01</span>
+        <div class="step-body">
+          <h3>Browse</h3>
+          <p>Look through the animals available online or in person and shortlist a few that catch your eye. Save your favourites and we'll have them ready when you visit.</p>
+          <p class="step-when"><span class="step-when-label">Typical duration</span><span class="step-when-val">~ an afternoon</span></p>
+        </div>
+      </li>
+      <li class="step" data-od-id="process-step-2">
+        <span class="step-num" aria-hidden="true">02</span>
+        <div class="step-body">
+          <h3>Meet</h3>
+          <p>Visit the shelter and spend 30–45 minutes with the animal in our meet room. Everyone who'll live with them should come along, children included.</p>
+          <p class="step-when"><span class="step-when-label">Typical duration</span><span class="step-when-val">same day</span></p>
+        </div>
+      </li>
+      <li class="step" data-od-id="process-step-3">
+        <span class="step-num" aria-hidden="true">03</span>
+        <div class="step-body">
+          <h3>Home check</h3>
+          <p>A short conversation, in person or over video, about your home, your daily routine, and any other pets. We help you prep — we're not here to grade you.</p>
+          <p class="step-when"><span class="step-when-label">Typical duration</span><span class="step-when-val">within a week</span></p>
+        </div>
+      </li>
+      <li class="step" data-od-id="process-step-4">
+        <span class="step-num" aria-hidden="true">04</span>
+        <div class="step-body">
+          <h3>Take them home</h3>
+          <p>Sign the adoption agreement, settle the fee, and head home together. We follow up at two weeks, two months, and six months to see how everyone's settling in.</p>
+          <p class="step-when"><span class="step-when-label">Typical duration</span><span class="step-when-val">the best part</span></p>
+        </div>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section class="band band--warm reveal" data-od-id="process-included">
+  <div class="container">
+    <div class="section-head section-head--start">
+      <div>
+        <p class="eyebrow">Included with every adoption</p>
+        <h2 data-od-id="process-included-title">What comes home with them</h2>
+        <p>Every animal leaves the shelter ready for a healthy start — the medical work is already done before you meet them.</p>
+      </div>
+    </div>
+    <ul class="included-grid" role="list">
+      <li class="included-item" data-od-id="process-included-1">
+        <span class="ic" aria-hidden="true"><svg><use href="#i-check"/></svg></span>
+        <span class="label">Spay or neuter surgery</span>
+      </li>
+      <li class="included-item" data-od-id="process-included-2">
+        <span class="ic" aria-hidden="true"><svg><use href="#i-check"/></svg></span>
+        <span class="label">Initial vaccinations</span>
+      </li>
+      <li class="included-item" data-od-id="process-included-3">
+        <span class="ic" aria-hidden="true"><svg><use href="#i-check"/></svg></span>
+        <span class="label">Microchip registration</span>
+      </li>
+      <li class="included-item" data-od-id="process-included-4">
+        <span class="ic" aria-hidden="true"><svg><use href="#i-check"/></svg></span>
+        <span class="label">Health check &amp; flea/worm treatment</span>
+      </li>
+      <li class="included-item" data-od-id="process-included-5">
+        <span class="ic" aria-hidden="true"><svg><use href="#i-check"/></svg></span>
+        <span class="label">Starter bag of food</span>
+      </li>
+      <li class="included-item" data-od-id="process-included-6">
+        <span class="ic" aria-hidden="true"><svg><use href="#i-check"/></svg></span>
+        <span class="label">ID tag &amp; starter collar</span>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<section class="band reveal" data-od-id="process-fees">
+  <div class="container">
+    <div class="section-head section-head--start">
+      <div>
+        <p class="eyebrow">Fees</p>
+        <h2 data-od-id="process-fees-title">A contribution, not a price</h2>
+        <p>The adoption fee covers a fraction of the care each animal has already received. The amounts below are examples for this prototype.</p>
+      </div>
+    </div>
+
+    <div class="fees-table-wrap">
+      <table class="fees-table" data-od-id="process-fees-table">
+        <thead>
+          <tr>
+            <th scope="col">Animal type</th>
+            <th scope="col">Example fee</th>
+            <th scope="col">Covers</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="col-animal" data-label="Animal type">Dogs</td>
+            <td class="fee" data-label="Example fee">$185*</td>
+            <td class="covers" data-label="Covers">Neuter, vaccinations, microchip, and health check.</td>
+          </tr>
+          <tr>
+            <td class="col-animal" data-label="Animal type">Cats</td>
+            <td class="fee" data-label="Example fee">$95*</td>
+            <td class="covers" data-label="Covers">Neuter, vaccinations, microchip, and health check.</td>
+          </tr>
+          <tr>
+            <td class="col-animal" data-label="Animal type">Small animals (rabbits, guinea pigs)</td>
+            <td class="fee" data-label="Example fee">$35*</td>
+            <td class="covers" data-label="Covers">Health check and starter care.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="fees-note" data-od-id="process-fees-note">* Example amounts shown for this prototype — not official fees. Our longest-staying animals (Duke, Whiskers, and Buddy) have their fee waived entirely; if one of them turns out to be your match, there's nothing to pay.</p>
+    </div>
+  </div>
+</section>
+
+<section class="band reveal" data-od-id="process-good">
+  <div class="container">
+    <div class="section-head section-head--start">
+      <div>
+        <p class="eyebrow">Before you visit</p>
+        <h2 data-od-id="process-good-title">Setting up for a smooth adoption</h2>
+        <p>A little prep goes a long way. Here's what we'll talk through, and a few things worth knowing in advance.</p>
+      </div>
+    </div>
+
+    <div class="know-grid">
+      <div class="know-col" data-od-id="process-good-ask">
+        <h3>We'll ask about</h3>
+        <ul class="know-list" role="list">
+          <li><span class="ic" aria-hidden="true"><svg><use href="#i-check"/></svg></span><span>Your home setup — house or flat, garden, stairs, and any limits in your lease.</span></li>
+          <li><span class="ic" aria-hidden="true"><svg><use href="#i-check"/></svg></span><span>Your daily routine and roughly how long the animal would be alone.</span></li>
+          <li><span class="ic" aria-hidden="true"><svg><use href="#i-check"/></svg></span><span>Existing pets, and how they've met other animals before.</span></li>
+          <li><span class="ic" aria-hidden="true"><svg><use href="#i-check"/></svg></span><span>Everyone in the household, including visiting children and regular guests.</span></li>
+        </ul>
+      </div>
+      <div class="know-col" data-od-id="process-good-know">
+        <h3>Good to know</h3>
+        <ul class="know-list" role="list">
+          <li><span class="ic" aria-hidden="true"><svg><use href="#i-check"/></svg></span><span>Returns are always allowed, no questions asked, at any point in the animal's life.</span></li>
+          <li><span class="ic" aria-hidden="true"><svg><use href="#i-check"/></svg></span><span>Foster-to-adopt is possible for some animals — a trial fortnight before you commit.</span></li>
+          <li><span class="ic" aria-hidden="true"><svg><use href="#i-check"/></svg></span><span>We support you for the animal's whole life: behaviour advice, vet contacts, and a friendly ear.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band reveal" data-od-id="process-faq">
+  <div class="container">
+    <div class="section-head section-head--start">
+      <div>
+        <p class="eyebrow">Questions</p>
+        <h2 data-od-id="process-faq-title">People often ask</h2>
+        <p>And if yours isn't here, just ask us — by email, phone, or in person at the shelter.</p>
+      </div>
+    </div>
+
+    <div class="faq-list">
+      <details class="faq-item" data-od-id="process-faq-1">
+        <summary>Can I adopt if I rent?<svg class="chev" aria-hidden="true"><use href="#i-arrow"/></svg></summary>
+        <div class="answer">Yes — we don't require homeownership. We may ask about your lease or your landlord so we can help you confirm any pet restrictions before you fall in love with an animal who might not be allowed.</div>
+      </details>
+      <details class="faq-item" data-od-id="process-faq-2">
+        <summary>How long does approval take?<svg class="chev" aria-hidden="true"><use href="#i-arrow"/></svg></summary>
+        <div class="answer">Most applications are decided within two to four days. The home check is usually the only waiting step, and we'll arrange it at a time that suits you — in person or over video.</div>
+      </details>
+      <details class="faq-item" data-od-id="process-faq-3">
+        <summary>What if it doesn't work out?<svg class="chev" aria-hidden="true"><use href="#i-arrow"/></svg></summary>
+        <div class="answer">You can bring the animal back at any point, no questions asked. We'd far rather help you through a hard patch, or welcome them back, than have either of you struggle in silence.</div>
+      </details>
+      <details class="faq-item" data-od-id="process-faq-4">
+        <summary>Do you ship animals?<svg class="chev" aria-hidden="true"><use href="#i-arrow"/></svg></summary>
+        <div class="answer">No. Adoptions happen in person at the shelter so you can meet first and travel home together the same day. If you live a long way off, talk to us — we can sometimes arrange to meet partway.</div>
+      </details>
+      <details class="faq-item" data-od-id="process-faq-5">
+        <summary>Can I adopt as a gift?<svg class="chev" aria-hidden="true"><use href="#i-arrow"/></svg></summary>
+        <div class="answer">Not as a surprise. The person who'll care for the animal needs to meet them and be part of the decision — an animal is a commitment of many years, not a present. We're happy to arrange a surprise "meet voucher" instead.</div>
+      </details>
+      <details class="faq-item" data-od-id="process-faq-6">
+        <summary>What about young children?<svg class="chev" aria-hidden="true"><use href="#i-arrow"/></svg></summary>
+        <div class="answer">Bring them along. We want every person — and every existing pet — who'll share the home to be part of the meet, so we can match you with an animal whose temperament fits your family.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section class="band reveal" id="start" data-od-id="process-cta">
+  <div class="container">
+    <div class="cta-dark">
+      <h2 data-od-id="process-cta-title">Ready to meet them?</h2>
+      <p class="cta-sub">Shortlist a few, then come and spend an afternoon with them in our meet room. We'll take it from there — together.</p>
+      <div class="cta-actions">
+        <a class="btn btn-primary" href="animal-shelter.html#animals" data-od-id="process-cta-browse">Browse available animals</a>
+        <a class="btn-quiet" href="animal-shelter.html#visit" data-od-id="process-cta-visit">Visit the shelter <svg class="btn-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer" data-od-id="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="index.html" class="brand" style="color:var(--bg)">
+          <span class="brand-mark" style="background:color-mix(in oklab, var(--bg) 16%, var(--fg)); color:var(--surface-warm)">
+            <svg width="20" height="20" aria-hidden="true"><use href="#g-paw"/></svg>
+          </span>
+          <span>
+            <span class="brand-name">Paws &amp; Hearts</span>
+            <span class="brand-sub" style="color:color-mix(in oklab, var(--bg) 58%, var(--fg))">Shelter · Est. 1998</span>
+          </span>
+        </a>
+        <h3 style="margin-top:var(--space-8)">Monthly note from the kennels</h3>
+        <form class="newsletter" id="newsletterForm" novalidate>
+          <label for="newsletterEmail" hidden>Email address</label>
+          <input id="newsletterEmail" type="email" placeholder="you@example.com" autocomplete="email">
+          <button class="btn" type="submit">Subscribe</button>
+        </form>
+        <p class="form-msg" id="newsletterMsg" role="status"></p>
+      </div>
+      <div>
+        <h3>Adopt</h3>
+        <ul class="footer-links">
+          <li><a href="animal-shelter.html#animals">Available animals</a></li>
+          <li><a href="animal-shelter.html#waiting">Longest waiting</a></li>
+          <li><a href="happy-tails.html">Happy tails</a></li>
+          <li><a href="adopt-process.html">How adoption works</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>The shelter</h3>
+        <ul class="footer-links">
+          <li><a href="animal-shelter.html#help">Volunteer &amp; foster</a></li>
+          <li><a href="animal-shelter.html#help">Donate</a></li>
+          <li><a href="animal-shelter.html#visit">Opening hours</a></li>
+          <li><a href="animal-shelter.html#visit">Lost &amp; found</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-note">
+      <span>© 2026 Paws &amp; Hearts Animal Shelter · Registered 501(c)(3) nonprofit, EIN 00-0000000</span>
+      <span>Privacy · Terms · Accessibility</span>
+    </div>
+  </div>
+</footer>
+
+<script src="../assets/site.js"></script>
+</body>
+</html>

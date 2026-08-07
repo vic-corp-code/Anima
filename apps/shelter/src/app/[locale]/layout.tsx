@@ -4,7 +4,9 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Toaster } from "@anima/ui";
 import { routing } from "@/i18n/routing";
+import { ThemeProvider } from "@/components/theme-provider";
 import { ConvexClientProvider } from "../ConvexClientProvider";
 import "../globals.css";
 
@@ -46,12 +48,21 @@ export default async function LocaleLayout({
       <ConvexClientProvider>
         <html
           lang={locale}
+          suppressHydrationWarning
           className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
         >
           <body className="min-h-full flex flex-col">
-            <NextIntlClientProvider messages={messages}>
-              {children}
-            </NextIntlClientProvider>
+            <ThemeProvider
+              attribute="data-theme"
+              defaultTheme="light"
+              enableSystem={false}
+              disableTransitionOnChange
+            >
+              <NextIntlClientProvider messages={messages}>
+                {children}
+              </NextIntlClientProvider>
+              <Toaster />
+            </ThemeProvider>
           </body>
         </html>
       </ConvexClientProvider>
