@@ -79,6 +79,7 @@ export {
   FormMessage,
   useForm,
   useFormField,
+  zodResolver,
 } from "./components/ui/form"
 export { Label } from "./components/ui/label"
 export {

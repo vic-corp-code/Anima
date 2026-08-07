@@ -1,9 +1,31 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { z } from "zod";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+import { Textarea } from "../ui/textarea";
+import { Checkbox } from "../ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  useForm,
+  zodResolver,
+} from "../ui/form";
 import { PhotoUpload } from "./PhotoUpload";
 
 // Types matching the Convex schema
@@ -37,6 +59,29 @@ interface AnimalFormProps {
   uploadFile: (file: File) => Promise<string>;
 }
 
+// RHF values differ from the payload: the identification method select
+// carries "" for "not set" (empty strings aren't valid for the Convex
+// union), and every field is always present.
+interface AnimalFormValues {
+  name: string;
+  species: "dog" | "cat";
+  breed: string;
+  sex: "male" | "female" | "unknown";
+  chipId: string;
+  identificationMethod: "" | "chip" | "tattoo" | "none";
+  birthDate: string;
+  estimatedAge: string;
+  arrivalDate: string;
+  sterilized: boolean;
+  healthNotes: string;
+  characterNotes: string;
+  compatibilityKids: boolean;
+  compatibilityCats: boolean;
+  compatibilityDogs: boolean;
+  story: string;
+  photoUrls: string[];
+}
+
 const SPECIES_OPTIONS = [
   { value: "dog", label: { fr: "Chien", es: "Perro" } },
   { value: "cat", label: { fr: "Chat", es: "Gato" } },
@@ -54,6 +99,67 @@ const IDENTIFICATION_METHOD_OPTIONS = [
   { value: "none", label: { fr: "Aucune", es: "Ninguno" } },
 ] as const;
 
+function buildSchema(locale: "fr" | "es") {
+  const t = (fr: string, es: string) => (locale === "fr" ? fr : es);
+  const isRequired = t("Champ requis", "Campo requerido");
+
+  return z
+    .object({
+      name: z
+        .string()
+        .trim()
+        .min(1, t("Le nom est requis", "El nombre es requerido")),
+      species: z.enum(["dog", "cat"]),
+      breed: z.string(),
+      sex: z.enum(["male", "female", "unknown"]),
+      chipId: z.string(),
+      identificationMethod: z.enum(["chip", "tattoo", "none"]).or(z.literal("")),
+      birthDate: z.string(),
+      estimatedAge: z.string(),
+      arrivalDate: z.string().min(1, isRequired),
+      sterilized: z.boolean(),
+      healthNotes: z.string(),
+      characterNotes: z.string(),
+      compatibilityKids: z.boolean(),
+      compatibilityCats: z.boolean(),
+      compatibilityDogs: z.boolean(),
+      story: z.string(),
+      photoUrls: z.array(z.string()),
+    })
+    .superRefine((values, ctx) => {
+      // I-CAD format validation (15 digits)
+      if (values.chipId) {
+        const cleaned = values.chipId.replace(/[\s-]/g, "");
+        if (cleaned.length !== 15 || !/^\d{15}$/.test(cleaned)) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["chipId"],
+            message: t(
+              "Le numéro I-CAD doit comporter 15 chiffres",
+              "El número I-CAD debe tener 15 dígitos"
+            ),
+          });
+        }
+      }
+
+      // Arrival date validation (string comparison avoids UTC-vs-local
+      // timezone drift between the date-only input value and `new Date()`)
+      if (values.arrivalDate) {
+        const todayStr = new Date().toISOString().split("T")[0] as string;
+        if (values.arrivalDate > todayStr) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["arrivalDate"],
+            message: t(
+              "La date d'arrivée ne peut pas être dans le futur",
+              "La fecha de llegada no puede estar en el futuro"
+            ),
+          });
+        }
+      }
+    });
+}
+
 export function AnimalForm({
   initialData,
   onSubmit,
@@ -62,111 +168,71 @@ export function AnimalForm({
   locale = "fr",
   uploadFile,
 }: AnimalFormProps) {
-  const [formData, setFormData] = useState<AnimalFormData>({
-    name: initialData?.name || "",
-    species: initialData?.species || "cat",
-    breed: initialData?.breed || "",
-    sex: initialData?.sex || "unknown",
-    chipId: initialData?.chipId || "",
-    identificationMethod: initialData?.identificationMethod || undefined,
-    birthDate: initialData?.birthDate || "",
-    estimatedAge: initialData?.estimatedAge || "",
-    arrivalDate: (initialData?.arrivalDate ?? new Date().toISOString().split("T")[0]) as string,
-    sterilized: initialData?.sterilized ?? false,
-    healthNotes: initialData?.healthNotes || "",
-    characterNotes: initialData?.characterNotes || "",
-    compatibilityKids: initialData?.compatibilityKids ?? false,
-    compatibilityCats: initialData?.compatibilityCats ?? false,
-    compatibilityDogs: initialData?.compatibilityDogs ?? false,
-    story: initialData?.story || "",
-    photoUrls: initialData?.photoUrls || [],
+  const t = (fr: string, es: string) => (locale === "fr" ? fr : es);
+
+  const schema = useMemo(() => buildSchema(locale), [locale]);
+
+  const form = useForm<AnimalFormValues>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      name: initialData?.name ?? "",
+      species: initialData?.species ?? "cat",
+      breed: initialData?.breed ?? "",
+      sex: initialData?.sex ?? "unknown",
+      chipId: initialData?.chipId ?? "",
+      identificationMethod: initialData?.identificationMethod ?? "",
+      birthDate: initialData?.birthDate ?? "",
+      estimatedAge: initialData?.estimatedAge ?? "",
+      arrivalDate:
+        (initialData?.arrivalDate ?? new Date().toISOString().split("T")[0]) as string,
+      sterilized: initialData?.sterilized ?? false,
+      healthNotes: initialData?.healthNotes ?? "",
+      characterNotes: initialData?.characterNotes ?? "",
+      compatibilityKids: initialData?.compatibilityKids ?? false,
+      compatibilityCats: initialData?.compatibilityCats ?? false,
+      compatibilityDogs: initialData?.compatibilityDogs ?? false,
+      story: initialData?.story ?? "",
+      photoUrls: initialData?.photoUrls ?? [],
+    },
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [warnings, setWarnings] = useState<string[]>([]);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const t = (fr: string, es: string) => (locale === "fr" ? fr : es);
+  const chipId = form.watch("chipId");
+  const identificationMethod = form.watch("identificationMethod");
 
-  const validateForm = () => {
-    const newErrors: Record<string, string> = {};
-    const newWarnings: string[] = [];
-
-    // Required fields
-    if (!formData.name.trim()) {
-      newErrors["name"] = t("Le nom est requis", "El nombre es requerido");
-    }
-    if (!formData.arrivalDate) {
-      newErrors["arrivalDate"] = t(
-        "La date d'arrivée est requise",
-        "La fecha de llegada es requerida"
-      );
-    }
-
-    // French legal validation
-    if (!formData.chipId && locale === "fr") {
-      newWarnings.push(
+  // Non-blocking French legal warnings (validation errors are handled by zod)
+  const warnings: string[] = [];
+  if (locale === "fr") {
+    if (!chipId) {
+      warnings.push(
         t(
           "Le numéro I-CAD est légalement requis pour les chiens et chats en France",
           "El número I-CAD es legalmente requerido para perros y gatos en Francia"
         )
       );
-    }
-
-    if (
-      formData.chipId &&
-      formData.identificationMethod === "none" &&
-      locale === "fr"
-    ) {
-      newWarnings.push(
+    } else if (identificationMethod === "none") {
+      warnings.push(
         t(
           "La méthode d'identification doit être spécifiée si un numéro I-CAD est fourni",
           "El método de identificación debe especificarse si se proporciona un número I-CAD"
         )
       );
     }
+  }
 
-    // I-CAD format validation (15 digits, starts with 250 for France)
-    if (formData.chipId) {
-      const cleaned = formData.chipId.replace(/[\s-]/g, "");
-      if (cleaned.length !== 15 || !/^\d{15}$/.test(cleaned)) {
-        newErrors["chipId"] = t(
-          "Le numéro I-CAD doit comporter 15 chiffres",
-          "El número I-CAD debe tener 15 dígitos"
-        );
-      }
-    }
-
-    // Arrival date validation (string comparison avoids UTC-vs-local
-    // timezone drift between the date-only input value and `new Date()`)
-    if (formData.arrivalDate) {
-      const todayStr = new Date().toISOString().split("T")[0] as string;
-      if (formData.arrivalDate > todayStr) {
-        newErrors["arrivalDate"] = t(
-          "La date d'arrivée ne peut pas être dans le futur",
-          "La fecha de llegada no puede estar en el futuro"
-        );
-      }
-    }
-
-    setErrors(newErrors);
-    setWarnings(newWarnings);
-
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!validateForm()) {
-      return;
-    }
+  const handleSubmit = async (values: AnimalFormValues) => {
+    const payload: AnimalFormData = {
+      ...values,
+      // "" isn't a valid Convex union value — omit it entirely
+      identificationMethod: values.identificationMethod || undefined,
+    };
 
     setSubmitError(null);
     setIsSubmitting(true);
     try {
-      await onSubmit(formData);
+      await onSubmit(payload);
     } catch (error) {
       console.error("Failed to submit form:", error);
       setSubmitError(
@@ -180,432 +246,427 @@ export function AnimalForm({
     }
   };
 
-  const updateField = (
-    field: keyof AnimalFormData,
-    value: string | boolean
-  ) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    // Clear error for this field
-    if (errors[field]) {
-      setErrors((prev) => {
-        const updated = { ...prev };
-        delete updated[field];
-        return updated;
-      });
-    }
-  };
-
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Basic Information */}
-      <Card>
-        <CardHeader>
-          <CardTitle>{t("Informations de base", "Información básica")}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Name */}
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              {t("Nom *", "Nombre *")}
-            </label>
-            <Input
-              value={formData.name}
-              onChange={(e) =>
-                updateField("name", (e.target as HTMLInputElement).value)
-              }
-              className={errors["name"] ? "border-red-500" : ""}
-            />
-            {errors["name"] && (
-              <p className="text-sm text-red-500 mt-1">{errors["name"]}</p>
-            )}
-          </div>
-
-          {/* Species & Sex */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                {t("Espèce *", "Especie *")}
-              </label>
-              <select
-                value={formData.species}
-                onChange={(e) =>
-                  updateField(
-                    "species",
-                    (e.target as HTMLSelectElement).value
-                  )
-                }
-                className="w-full rounded border px-3 py-2"
-              >
-                {SPECIES_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label[locale]}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                {t("Sexe *", "Sexo *")}
-              </label>
-              <select
-                value={formData.sex}
-                onChange={(e) =>
-                  updateField("sex", (e.target as HTMLSelectElement).value)
-                }
-                className="w-full rounded border px-3 py-2"
-              >
-                {SEX_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label[locale]}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          {/* Breed */}
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              {t("Race (optionnel)", "Raza (opcional)")}
-            </label>
-            <Input
-              value={formData.breed}
-              onChange={(e) =>
-                updateField("breed", (e.target as HTMLInputElement).value)
-              }
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Identification */}
-      <Card>
-        <CardHeader>
-          <CardTitle>
-            {t("Identification", "Identificación")}
-            {locale === "fr" && (
-              <span className="text-xs text-muted-foreground ml-2">
-                (Requis légal)
-              </span>
-            )}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* I-CAD Number */}
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              {t("Numéro I-CAD", "Número I-CAD")}
-            </label>
-            <Input
-              value={formData.chipId}
-              onChange={(e) =>
-                updateField("chipId", (e.target as HTMLInputElement).value)
-              }
-              placeholder={t(
-                "250XXXXXXXXXXXXX",
-                "250XXXXXXXXXXXXX"
-              )}
-              className={errors["chipId"] ? "border-red-500" : ""}
-            />
-            {errors["chipId"] && (
-              <p className="text-sm text-red-500 mt-1">{errors["chipId"]}</p>
-            )}
-            <p className="text-xs text-muted-foreground mt-1">
-              {t(
-                "15 chiffres requis pour France",
-                "15 dígitos requeridos para Francia"
-              )}
-            </p>
-          </div>
-
-          {/* Identification Method */}
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              {t("Méthode d'identification", "Método de identificación")}
-            </label>
-            <select
-              value={formData.identificationMethod || ""}
-              onChange={(e) => {
-                const value = (e.target as HTMLSelectElement).value;
-                updateField("identificationMethod", value || "");
-              }}
-              className="w-full rounded border px-3 py-2"
-            >
-              <option value="">
-                {t("Sélectionner...", "Seleccionar...")}
-              </option>
-              {IDENTIFICATION_METHOD_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label[locale]}
-                </option>
-              ))}
-            </select>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Age */}
-      <Card>
-        <CardHeader>
-          <CardTitle>{t("Âge", "Edad")}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              {t("Date de naissance", "Fecha de nacimiento")}
-            </label>
-            <Input
-              type="date"
-              value={formData.birthDate}
-              onChange={(e) =>
-                updateField("birthDate", (e.target as HTMLInputElement).value)
-              }
-            />
-            <p className="text-xs text-muted-foreground mt-1">
-              {t("Ou", "O")}{" "}
-              <span className="italic">{t("Âge estimé ↓", "Edad estimada ↓")}</span>
-            </p>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              {t("Âge estimé", "Edad estimada")}
-            </label>
-            <Input
-              value={formData.estimatedAge}
-              onChange={(e) =>
-                updateField(
-                  "estimatedAge",
-                  (e.target as HTMLInputElement).value
-                )
-              }
-              placeholder={t("ex: 1 an, 6 mois...", "ej: 1 año, 6 meses...")}
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Health & Character */}
-      <Card>
-        <CardHeader>
-          <CardTitle>
-            {t("Santé et caractère", "Salud y carácter")}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Sterilized */}
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              id="sterilized"
-              checked={formData.sterilized}
-              onChange={(e) =>
-                updateField("sterilized", (e.target as HTMLInputElement).checked)
-              }
-              className="rounded"
-            />
-            <label htmlFor="sterilized" className="text-sm font-medium">
-              {t("Stérilisé", "Esterilizado")}
-            </label>
-          </div>
-
-          {/* Health Notes */}
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              {t("Notes de santé", "Notas de salud")}
-            </label>
-            <textarea
-              value={formData.healthNotes}
-              onChange={(e) =>
-                updateField(
-                  "healthNotes",
-                  (e.target as HTMLTextAreaElement).value
-                )
-              }
-              rows={3}
-              className="w-full rounded border px-3 py-2"
-              placeholder={t(
-                "Maladies, traitements, vaccinations...",
-                "Enfermedades, tratamientos, vacunas..."
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(handleSubmit)}
+        className="space-y-6"
+        noValidate
+      >
+        {/* Identity */}
+        <Card>
+          <CardHeader>
+            <CardTitle>{t("Identité", "Identidad")}</CardTitle>
+          </CardHeader>
+          <CardContent className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem className="sm:col-span-2">
+                  <FormLabel>{t("Nom *", "Nombre *")}</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               )}
             />
-          </div>
 
-          {/* Character Notes */}
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              {t("Caractère", "Carácter")}
-            </label>
-            <textarea
-              value={formData.characterNotes}
-              onChange={(e) =>
-                updateField(
-                  "characterNotes",
-                  (e.target as HTMLTextAreaElement).value
-                )
-              }
-              rows={3}
-              className="w-full rounded border px-3 py-2"
-              placeholder={t(
-                "Comportement, tempérament...",
-                "Comportamiento, temperamento..."
+            <FormField
+              control={form.control}
+              name="species"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("Espèce *", "Especie *")}</FormLabel>
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {SPECIES_OPTIONS.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label[locale]}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
               )}
             />
-          </div>
 
-          {/* Compatibility */}
-          <div>
-            <label className="block text-sm font-medium mb-2">
-              {t("Compatibilité", "Compatibilidad")}
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {[
-                { key: "compatibilityKids", label: { fr: "Enfants", es: "Niños" } },
-                { key: "compatibilityCats", label: { fr: "Chats", es: "Gatos" } },
-                { key: "compatibilityDogs", label: { fr: "Chiens", es: "Perros" } },
-              ].map((item) => (
-                <label key={item.key} className="flex items-center gap-1">
-                  <input
-                    type="checkbox"
-                    checked={formData[item.key as keyof typeof formData] as boolean}
-                    onChange={(e) =>
-                      updateField(
-                        item.key as keyof typeof formData,
-                        (e.target as HTMLInputElement).checked
-                      )
-                    }
-                    className="rounded"
-                  />
-                  <span className="text-sm">{item.label[locale]}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Photos */}
-      <PhotoUpload
-        onPhotosChange={(urls) => setFormData((prev) => ({ ...prev, photoUrls: urls }))}
-        uploadFile={uploadFile}
-        initialPhotos={formData.photoUrls}
-        maxPhotos={10}
-        maxSizeMB={5}
-        locale={locale}
-      />
-
-      {/* Arrival */}
-      <Card>
-        <CardHeader>
-          <CardTitle>
-            {t("Arrivée", "Llegada")} *
-            {locale === "fr" && (
-              <span className="text-xs text-muted-foreground ml-2">
-                (Requis légal)
-              </span>
-            )}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              {t("Date d'arrivée *", "Fecha de llegada *")}
-            </label>
-            <Input
-              type="date"
-              value={formData.arrivalDate}
-              onChange={(e) =>
-                updateField("arrivalDate", (e.target as HTMLInputElement).value)
-              }
-              className={errors["arrivalDate"] ? "border-red-500" : ""}
-            />
-            {errors["arrivalDate"] && (
-              <p className="text-sm text-red-500 mt-1">
-                {errors["arrivalDate"]}
-              </p>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Story (Public) */}
-      <Card>
-        <CardHeader>
-          <CardTitle>{t("Histoire publique", "Historia pública")}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              {t(
-                "Histoire pour les adoptants",
-                "Historia para adoptantes"
-              )}
-            </label>
-            <textarea
-              value={formData.story}
-              onChange={(e) =>
-                updateField("story", (e.target as HTMLTextAreaElement).value)
-              }
-              rows={4}
-              className="w-full rounded border px-3 py-2"
-              placeholder={t(
-                "Racontez l'histoire de cet animal pour aider à trouver une famille...",
-                "Cuenta la historia de este animal para ayudar a encontrar una familia..."
+            <FormField
+              control={form.control}
+              name="sex"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("Sexe *", "Sexo *")}</FormLabel>
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {SEX_OPTIONS.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label[locale]}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
               )}
             />
-            <p className="text-xs text-muted-foreground mt-1">
-              {t(
-                "Ce texte sera visible sur l'annonce d'adoption",
-                "Este texto será visible en el anuncio de adopción"
-              )}
-            </p>
-          </div>
-        </CardContent>
-      </Card>
 
-      {/* Warnings */}
-      {warnings.length > 0 && (
-        <Card className="border-yellow-200 bg-yellow-50">
-          <CardContent className="pt-6">
-            <div className="space-y-1">
-              {warnings.map((warning, index) => (
-                <p key={index} className="text-sm text-yellow-800">
-                  ⚠️ {warning}
-                </p>
-              ))}
-            </div>
+            <FormField
+              control={form.control}
+              name="breed"
+              render={({ field }) => (
+                <FormItem className="sm:col-span-2">
+                  <FormLabel>{t("Race (optionnel)", "Raza (opcional)")}</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="chipId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("Numéro I-CAD", "Número I-CAD")}</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      placeholder="250XXXXXXXXXXXXX"
+                      inputMode="numeric"
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    {t(
+                      "15 chiffres requis pour France",
+                      "15 dígitos requeridos para Francia"
+                    )}
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="identificationMethod"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    {t("Méthode d'identification", "Método de identificación")}
+                  </FormLabel>
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue
+                          placeholder={t("Sélectionner...", "Seleccionar...")}
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="">
+                        {t("Sélectionner...", "Seleccionar...")}
+                      </SelectItem>
+                      {IDENTIFICATION_METHOD_OPTIONS.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label[locale]}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="birthDate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    {t("Date de naissance", "Fecha de nacimiento")}
+                  </FormLabel>
+                  <FormControl>
+                    <Input type="date" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    {t("Ou", "O")}{" "}
+                    <em>{t("âge estimé ci-dessous", "edad estimada abajo")}</em>
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="estimatedAge"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("Âge estimé", "Edad estimada")}</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      placeholder={t("ex: 1 an, 6 mois...", "ej: 1 año, 6 meses...")}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="arrivalDate"
+              render={({ field }) => (
+                <FormItem className="sm:col-span-2">
+                  <FormLabel>
+                    {t("Date d'arrivée *", "Fecha de llegada *")}
+                  </FormLabel>
+                  <FormControl>
+                    <Input type="date" {...field} />
+                  </FormControl>
+                  {locale === "fr" && (
+                    <FormDescription>
+                      {t("(Requis légal)", "(Requisito legal)")}
+                    </FormDescription>
+                  )}
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </CardContent>
         </Card>
-      )}
 
-      {/* Submit error */}
-      {submitError && (
-        <p className="text-sm text-red-500">{submitError}</p>
-      )}
+        {/* Health */}
+        <Card>
+          <CardHeader>
+            <CardTitle>{t("Santé", "Salud")}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <FormField
+              control={form.control}
+              name="sterilized"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center gap-3 space-y-0">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormLabel>{t("Stérilisé", "Esterilizado")}</FormLabel>
+                </FormItem>
+              )}
+            />
 
-      {/* Actions */}
-      <div className="flex gap-4">
-        <Button
-          type="submit"
-          disabled={isSubmitting}
-          className="flex-1"
-        >
-          {isSubmitting
-            ? t("Enregistrement...", "Guardando...")
-            : submitLabel || t("Enregistrer", "Guardar")}
-        </Button>
-        {onCancel && (
+            <FormField
+              control={form.control}
+              name="healthNotes"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("Notes de santé", "Notas de salud")}</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      {...field}
+                      rows={3}
+                      placeholder={t(
+                        "Maladies, traitements, vaccinations...",
+                        "Enfermedades, tratamientos, vacunas..."
+                      )}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </CardContent>
+        </Card>
+
+        {/* Behavior */}
+        <Card>
+          <CardHeader>
+            <CardTitle>{t("Comportement", "Comportamiento")}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <FormField
+              control={form.control}
+              name="characterNotes"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("Caractère", "Carácter")}</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      {...field}
+                      rows={3}
+                      placeholder={t(
+                        "Comportement, tempérament...",
+                        "Comportamiento, temperamento..."
+                      )}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="compatibilityKids"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center gap-3 space-y-0">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormLabel>{t("Enfants", "Niños")}</FormLabel>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="compatibilityCats"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center gap-3 space-y-0">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormLabel>{t("Chats", "Gatos")}</FormLabel>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="compatibilityDogs"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center gap-3 space-y-0">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormLabel>{t("Chiens", "Perros")}</FormLabel>
+                </FormItem>
+              )}
+            />
+          </CardContent>
+        </Card>
+
+        {/* Media */}
+        <Card>
+          <CardHeader>
+            <CardTitle>{t("Médias", "Medios")}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <FormField
+              control={form.control}
+              name="story"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    {t("Histoire pour les adoptants", "Historia para adoptantes")}
+                  </FormLabel>
+                  <FormControl>
+                    <Textarea
+                      {...field}
+                      rows={4}
+                      placeholder={t(
+                        "Racontez l'histoire de cet animal pour aider à trouver une famille...",
+                        "Cuenta la historia de este animal para ayudar a encontrar una familia..."
+                      )}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    {t(
+                      "Ce texte sera visible sur l'annonce d'adoption",
+                      "Este texto será visible en el anuncio de adopción"
+                    )}
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <PhotoUpload
+              onPhotosChange={(urls) => form.setValue("photoUrls", urls)}
+              uploadFile={uploadFile}
+              initialPhotos={initialData?.photoUrls ?? []}
+              maxPhotos={10}
+              maxSizeMB={5}
+              locale={locale}
+              bare
+            />
+          </CardContent>
+        </Card>
+
+        {/* French legal warnings (non-blocking) */}
+        {warnings.length > 0 && (
+          <Alert className="border-warn/40 bg-warn/10">
+            <AlertTitle className="text-warn">
+              {t("À noter", "A tener en cuenta")}
+            </AlertTitle>
+            <AlertDescription className="text-warn/90">
+              <ul className="mt-1 list-disc space-y-1 pl-5">
+                {warnings.map((warning, index) => (
+                  <li key={index}>{warning}</li>
+                ))}
+              </ul>
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {/* Submit error */}
+        {submitError && (
+          <p className="text-sm text-destructive">{submitError}</p>
+        )}
+
+        {/* Actions */}
+        <div className="flex gap-4">
           <Button
-            type="button"
-            variant="outline"
-            onClick={onCancel}
+            type="submit"
             disabled={isSubmitting}
             className="flex-1"
           >
-            {t("Annuler", "Cancelar")}
+            {isSubmitting
+              ? t("Enregistrement...", "Guardando...")
+              : submitLabel || t("Enregistrer", "Guardar")}
           </Button>
-        )}
-      </div>
-    </form>
+          {onCancel && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onCancel}
+              disabled={isSubmitting}
+              className="flex-1"
+            >
+              {t("Annuler", "Cancelar")}
+            </Button>
+          )}
+        </div>
+      </form>
+    </Form>
   );
 }
