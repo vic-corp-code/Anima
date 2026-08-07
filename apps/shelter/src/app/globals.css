@@ -1,68 +1,338 @@
 @import "tailwindcss";
 
+/* ==========================================================================
+   Palette v2 (#155) — tokens extracted from the "Shelter Workspace Mission"
+   kit (docs/tech/design-mockups/assets/site.css), mapped onto shadcn/tweakcn's
+   slot names per the audits below. Every value here traces back either to a
+   literal kit value or to an explicit, documented decision — see the PR body
+   for #155 for the numbered list of decisions and open follow-ups.
+
+   Sources:
+   - docs/tech/design-mockups/audit-token-structure.md (#153) — color mapping
+   - docs/tech/design-mockups/audit-elevation-motion.md (#133) — shadow/radius/
+     motion/focus-ring derivation
+   - docs/tech/design-mockups/assets/site.css — literal kit values
+   ========================================================================== */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+
+  /* ---- base ---- */
+  --background: #fbf6ee; /* kit --bg */
+  --foreground: #201914; /* kit --fg */
+
+  /* ---- card / popover / secondary ----
+     Kit has no distinct tokens for these three — all trace to --surface per
+     admin-dashboard.html (panels/cards/mobile-nav dropdown/.btn-secondary all
+     sit on --surface). Explicit merge, OK'd in audit-token-structure.md §2. */
+  --card: #fffdf8; /* kit --surface */
+  --card-foreground: #201914; /* kit --fg */
+  --popover: #fffdf8; /* kit --surface */
+  --popover-foreground: #201914; /* kit --fg */
+  --secondary: #fffdf8; /* kit --surface */
+  --secondary-foreground: #201914; /* kit --fg */
+
+  /* ---- primary ----
+     The kit's warm brand --accent, NOT shadcn's neutral --accent slot — see
+     audit-token-structure.md §0/§2, "the single most important row." */
+  --primary: #9b5b32; /* kit --accent */
+  --primary-foreground: #ffffff; /* kit --accent-on */
+  --accent-on: #ffffff; /* kept as its own token: reused below (sidebar, extras) */
+  --accent-hover: color-mix(in oklab, var(--primary), black 8%);
+  --accent-active: color-mix(in oklab, var(--primary), black 14%);
+
+  /* ---- muted / accent (shadcn's neutral hover/panel slots) ----
+     shadcn's --muted is a *background*; the kit's own --muted is a *text*
+     color (used below as --muted-foreground instead) — do not conflate them,
+     see audit-token-structure.md §1 note and §2. */
+  --muted: #f1e3cf; /* kit --surface-warm */
+  --muted-foreground: #7a6d63; /* kit --muted */
+  --accent: #f1e3cf; /* kit --surface-warm — confirmed via sidebar hover/.btn-ghost/.mobile-nav a:hover */
+  --accent-foreground: #201914; /* kit --fg */
+
+  /* ---- destructive ----
+     --destructive-foreground has no kit source; contrast-checked separately
+     for light/dark, see decision 5 in the PR body. */
+  --destructive: #b33a3a; /* kit --danger */
+  --destructive-foreground: #ffffff; /* verified ~5.9:1 against #b33a3a — passes AA */
+
+  /* ---- borders / input / ring ----
+     Kit runs a two-tier border system (--border / --border-soft) that shadcn's
+     single --border slot can't carry — --border-soft is kept as a permanent
+     extra token below (decision 4). --input intentionally uses --surface, not
+     --border-soft (decision 6 — resolves the ambiguity flagged in
+     audit-token-structure.md §5 point 7; wants a visual double-check later). */
+  --border: #ded2c3; /* kit --border */
+  --input: #fffdf8; /* kit --surface, per decision 6 */
+  --ring: #9b5b32; /* kit --accent, plain-color fallback (decision 3) */
+
+  /* ---- chart placeholder ----
+     No kit source at all. Mechanical fallback per decision 7 — nothing
+     consumes these yet (charts explicitly deferred); real palette pass
+     tracked as a follow-up issue, see PR body. */
+  --chart-1: #9b5b32; /* == --primary/--accent */
+  --chart-2: #4f8a4f; /* == --success */
+  --chart-3: #c9822f; /* == --warn */
+  --chart-4: #9b5b32; /* == --meta (same hex as --accent in the kit) */
+  --chart-5: #b33a3a; /* == --danger */
+
+  /* ---- sidebar ----
+     4.1 rows grounded in admin-dashboard.html's real sidebar markup; 4.2 rows
+     (primary/primary-foreground/ring) are same-as-global-primary placeholders,
+     unconfirmed until a real sidebar CTA element exists (decision 8). */
+  --sidebar: #fffdf8; /* kit --surface */
+  --sidebar-foreground: #4c4037; /* kit --fg-2 */
+  --sidebar-border: #eee4d7; /* kit --border-soft */
+  --sidebar-accent: color-mix(in oklab, var(--primary) 12%, var(--card));
+  --sidebar-accent-foreground: #9b5b32; /* kit --accent */
+  --sidebar-primary: #9b5b32; /* placeholder: == --primary, unconfirmed (decision 8) */
+  --sidebar-primary-foreground: #ffffff; /* placeholder: == --accent-on, unconfirmed (decision 8) */
+  --sidebar-ring: #9b5b32; /* placeholder: == --primary, unconfirmed (decision 8) */
+
+  /* ---- extra kit tokens with no shadcn slot ----
+     Carried forward as-is, not force-fit into standard slots (explicitly OK'd
+     in audit-token-structure.md §3). */
+  --meta: #9b5b32;
+  --border-soft: #eee4d7;
+  --success: #4f8a4f;
+  --warn: #c9822f;
+  --danger: #b33a3a;
+
+  /* ---- elevation ----
+     Kit has exactly 2 real shadow values (a hairline ring, one soft raised
+     shadow) plus a distinct focus halo — not a graduated scale. Names kept
+     as the kit's own, per audit-elevation-motion.md §5 recommendation; the
+     derived --shadow-2xs…2xl scale below is a separate additional layer
+     built from these. */
+  --elev-flat: none;
+  --elev-ring: 0 0 0 1px var(--border);
+  --elev-raised: 0 20px 52px rgba(32, 25, 20, 0.12);
+  --focus-ring: 0 0 0 4px rgba(155, 91, 50, 0.24);
+
+  /* ---- shadow scale derivation (decision 1) ----
+     Base primitives anchored to --elev-raised's real values (offset/blur/
+     opacity/color = the scale's "1x" reference point, i.e. --shadow-lg).
+     --shadow-2xs/--shadow-xs anchor to --elev-ring's hairline instead — it's
+     the kit's only other real value and has no blur, so it doesn't sit on the
+     same curve. --shadow-sm/--shadow-md/--shadow-xl/--shadow-2xl are
+     interpolated via calc() from the base primitives, not invented
+     independently, so the whole scale stays internally consistent. */
+  --shadow-color: 32 25 20; /* warm near-black, matches --elev-raised light */
+  --shadow-opacity: 0.12;
+  --shadow-blur: 52px;
+  --shadow-spread: 0px;
+  --shadow-offset-x: 0px;
+  --shadow-offset-y: 20px;
+  --shadow-2xs: var(--elev-ring);
+  --shadow-xs: var(--elev-ring);
+  --shadow-sm: var(--shadow-offset-x) calc(var(--shadow-offset-y) * 0.15)
+    calc(var(--shadow-blur) * 0.15) var(--shadow-spread)
+    rgb(var(--shadow-color) / calc(var(--shadow-opacity) * 0.5));
+  --shadow-md: var(--shadow-offset-x) calc(var(--shadow-offset-y) * 0.4)
+    calc(var(--shadow-blur) * 0.4) var(--shadow-spread)
+    rgb(var(--shadow-color) / calc(var(--shadow-opacity) * 0.75));
+  --shadow-lg: var(--elev-raised);
+  --shadow-xl: var(--shadow-offset-x) calc(var(--shadow-offset-y) * 1.3)
+    calc(var(--shadow-blur) * 1.3) var(--shadow-spread)
+    rgb(var(--shadow-color) / calc(var(--shadow-opacity) * 1.15));
+  --shadow-2xl: var(--shadow-offset-x) calc(var(--shadow-offset-y) * 1.6)
+    calc(var(--shadow-blur) * 1.6) var(--shadow-spread)
+    rgb(var(--shadow-color) / calc(var(--shadow-opacity) * 1.3));
+
+  /* ---- radius (decision 2) ----
+     shadcn's single-base 4-step calc() formula can't reproduce the kit's
+     10/16/24/pill spread. --radius carries the kit's md value and drives the
+     two slots with no kit source (md/xl) via shadcn's normal offset formula;
+     --radius-sm/--radius-lg/--radius-pill carry the kit's exact real values
+     as extras, used directly instead of the calc()-derived approximation
+     wherever a component needs kit-authentic roundedness. */
+  --radius: 16px; /* kit --radius-md */
+  --radius-sm: 10px; /* kit --radius-sm, exact */
+  --radius-lg: 24px; /* kit --radius-lg, exact */
+  --radius-pill: 9999px; /* kit --radius-pill, exact */
+
+  /* ---- motion ---- */
+  --motion-fast: 150ms;
+  --motion-base: 240ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+
+  /* ---- type ---- */
+  --font-display: Georgia, "Times New Roman", serif;
+  --tracking-display: -0.025em;
 }
 
+/* ---------- dark theme ----------
+   [data-theme="dark"] attribute on <html>, toggled + persisted via
+   ThemeProvider (see [locale]/layout.tsx) — matches docs/tech/design-system.md
+   and confirmed matching the kit's own mechanism per audit-token-structure.md
+   §0. Every value below is the kit's real dark-mode value; nothing here is
+   invented. */
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --background: #17120e;
+  --foreground: #f4ece1;
+
+  --card: #1f1913;
+  --card-foreground: #f4ece1;
+  --popover: #1f1913;
+  --popover-foreground: #f4ece1;
+  --secondary: #1f1913;
+  --secondary-foreground: #f4ece1;
+
+  --primary: #d9925c;
+  --primary-foreground: #1a130d;
+  --accent-on: #1a130d;
+  --accent-hover: color-mix(in oklab, var(--primary), white 12%);
+  --accent-active: color-mix(in oklab, var(--primary), white 20%);
+
+  --muted: #2c231a;
+  --muted-foreground: #9e9081;
+  --accent: #2c231a;
+  --accent-foreground: #f4ece1;
+
+  --destructive: #e58079;
+  /* white fails AA here (~2.7:1) — reuse --accent-on's dark value instead,
+     verified ~6.7:1 against #e58079 (decision 5). */
+  --destructive-foreground: #1a130d;
+
+  --border: #4d4036;
+  --input: #1f1913; /* kit --surface, per decision 6 */
+  --ring: #d9925c;
+
+  --chart-1: #d9925c;
+  --chart-2: #7cbb7c;
+  --chart-3: #e0a24f;
+  --chart-4: #dda06d;
+  --chart-5: #e58079;
+
+  --sidebar: #1f1913;
+  --sidebar-foreground: #d3c6b6;
+  --sidebar-border: #33291f;
+  --sidebar-accent: color-mix(in oklab, var(--primary) 12%, var(--card));
+  --sidebar-accent-foreground: #d9925c;
+  --sidebar-primary: #d9925c; /* placeholder, unconfirmed (decision 8) */
+  --sidebar-primary-foreground: #1a130d; /* placeholder, unconfirmed (decision 8) */
+  --sidebar-ring: #d9925c; /* placeholder, unconfirmed (decision 8) */
+
+  --meta: #dda06d;
+  --border-soft: #33291f;
+  --success: #7cbb7c;
+  --warn: #e0a24f;
+  --danger: #e58079;
+
+  --elev-raised: 0 20px 52px rgba(0, 0, 0, 0.55);
+  --focus-ring: 0 0 0 4px rgba(217, 146, 92, 0.35);
+
+  /* shadow base primitives: true black, higher opacity, same offset/blur —
+     matches --elev-raised's dark values exactly. */
+  --shadow-color: 0 0 0;
+  --shadow-opacity: 0.55;
+}
+
+/* ==========================================================================
+   Tailwind / shadcn mapping — every slot Tailwind utilities and shadcn
+   components expect, remapped onto the tokens above via `inline` so no extra
+   indirection is added at build time.
+   ========================================================================== */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
 
-  /* Shadcn semantic colors (HSL format for theming) */
-  --color-card: 0 0% 100%;
-  --color-card-foreground: 240 10% 3.9%;
-  --color-popover: 0 0% 100%;
-  --color-popover-foreground: 240 10% 3.9%;
-  --color-muted: 240 4.8% 95.9%;
-  --color-muted-foreground: 240 3.8% 46.1%;
-  --color-accent: 240 4.8% 95.9%;
-  --color-accent-foreground: 240 5.9% 10%;
-  --color-destructive: 0 84.2% 60.2%;
-  --color-destructive-foreground: 0 0% 98%;
-  --color-border: 240 5.9% 90%;
-  --color-input: 240 5.9% 90%;
-  --color-ring: 240 10% 3.9%;
-  --radius: 0.5rem;
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
 
-  /* Primary/secondary for shadcn components */
-  --color-primary: 240 5.9% 10%;
-  --color-primary-foreground: 0 0% 98%;
-  --color-secondary: 240 4.8% 95.9%;
-  --color-secondary-foreground: 240 5.9% 10%;
-}
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
 
-    /* Shadcn dark mode semantic colors */
-    --color-card: 240 10% 3.9%;
-    --color-card-foreground: 0 0% 98%;
-    --color-popover: 240 10% 3.9%;
-    --color-popover-foreground: 0 0% 98%;
-    --color-muted: 240 3.7% 15.9%;
-    --color-muted-foreground: 240 5% 64.9%;
-    --color-accent: 240 3.7% 15.9%;
-    --color-accent-foreground: 0 0% 98%;
-    --color-destructive: 0 62.8% 30.6%;
-    --color-destructive-foreground: 0 0% 98%;
-    --color-border: 240 3.7% 15.9%;
-    --color-input: 240 3.7% 15.9%;
-    --color-ring: 240 4.9% 83.9%;
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
 
-    --color-primary: 0 0% 98%;
-    --color-primary-foreground: 240 5.9% 10%;
-    --color-secondary: 240 3.7% 15.9%;
-    --color-secondary-foreground: 0 0% 98%;
-  }
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* extras — no standard shadcn slot, exposed as Tailwind utilities anyway
+     (bg-meta, text-meta, border-border-soft, bg-accent-hover, etc.) */
+  --color-meta: var(--meta);
+  --color-border-soft: var(--border-soft);
+  --color-success: var(--success);
+  --color-warn: var(--warn);
+  --color-danger: var(--danger);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-active: var(--accent-active);
+  --color-accent-on: var(--accent-on);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-pill: var(--radius-pill);
+
+  --shadow-2xs: var(--shadow-2xs);
+  --shadow-xs: var(--shadow-xs);
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --shadow-xl: var(--shadow-xl);
+  --shadow-2xl: var(--shadow-2xl);
+
+  --duration-fast: var(--motion-fast);
+  --duration-base: var(--motion-base);
+  --ease-standard: var(--ease-standard);
+
+  /* -0.025em happens to equal Tailwind's own default tracking-tight — made
+     explicit here so the connection to the kit token is traceable rather
+     than coincidental. */
+  --tracking-tight: var(--tracking-display);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-display);
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+}
+
+/* Kit's own focus-visible rule (site.css) — soft tinted halo, not shadcn's
+   flat ring-* utilities (decision 3). A prior PR review caught eliding the
+   `outline: none` half of this rule — keep both declarations together. */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--radius-sm);
 }
