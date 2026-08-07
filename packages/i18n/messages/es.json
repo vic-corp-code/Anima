@@ -62,7 +62,10 @@
       "registryNumberSaving": "Guardando…",
       "markVerified": "Marcar como verificada",
       "unmarkVerified": "Anular la verificación",
-      "markVerifiedRequiresNumber": "Introduce un número de registro antes de marcar la organización como verificada."
+      "markVerifiedRequiresNumber": "Introduce un número de registro antes de marcar la organización como verificada.",
+      "registryNumberEdit": "Editar",
+      "registryNumberCancel": "Cancelar",
+      "registryNumberEmpty": "No informado"
     },
     "nav": {
       "overview": "Vista general",
