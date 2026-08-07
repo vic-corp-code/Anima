@@ -80,7 +80,6 @@ export {
   useForm,
   useFormField,
 } from "./components/ui/form"
-export { zodResolver } from "@hookform/resolvers/zod"
 export { Label } from "./components/ui/label"
 export {
   Pagination,

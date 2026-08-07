@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useConvexAuth, useMutation, useQuery } from "convex/react";
 import { useTranslations } from "next-intl";
-import { z } from "zod";
 import { api } from "@anima/backend/convex/_generated/api";
 import { Id } from "@anima/backend/convex/_generated/dataModel";
 import {
@@ -23,7 +22,6 @@ import {
   FormMessage,
   Input,
   useForm,
-  zodResolver,
 } from "@anima/ui";
 
 interface VerificationCardProps {
@@ -34,27 +32,12 @@ interface VerificationCardProps {
 
 type VerificationStatus = VerificationCardProps["verificationStatus"];
 
-const registryNumberSchema = z.object({
-  registryNumber: z.string().trim(),
-});
-
-type RegistryNumberFormValues = z.infer<typeof registryNumberSchema>;
-
 // Kit pill semantics (EXTRACTION.md §1): neutral/muted = unverified,
 // warn (orange) = in progress, success (green) = fully verified.
-const BADGE_STYLES: Record<
-  VerificationStatus,
-  { variant: "default" | "secondary" | "destructive" | "outline" | "ghost" | "link"; className?: string }
-> = {
-  unverified: { variant: "secondary" },
-  email_verified: {
-    variant: "secondary",
-    className: "bg-warn/10 text-warn dark:bg-warn/20",
-  },
-  registry_verified: {
-    variant: "secondary",
-    className: "bg-success/10 text-success dark:bg-success/20",
-  },
+const BADGE_CLASSES: Record<VerificationStatus, string | undefined> = {
+  unverified: undefined,
+  email_verified: "bg-warn/10 text-warn dark:bg-warn/20",
+  registry_verified: "bg-success/10 text-success dark:bg-success/20",
 };
 
 // Client sub-component so the rest of the org page can stay a server
@@ -79,9 +62,12 @@ export function VerificationCard({
   const markVerified = useMutation(api.organizations.markVerified);
   const unmarkVerified = useMutation(api.organizations.unmarkVerified);
 
-  const form = useForm<RegistryNumberFormValues>({
-    resolver: zodResolver(registryNumberSchema),
-    defaultValues: { registryNumber: registryNumber ?? "" },
+  // Last value this card persisted; source of truth for re-edit + display so
+  // a save doesn't wait on router.refresh() to propagate the prop.
+  const [savedRegistryNumber, setSavedRegistryNumber] = useState(registryNumber);
+
+  const form = useForm<{ registryNumber: string }>({
+    defaultValues: { registryNumber: savedRegistryNumber ?? "" },
   });
 
   const [isEditing, setIsEditing] = useState(false);
@@ -93,7 +79,7 @@ export function VerificationCard({
 
   const startEditing = () => {
     setError(null);
-    form.reset({ registryNumber: registryNumber ?? "" });
+    form.reset({ registryNumber: savedRegistryNumber ?? "" });
     setIsEditing(true);
   };
 
@@ -102,13 +88,12 @@ export function VerificationCard({
     setError(null);
   };
 
-  const handleSaveRegistryNumber = async (values: RegistryNumberFormValues) => {
+  const handleSaveRegistryNumber = async (values: { registryNumber: string }) => {
     setIsSaving(true);
     try {
-      await updateRegistryNumber({
-        organizationId,
-        registryNumber: values.registryNumber,
-      });
+      const trimmed = values.registryNumber.trim();
+      await updateRegistryNumber({ organizationId, registryNumber: trimmed });
+      setSavedRegistryNumber(trimmed);
       setIsEditing(false);
       router.refresh();
     } finally {
@@ -145,8 +130,8 @@ export function VerificationCard({
         <CardTitle>{t("verificationTitle")}</CardTitle>
         <CardAction>
           <Badge
-            variant={BADGE_STYLES[verificationStatus].variant}
-            className={BADGE_STYLES[verificationStatus].className}
+            variant="secondary"
+            className={BADGE_CLASSES[verificationStatus]}
           >
             {t(`verificationStatus.${verificationStatus}`)}
           </Badge>
@@ -166,7 +151,7 @@ export function VerificationCard({
                   <FormItem>
                     <FormLabel>{t("registryNumberLabel")}</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input {...field} autoFocus />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -192,7 +177,7 @@ export function VerificationCard({
             <div className="min-w-0">
               <p className="text-sm text-muted-foreground">{t("registryNumberLabel")}</p>
               <p className="truncate font-medium">
-                {registryNumber || (
+                {savedRegistryNumber || (
                   <span className="font-normal text-muted-foreground">
                     {t("registryNumberEmpty")}
                   </span>
