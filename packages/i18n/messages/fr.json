@@ -392,6 +392,8 @@
     "signInToAccept": "Se connecter pour accepter"
   },
   "orgChat": {
+    "title": "Assistant",
+    "description": "Je peux gérer les animaux, les annonces, les cagnottes et les actualités.",
     "greeting": "Bonjour ! Comment puis-je vous aider ? Je peux gérer les animaux, les annonces, les cagnottes et les actualités.",
     "inputPlaceholder": "ex: crée une annonce pour Max...",
     "send": "Envoyer",
@@ -401,6 +403,7 @@
     "loadingThread": "Démarrage de la conversation…",
     "loadMore": "Charger plus",
     "proposal": {
+      "pending": "En attente de validation",
       "approve": "Valider",
       "deny": "Refuser",
       "denyReasonPlaceholder": "Motif du refus (optionnel)…",

@@ -6,6 +6,8 @@ import { useTranslations } from "next-intl";
 import { Id } from "@anima/backend/convex/_generated/dataModel";
 import {
   Button,
+  Sheet,
+  SheetContent,
   Sidebar,
   SidebarContent,
   SidebarGroup,
@@ -103,12 +105,13 @@ export default function OrganizationLayout({
         {chatOpen ? "✕" : "💬"}
       </Button>
 
-      {/* Chat panel */}
-      {chatOpen && (
-        <div className="fixed bottom-36 right-4 z-50 h-[500px] w-[360px] max-w-[calc(100vw-2rem)] rounded-lg border border-border bg-card shadow-xl md:bottom-20">
+      {/* Chat panel — right-hand drawer; the toggle button above stays the
+          single source of truth for open state */}
+      <Sheet open={chatOpen} onOpenChange={setChatOpen}>
+        <SheetContent side="right" className="w-full gap-0 p-0 sm:max-w-sm">
           <OrgChat organizationId={organizationId} />
-        </div>
-      )}
+        </SheetContent>
+      </Sheet>
     </SidebarProvider>
   );
 }
