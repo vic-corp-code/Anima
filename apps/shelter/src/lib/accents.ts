@@ -68,7 +68,10 @@ export function getSavedAccent(): string {
 export function applyAccent(id: string): void {
   const root = document.documentElement;
   const accent = ACCENT_BY_ID[id];
-  if (accent) {
+  // "brand" means no override — ACCENT_BY_ID holds its hex too, so it must be
+  // excluded explicitly or the clear-branch below would be unreachable and
+  // "Défaut" would force the light tokens over the audited dark ones.
+  if (id !== "brand" && accent) {
     for (const name of PRIMARY_VARS) root.style.setProperty(name, accent);
     for (const name of FOREGROUND_VARS) root.style.setProperty(name, "#ffffff");
   } else {
@@ -86,11 +89,15 @@ export function applyAccent(id: string): void {
 
 // Inlined into the SSR HTML before hydration ([locale]/layout.tsx) so the
 // saved accent is applied before first paint, avoiding a flash of the
-// default brand accent. Skips the foreground tokens: white is already the
-// default in light mode and only matters post-hydration. Self-contained: the
-// id→accent map is baked in via JSON.stringify at module load.
+// default brand accent. Foreground tokens are included too: white is the
+// light-mode default, but dark mode ships #1a130d (for the lightened
+// #d9925c brand accent) — on a dark user accent it fails, so it must be
+// overridden here as well. Self-contained: the id→accent map is baked in
+// via JSON.stringify at module load.
 export const ACCENT_BOOT_SCRIPT = `(function(){try{var k=${JSON.stringify(
   ACCENT_STORAGE_KEY,
 )};var m=${JSON.stringify(ACCENT_BY_ID)};var v=localStorage.getItem(k);if(!v||v==="brand"||!m[v])return;var r=document.documentElement;${PRIMARY_VARS.map(
   (name) => `r.style.setProperty(${JSON.stringify(name)},m[v])`,
+).join(";")};${FOREGROUND_VARS.map(
+  (name) => `r.style.setProperty(${JSON.stringify(name)},"#ffffff")`,
 ).join(";")};}catch(e){}})();`;

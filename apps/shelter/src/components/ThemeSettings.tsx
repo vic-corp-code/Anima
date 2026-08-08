@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { Moon, Palette, Sun } from "lucide-react";
@@ -26,7 +26,17 @@ export function ThemeSettings() {
   const t = useTranslations("theme");
   const { theme, setTheme } = useTheme();
   const isDark = theme === "dark";
-  const [accent, setAccent] = useState(getSavedAccent);
+  // SSR renders "brand" (no localStorage on the server); the saved accent is
+  // read after hydration to avoid a data-state mismatch — same mounted-pattern
+  // next-themes uses for `theme`. Re-applying on mount also guarantees the
+  // accent (incl. the foreground tokens) is set even if the boot script was
+  // skipped, e.g. when localStorage is only available after hydration.
+  const [accent, setAccent] = useState("brand");
+  useEffect(() => {
+    const saved = getSavedAccent();
+    setAccent(saved);
+    applyAccent(saved);
+  }, []);
 
   return (
     <Popover>
