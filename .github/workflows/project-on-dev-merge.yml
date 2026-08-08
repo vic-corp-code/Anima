@@ -6,7 +6,7 @@ on:
     branches: [dev]
 
 permissions:
-  projects: write
+  repository-projects: write
   contents: read
 
 jobs:
@@ -14,13 +14,24 @@ jobs:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # GITHUB_TOKEN cannot see org-level ProjectV2 (probe: "Could not resolve
+      # to a ProjectV2") — needs a token with the `project` scope. Use the
+      # PROJECT_TOKEN secret (fine-grained PAT with Projects read/write) and
+      # degrade to GITHUB_TOKEN only as a fallback.
+      GH_TOKEN: ${{ secrets.PROJECT_TOKEN || secrets.GITHUB_TOKEN }}
       PROJECT_OWNER: vic-corp-code
       PROJECT_NUMBER: "3"
       PROJECT_ID: PVT_kwDOELvlgc4BfecE
       STATUS_FIELD_ID: PVTSSF_lADOELvlgc4BfecEzhZxEro
       IN_DEV_OPTION_ID: a15869a9
     steps:
+      - name: Check project access
+        run: |
+          if ! gh project item-list "$PROJECT_NUMBER" --owner "$PROJECT_OWNER" --format json --limit 1 >/dev/null 2>&1; then
+            echo "::error::Cannot read project $PROJECT_NUMBER. Set the PROJECT_TOKEN repo secret (fine-grained PAT with Organization > Projects read/write) — GITHUB_TOKEN is repo-scoped and cannot see org projects."
+            exit 1
+          fi
+          echo "Project access OK"
       - name: Move linked issues to In Dev
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
