@@ -219,7 +219,11 @@ const WARN_TINT = tint("warn", 74, 14);
 const META_TINT = tint("meta", 74, 14);
 const PRIMARY_TINT = tint("primary", 74, 14);
 
-const LIGHT_PAIRS: Pair[] = [
+// Rows identical in both themes live in COMMON_PAIRS; only the four dark-only
+// `/20` chips and the light-only destructive `/10` chip are theme-specific.
+// (Hover/active rows share the same token specs — `--accent-hover`/`--accent-active`
+// mix toward black in light and white in dark — so they're common too.)
+const COMMON_PAIRS: Pair[] = [
   { name: "foreground/background", fg: "var(--foreground)", bg: "var(--background)", min: TEXT_MIN },
   { name: "card-foreground/card", fg: "var(--card-foreground)", bg: "var(--card)", min: TEXT_MIN },
   { name: "muted-foreground/background", fg: "var(--muted-foreground)", bg: "var(--background)", min: TEXT_MIN },
@@ -227,14 +231,13 @@ const LIGHT_PAIRS: Pair[] = [
   { name: "muted-foreground/muted", fg: "var(--muted-foreground)", bg: "var(--muted)", min: TEXT_MIN },
   { name: "muted-foreground/bg-muted/50 over card", fg: "var(--muted-foreground)", bg: chip("muted", 50), min: TEXT_MIN },
   { name: "primary-foreground/primary", fg: "var(--primary-foreground)", bg: "var(--primary)", min: TEXT_MIN },
-  { name: "primary-foreground/primary hover (mix→black 8%)", fg: "var(--primary-foreground)", bg: "var(--accent-hover)", min: TEXT_MIN },
-  { name: "primary-foreground/primary active (mix→black 14%)", fg: "var(--primary-foreground)", bg: "var(--accent-active)", min: TEXT_MIN },
+  { name: "primary-foreground/primary hover", fg: "var(--primary-foreground)", bg: "var(--accent-hover)", min: TEXT_MIN },
+  { name: "primary-foreground/primary active", fg: "var(--primary-foreground)", bg: "var(--accent-active)", min: TEXT_MIN },
   { name: "accent-foreground/accent", fg: "var(--accent-foreground)", bg: "var(--accent)", min: TEXT_MIN },
   { name: "destructive-foreground/destructive", fg: "var(--destructive-foreground)", bg: "var(--destructive)", min: TEXT_MIN },
-  { name: "destructive/bg-destructive/10 chip", fg: "var(--destructive)", bg: chip("destructive", 10), min: TEXT_MIN },
   { name: "destructive/bg-destructive/15 hover", fg: "var(--destructive)", bg: chip("destructive", 15), min: TEXT_MIN },
   { name: "sidebar-foreground/sidebar", fg: "var(--sidebar-foreground)", bg: "var(--sidebar)", min: TEXT_MIN },
-  { name: "sidebar-accent-foreground/sidebar-accent (30% wash)", fg: "var(--sidebar-accent-foreground)", bg: "var(--sidebar-accent)", min: TEXT_MIN },
+  { name: "sidebar-accent-foreground/sidebar-accent", fg: "var(--sidebar-accent-foreground)", bg: "var(--sidebar-accent)", min: TEXT_MIN },
   { name: "sidebar-primary-foreground/sidebar-primary", fg: "var(--sidebar-primary-foreground)", bg: "var(--sidebar-primary)", min: TEXT_MIN },
   { name: "success/background", fg: "var(--success)", bg: "var(--background)", min: TEXT_MIN },
   { name: "success/card", fg: "var(--success)", bg: "var(--card)", min: TEXT_MIN },
@@ -250,54 +253,60 @@ const LIGHT_PAIRS: Pair[] = [
   { name: "WARN_TINT badge (text on surface)", fg: WARN_TINT.fg, bg: WARN_TINT.bg, min: TEXT_MIN },
   { name: "META_TINT badge (text on surface)", fg: META_TINT.fg, bg: META_TINT.bg, min: TEXT_MIN },
   { name: "PRIMARY_TINT badge (text on surface)", fg: PRIMARY_TINT.fg, bg: PRIMARY_TINT.bg, min: TEXT_MIN },
+  // Component focus rings render the full-opacity --ring/--sidebar-ring tokens
+  // (Button, Badge, sidebar menu buttons) — measured here at 3:1. The soft
+  // --focus-ring halo that bare links/inputs render is measured separately in
+  // the "documented by-design sub-bar" block below.
+  { name: "ring/background (component focus ring)", fg: "var(--ring)", bg: "var(--background)", min: UI_MIN },
+  { name: "sidebar-ring/sidebar (component focus ring)", fg: "var(--sidebar-ring)", bg: "var(--sidebar)", min: UI_MIN },
   { name: "active indicator bar (primary)/sidebar", fg: "var(--primary)", bg: "var(--sidebar)", min: UI_MIN },
-  { name: "ring/background (focus indicator)", fg: "var(--ring)", bg: "var(--background)", min: UI_MIN },
-  { name: "sidebar-ring/sidebar (focus indicator)", fg: "var(--sidebar-ring)", bg: "var(--sidebar)", min: UI_MIN },
+];
+
+const LIGHT_PAIRS: Pair[] = [
+  ...COMMON_PAIRS,
+  { name: "destructive/bg-destructive/10 chip", fg: "var(--destructive)", bg: chip("destructive", 10), min: TEXT_MIN },
 ];
 
 const DARK_PAIRS: Pair[] = [
-  { name: "foreground/background", fg: "var(--foreground)", bg: "var(--background)", min: TEXT_MIN },
-  { name: "card-foreground/card", fg: "var(--card-foreground)", bg: "var(--card)", min: TEXT_MIN },
-  { name: "muted-foreground/muted", fg: "var(--muted-foreground)", bg: "var(--muted)", min: TEXT_MIN },
-  { name: "muted-foreground/background", fg: "var(--muted-foreground)", bg: "var(--background)", min: TEXT_MIN },
-  { name: "muted-foreground/card", fg: "var(--muted-foreground)", bg: "var(--card)", min: TEXT_MIN },
-  { name: "muted-foreground/bg-muted/50 over card", fg: "var(--muted-foreground)", bg: chip("muted", 50), min: TEXT_MIN },
-  { name: "primary-foreground/primary", fg: "var(--primary-foreground)", bg: "var(--primary)", min: TEXT_MIN },
-  { name: "primary-foreground/primary hover (mix→white 12%)", fg: "var(--primary-foreground)", bg: "var(--accent-hover)", min: TEXT_MIN },
-  { name: "primary-foreground/primary active (mix→white 20%)", fg: "var(--primary-foreground)", bg: "var(--accent-active)", min: TEXT_MIN },
-  { name: "accent-foreground/accent", fg: "var(--accent-foreground)", bg: "var(--accent)", min: TEXT_MIN },
-  { name: "destructive-foreground/destructive", fg: "var(--destructive-foreground)", bg: "var(--destructive)", min: TEXT_MIN },
+  ...COMMON_PAIRS,
   { name: "destructive/bg-destructive/20 chip", fg: "var(--destructive)", bg: chip("destructive", 20), min: TEXT_MIN },
-  { name: "destructive/bg-destructive/15 hover", fg: "var(--destructive)", bg: chip("destructive", 15), min: TEXT_MIN },
-  { name: "sidebar-foreground/sidebar", fg: "var(--sidebar-foreground)", bg: "var(--sidebar)", min: TEXT_MIN },
-  { name: "sidebar-accent-foreground/sidebar-accent (kit 12%)", fg: "var(--sidebar-accent-foreground)", bg: "var(--sidebar-accent)", min: TEXT_MIN },
-  { name: "sidebar-primary-foreground/sidebar-primary", fg: "var(--sidebar-primary-foreground)", bg: "var(--sidebar-primary)", min: TEXT_MIN },
-  { name: "success/background", fg: "var(--success)", bg: "var(--background)", min: TEXT_MIN },
-  { name: "success/card", fg: "var(--success)", bg: "var(--card)", min: TEXT_MIN },
-  { name: "success/bg-success/10 chip", fg: "var(--success)", bg: chip("success", 10), min: TEXT_MIN },
   { name: "success/bg-success/20 chip", fg: "var(--success)", bg: chip("success", 20), min: TEXT_MIN },
-  { name: "warn/background", fg: "var(--warn)", bg: "var(--background)", min: TEXT_MIN },
-  { name: "warn/card", fg: "var(--warn)", bg: "var(--card)", min: TEXT_MIN },
-  { name: "warn/bg-warn/10 chip", fg: "var(--warn)", bg: chip("warn", 10), min: TEXT_MIN },
   { name: "warn/bg-warn/20 chip", fg: "var(--warn)", bg: chip("warn", 20), min: TEXT_MIN },
-  { name: "danger/background", fg: "var(--danger)", bg: "var(--background)", min: TEXT_MIN },
-  { name: "danger/card", fg: "var(--danger)", bg: "var(--card)", min: TEXT_MIN },
-  { name: "danger/bg-danger/10 chip", fg: "var(--danger)", bg: chip("danger", 10), min: TEXT_MIN },
   { name: "danger/bg-danger/20 chip", fg: "var(--danger)", bg: chip("danger", 20), min: TEXT_MIN },
-  { name: "meta/bg-meta/10 chip", fg: "var(--meta)", bg: chip("meta", 10), min: TEXT_MIN },
   { name: "meta/bg-meta/20 chip", fg: "var(--meta)", bg: chip("meta", 20), min: TEXT_MIN },
-  { name: "SUCCESS_TINT badge (text on surface)", fg: SUCCESS_TINT.fg, bg: SUCCESS_TINT.bg, min: TEXT_MIN },
-  { name: "WARN_TINT badge (text on surface)", fg: WARN_TINT.fg, bg: WARN_TINT.bg, min: TEXT_MIN },
-  { name: "META_TINT badge (text on surface)", fg: META_TINT.fg, bg: META_TINT.bg, min: TEXT_MIN },
-  { name: "PRIMARY_TINT badge (text on surface)", fg: PRIMARY_TINT.fg, bg: PRIMARY_TINT.bg, min: TEXT_MIN },
-  { name: "active indicator bar (primary)/sidebar", fg: "var(--primary)", bg: "var(--sidebar)", min: UI_MIN },
-  { name: "ring/background (focus indicator)", fg: "var(--ring)", bg: "var(--background)", min: UI_MIN },
-  { name: "sidebar-ring/sidebar (focus indicator)", fg: "var(--sidebar-ring)", bg: "var(--sidebar)", min: UI_MIN },
 ];
 
 function ratios(theme: "light" | "dark", pairs: Pair[]): Array<Pair & { ratio: number }> {
   return pairs.map((p) => ({ ...p, ratio: contrastRatio(resolve(p.fg, theme), resolve(p.bg, theme)) }));
 }
+
+/* ------------------------------------------------------------------ */
+/* The kit's soft focus halo — measured honestly, not assumed          */
+/* ------------------------------------------------------------------ */
+
+function compositeOver(fg: Rgb, bg: Rgb, alpha: number): Rgb {
+  return fg.map((v, i) => Math.round(v * alpha + bg[i] * (1 - alpha))) as Rgb;
+}
+
+// --focus-ring (globals.css) is the kit's soft halo: `0 0 0 4px rgba(accent,
+// 0.24|0.35)`. It is the focus indicator on halo-only elements — bare links
+// (urgent-needs links), inputs, [tabindex] — that carry no component ring.
+// Measured here so the suite fails loudly if anyone "fixes" it by accident or
+// changes the alpha: it is deliberately sub-3:1, a documented non-issue in the
+// same class as the --input boundary (see audit-contrast-dark-mode.md).
+function focusHalo(theme: "light" | "dark"): Rgb {
+  const tokens = theme === "dark" ? DARK_TOKENS : LIGHT_TOKENS;
+  const raw = tokens.get("focus-ring");
+  if (!raw) throw new Error("missing --focus-ring token");
+  const m = raw.match(/rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)/);
+  if (!m) throw new Error(`unparsable --focus-ring: ${raw}`);
+  return compositeOver([+m[1], +m[2], +m[3]], resolve("var(--background)", theme), parseFloat(m[4]));
+}
+
+const HALO_BANDS: Record<"light" | "dark", [number, number]> = {
+  light: [1.2, 1.6], // composites to 1.38:1 vs --background
+  dark: [1.7, 2.2], // composites to 1.94:1 vs --background
+};
 
 describe("dark-mode token contrast (audit #154)", () => {
   it.each(ratios("light", LIGHT_PAIRS))("light: $name ≥ $min", ({ ratio, min, name }) => {
@@ -323,6 +332,20 @@ describe("dark-mode token contrast (audit #154)", () => {
     expect(ratio).toBeGreaterThan(6.6);
     expect(ratio).toBeLessThan(6.9);
   });
+
+  // The kit's soft halo is sub-bar BY DESIGN (documented non-issue). This pin
+  // asserts the measured band so the verdict can't drift silently: if the halo
+  // is ever strengthened to pass 3:1, this test fails and the flag in the audit
+  // doc must be removed.
+  it.each([
+    ["light", ...HALO_BANDS.light],
+    ["dark", ...HALO_BANDS.dark],
+  ] as const)("%s --focus-ring halo composite/background stays in its documented sub-3:1 band", (theme, lo, hi) => {
+    const ratio = contrastRatio(focusHalo(theme), resolve("var(--background)", theme));
+    expect(ratio).toBeGreaterThan(lo);
+    expect(ratio).toBeLessThan(hi);
+    expect(ratio, `halo must stay a documented sub-${UI_MIN}:1 by-design item`).toBeLessThan(UI_MIN);
+  });
 });
 
 /* ------------------------------------------------------------------ */
@@ -340,10 +363,21 @@ describe("focus-visible / keyboard-nav coverage (audit #154)", () => {
     expect(globalsCss).toContain('@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *))');
   });
 
-  it("Button focus ring stays full-opacity (the /50-alpha ring failed 1.7:1)", () => {
+  it("Button + Badge focus rings stay full-opacity (low-alpha rings measure 1.35–2.1:1, failing 3:1)", () => {
+    // base ring: full-opacity --ring, never the /50 regression #189 fixed
     expect(buttonSrc).toContain("focus-visible:ring-3");
     expect(buttonSrc).toContain("focus-visible:ring-ring");
-    expect(buttonSrc).not.toContain("focus-visible:ring-ring/50");
+    expect(badgeSrc).toContain("focus-visible:ring-[3px]");
+    expect(badgeSrc).toContain("focus-visible:ring-ring");
+    for (const src of [buttonSrc, badgeSrc]) {
+      expect(src).not.toContain("focus-visible:ring-ring/50");
+    }
+    // destructive variant: full-opacity --destructive ring, never /20 or /40
+    for (const src of [buttonSrc, badgeSrc]) {
+      expect(src).toContain("focus-visible:ring-destructive");
+      expect(src).not.toContain("focus-visible:ring-destructive/20");
+      expect(src).not.toContain("focus-visible:ring-destructive/40");
+    }
   });
 
   it("sidebar active state carries focus-visible ring + active wash/text (data-active)", () => {
