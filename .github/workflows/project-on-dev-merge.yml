@@ -1,0 +1,50 @@
+name: Move issue to In Dev on dev merge
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [dev]
+
+permissions:
+  projects: write
+  contents: read
+
+jobs:
+  move-to-in-dev:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PROJECT_OWNER: vic-corp-code
+      PROJECT_NUMBER: "3"
+      PROJECT_ID: PVT_kwDOELvlgc4BfecE
+      STATUS_FIELD_ID: PVTSSF_lADOELvlgc4BfecEzhZxEro
+      IN_DEV_OPTION_ID: a15869a9
+    steps:
+      - name: Move linked issues to In Dev
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          set -euo pipefail
+          refs=$(printf '%s\n%s\n' "$PR_TITLE" "$PR_BODY" \
+            | grep -oiE '(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved)[[:space:]:]*#[0-9]+' \
+            | grep -oE '#[0-9]+' | tr -d '#' | sort -u || true)
+          if [ -z "$refs" ]; then
+            echo "No closing-keyword issue references found; nothing to do."
+            exit 0
+          fi
+          items_json=$(gh project item-list "$PROJECT_NUMBER" --owner "$PROJECT_OWNER" --format json --limit 500)
+          for n in $refs; do
+            item_id=$(printf '%s' "$items_json" | jq -r --argjson n "$n" '.items[] | select(.content.number == $n) | .id' | head -n1)
+            if [ -z "$item_id" ]; then
+              echo "Issue #$n is not in project $PROJECT_NUMBER; skipping."
+              continue
+            fi
+            echo "Moving issue #$n (item $item_id) to In Dev"
+            gh project item-edit \
+              --id "$item_id" \
+              --field-id "$STATUS_FIELD_ID" \
+              --single-select-option-id "$IN_DEV_OPTION_ID" \
+              --project-id "$PROJECT_ID"
+          done
