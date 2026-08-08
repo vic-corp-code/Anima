@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { internalMutation, internalQuery, mutation, query } from "./_generated/server";
 import { assertOrgAccess } from "./access";
 
 // Create a news post. Org-level, no lifecycle/status — the roadmap calls
@@ -105,5 +105,67 @@ export const get = query({
       ),
       linkedCagnotte,
     };
+  },
+});
+
+// --- Internal functions (no auth — used by the AI agent) ---
+
+export const listInternal = internalQuery({
+  args: { organizationId: v.id("organizations") },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("newsPosts")
+      .withIndex("by_organization", (q) => q.eq("organizationId", args.organizationId))
+      .take(20);
+  },
+});
+
+export const getInternal = internalQuery({
+  args: { newsPostId: v.id("newsPosts") },
+  handler: async (ctx, args) => {
+    return await ctx.db.get(args.newsPostId);
+  },
+});
+
+export const createInternal = internalMutation({
+  args: {
+    organizationId: v.id("organizations"),
+    title: v.string(),
+    text: v.string(),
+    photoUrls: v.optional(v.array(v.string())),
+    linkedAnimalIds: v.optional(v.array(v.id("animals"))),
+    linkedCagnotteId: v.optional(v.id("cagnottes")),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db.insert("newsPosts", {
+      organizationId: args.organizationId,
+      title: args.title,
+      text: args.text,
+      photoUrls: args.photoUrls ?? [],
+      linkedAnimalIds: args.linkedAnimalIds ?? [],
+      linkedCagnotteId: args.linkedCagnotteId,
+    });
+  },
+});
+
+export const updateInternal = internalMutation({
+  args: {
+    newsPostId: v.id("newsPosts"),
+    title: v.optional(v.string()),
+    text: v.optional(v.string()),
+    photoUrls: v.optional(v.array(v.string())),
+    linkedAnimalIds: v.optional(v.array(v.id("animals"))),
+    linkedCagnotteId: v.optional(v.id("cagnottes")),
+  },
+  handler: async (ctx, args) => {
+    const post = await ctx.db.get(args.newsPostId);
+    if (!post) throw new Error("News post not found");
+    const { newsPostId, ...rest } = args;
+    const updates: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(rest)) {
+      if (value !== undefined) updates[key] = value;
+    }
+    await ctx.db.patch(args.newsPostId, updates);
+    return args.newsPostId;
   },
 });

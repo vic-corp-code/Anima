@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Annonces d'adoption — Refuge Espoir Animal</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --surface: #f5f5f5;
+      --fg: #000000;
+      --muted: #8c8c8c;
+      --border: #dbdbdb;
+      --accent: #032f62;
+      --accent-secondary: #d73a49;
+      --success: #17a34a;
+      --warn: #ea580c;
+      --font-display: Geist, system-ui, -apple-system, Segoe UI, Helvetica Neue, Arial, sans-serif;
+      --font-body: Geist, system-ui, -apple-system, Segoe UI, Helvetica Neue, Arial, sans-serif;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--fg);
+      line-height: 1.5;
+      font-size: 15px;
+    }
+    
+    /* Layout */
+    .app {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      min-height: 100vh;
+    }
+    
+    /* Sidebar */
+    .sidebar {
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 24px 0;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .sidebar-header {
+      padding: 0 20px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .org-name {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--fg);
+    }
+    
+    .org-type {
+      font-size: 13px;
+      color: var(--muted);
+      letter-spacing: 0.01em;
+      margin-top: 4px;
+    }
+    
+    .nav {
+      padding: 24px 0;
+      flex: 1;
+    }
+    
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 20px;
+      color: var(--fg);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 510;
+      letter-spacing: 0.01em;
+      transition: background 0.15s;
+    }
+    
+    .nav-item:hover {
+      background: oklch(from var(--bg) calc(l - 0.03) c h);
+    }
+    
+    .nav-item.active {
+      background: var(--bg);
+      color: var(--accent);
+    }
+    
+    .nav-icon {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      stroke-width: 1.8px;
+      fill: none;
+    }
+    
+    /* Main content */
+    .main {
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      min-height: 100vh;
+    }
+    
+    .form-column {
+      padding: 32px 40px;
+      max-width: 800px;
+    }
+    
+    .preview-column {
+      background: var(--surface);
+      border-left: 1px solid var(--border);
+      padding: 32px 24px;
+      overflow-y: auto;
+    }
+    
+    .page-header {
+      margin-bottom: 32px;
+    }
+    
+    .page-title {
+      font-size: 28px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      font-family: var(--font-display);
+    }
+    
+    .page-subtitle {
+      font-size: 15px;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+    
+    /* Form */
+    .form-section {
+      margin-bottom: 32px;
+    }
+    
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      margin-bottom: 16px;
+    }
+    
+    .form-field {
+      margin-bottom: 20px;
+    }
+    
+    .field-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      margin-bottom: 8px;
+      color: var(--fg);
+    }
+    
+    .field-hint {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 8px;
+      letter-spacing: 0.01em;
+    }
+    
+    .input,
+    .select,
+    .textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--fg);
+      transition: all 0.15s;
+    }
+    
+    .input:focus,
+    .select:focus,
+    .textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px oklch(from var(--accent) l c h / 0.1);
+    }
+    
+    .textarea {
+      resize: vertical;
+      min-height: 100px;
+      line-height: 1.6;
+    }
+    
+    .select {
+      cursor: pointer;
+    }
+    
+    /* Photo upload */
+    .photo-upload {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    
+    .photo-slot {
+      width: 120px;
+      height: 120px;
+      border: 2px dashed var(--border);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s;
+      background: var(--surface);
+    }
+    
+    .photo-slot:hover {
+      border-color: var(--accent);
+      background: oklch(from var(--surface) calc(l - 0.02) c h);
+    }
+    
+    .photo-slot svg {
+      width: 32px;
+      height: 32px;
+      stroke: var(--muted);
+      stroke-width: 1.8px;
+      fill: none;
+    }
+    
+    .photo-preview {
+      width: 120px;
+      height: 120px;
+      border-radius: 8px;
+      object-fit: cover;
+      border: 1px solid var(--border);
+    }
+    
+    /* Checkbox group */
+    .checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .checkbox {
+      width: 18px;
+      height: 18px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      cursor: pointer;
+      accent-color: var(--accent);
+    }
+    
+    .checkbox-label {
+      font-size: 14px;
+      cursor: pointer;
+    }
+    
+    /* Button */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 510;
+      letter-spacing: 0.02em;
+      text-decoration: none;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--fg);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    
+    .btn:hover {
+      background: oklch(from var(--bg) calc(l - 0.03) c h);
+    }
+    
+    .btn-primary {
+      background: var(--accent);
+      color: #ffffff;
+      border-color: var(--accent);
+    }
+    
+    .btn-primary:hover {
+      background: oklch(from var(--accent) calc(l - 0.08) c h);
+      border-color: oklch(from var(--accent) calc(l - 0.08) c h);
+    }
+    
+    .btn svg {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+      stroke-width: 1.8px;
+      fill: none;
+    }
+    
+    .form-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+    
+    /* Preview */
+    .preview-header {
+      margin-bottom: 24px;
+    }
+    
+    .preview-title {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      margin-bottom: 8px;
+    }
+    
+    .preview-subtitle {
+      font-size: 13px;
+      color: var(--muted);
+      letter-spacing: 0.01em;
+    }
+    
+    .preview-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    
+    .preview-platform {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    
+    .preview-content {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--fg);
+      white-space: pre-wrap;
+    }
+    
+    .preview-photo {
+      width: 100%;
+      height: 200px;
+      background: var(--surface);
+      border-radius: 8px;
+      margin-top: 12px;
+      border: 1px solid var(--border);
+    }
+    
+    .preview-meta {
+      display: flex;
+      gap: 12px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--muted);
+    }
+    
+    .preview-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    /* Responsive */
+    @media (max-width: 1200px) {
+      .main {
+        grid-template-columns: 1fr;
+      }
+      
+      .preview-column {
+        display: none;
+      }
+    }
+    
+    @media (max-width: 1024px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+      
+      .sidebar {
+        display: none;
+      }
+      
+      .form-column {
+        padding: 24px 20px;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .page-title {
+        font-size: 24px;
+      }
+      
+      .photo-slot,
+      .photo-preview {
+        width: 100px;
+        height: 100px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar" data-od-id="main-sidebar">
+      <div class="sidebar-header">
+        <div class="org-name">Refuge Espoir Animal</div>
+        <div class="org-type">SPA · Marseille</div>
+      </div>
+      
+      <nav class="nav">
+        <a href="dashboard.html" class="nav-item" data-od-id="nav-dashboard">
+          <svg class="nav-icon" viewBox="0 0 24 24">
+            <rect x="3" y="3" width="7" height="7" rx="1"/>
+            <rect x="14" y="3" width="7" height="7" rx="1"/>
+            <rect x="14" y="14" width="7" height="7" rx="1"/>
+            <rect x="3" y="14" width="7" height="7" rx="1"/>
+          </svg>
+          Tableau de bord
+        </a>
+        
+        <a href="registry.html" class="nav-item" data-od-id="nav-registry">
+          <svg class="nav-icon" viewBox="0 0 24 24">
+            <path d="M12 6v.01M12 12v.01M12 18v.01M12 7a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm0 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm0 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+            <circle cx="12" cy="12" r="9"/>
+          </svg>
+          Registre des animaux
+        </a>
+        
+        <a href="announcements.html" class="nav-item active" data-od-id="nav-announcements">
+          <svg class="nav-icon" viewBox="0 0 24 24">
+            <path d="M12 19l7 2-7-18-7 18 7-2zm0 0v-8"/>
+          </svg>
+          Annonces d'adoption
+        </a>
+        
+        <a href="social.html" class="nav-item" data-od-id="nav-social">
+          <svg class="nav-icon" viewBox="0 0 24 24">
+            <rect x="2" y="7" width="20" height="14" rx="2"/>
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+          </svg>
+          Publications sociales
+        </a>
+        
+        <a href="fundraising.html" class="nav-item" data-od-id="nav-fundraising">
+          <svg class="nav-icon" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 6v6l4 2"/>
+          </svg>
+          Cagnottes
+        </a>
+      </nav>
+    </aside>
+    
+    <!-- Main content -->
+    <main class="main">
+      <!-- Form column -->
+      <div class="form-column">
+        <header class="page-header" data-od-id="page-header">
+          <h1 class="page-title">Créer une annonce d'adoption</h1>
+          <p class="page-subtitle">Remplissez une seule fois — votre annonce sera prête pour tous vos canaux</p>
+        </header>
+        
+        <form data-od-id="announcement-form">
+          <!-- Animal selection -->
+          <div class="form-section">
+            <h2 class="section-title">Animal</h2>
+            
+            <div class="form-field">
+              <label class="field-label" for="animal-select">Sélectionner un animal du registre</label>
+              <select class="select" id="animal-select" data-od-id="animal-select">
+                <option value="">Choisir un animal...</option>
+                <option value="luna">Luna — Chat européen, 3 ans, F</option>
+                <option value="bella">Bella — Chat européen, 1 an, F</option>
+                <option value="nala">Nala — Chat siamois, 5 ans, F</option>
+                <option value="rex">Rex — Berger allemand, 5 ans, M</option>
+                <option value="max">Max — Bouledogue français, 4 ans, M</option>
+              </select>
+            </div>
+          </div>
+          
+          <!-- Story -->
+          <div class="form-section">
+            <h2 class="section-title">Histoire</h2>
+            
+            <div class="form-field">
+              <label class="field-label" for="story">Racontez son histoire</label>
+              <span class="field-hint">Cette description sera utilisée pour toutes les publications</span>
+              <textarea 
+                class="textarea" 
+                id="story" 
+                data-od-id="story-textarea"
+                placeholder="Luna est une chatte douce et câline qui a été trouvée errante dans le quartier des Catalans. Elle adore les moments de tendresse et s'entend bien avec les autres chats. Elle cherche une famille calme où elle pourra s'épanouir..."
+              ></textarea>
+            </div>
+            
+            <div class="form-field">
+              <label class="field-label" for="personality">Personnalité et comportement</label>
+              <input 
+                type="text" 
+                class="input" 
+                id="personality" 
+                placeholder="Calme, sociable, joueuse"
+                data-od-id="personality-input"
+              />
+            </div>
+            
+            <div class="form-field">
+              <label class="field-label" for="ideal-home">Foyer idéal</label>
+              <input 
+                type="text" 
+                class="input" 
+                id="ideal-home" 
+                placeholder="Famille calme, sans jeunes enfants, avec jardin"
+                data-od-id="ideal-home-input"
+              />
+            </div>
+          </div>
+          
+          <!-- Photos -->
+          <div class="form-section">
+            <h2 class="section-title">Photos</h2>
+            
+            <div class="form-field">
+              <label class="field-label">Photos de l'animal</label>
+              <span class="field-hint">Ajoutez 3 à 5 photos de qualité</span>
+              <div class="photo-upload">
+                <div class="photo-slot" data-od-id="photo-slot-1">
+                  <svg viewBox="0 0 24 24">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21 15 16 10 5 21"/>
+                  </svg>
+                </div>
+                <div class="photo-slot" data-od-id="photo-slot-2">
+                  <svg viewBox="0 0 24 24">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21 15 16 10 5 21"/>
+                  </svg>
+                </div>
+                <div class="photo-slot" data-od-id="photo-slot-3">
+                  <svg viewBox="0 0 24 24">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21 15 16 10 5 21"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Contact & platforms -->
+          <div class="form-section">
+            <h2 class="section-title">Publication</h2>
+            
+            <div class="form-field">
+              <label class="field-label" for="contact-email">Email de contact</label>
+              <input 
+                type="email" 
+                class="input" 
+                id="contact-email" 
+                value="adoptions@refuge-espoir.fr"
+                data-od-id="contact-email-input"
+              />
+            </div>
+            
+            <div class="form-field">
+              <label class="field-label" for="contact-phone">Téléphone de contact</label>
+              <input 
+                type="tel" 
+                class="input" 
+                id="contact-phone" 
+                value="04 91 XX XX XX"
+                data-od-id="contact-phone-input"
+              />
+            </div>
+            
+            <div class="form-field">
+              <label class="field-label">Plateformes de publication</label>
+              <div class="checkbox-group">
+                <div class="checkbox-item">
+                  <input type="checkbox" class="checkbox" id="platform-website" checked data-od-id="platform-website">
+                  <label class="checkbox-label" for="platform-website">Site web du refuge</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" class="checkbox" id="platform-facebook" checked data-od-id="platform-facebook">
+                  <label class="checkbox-label" for="platform-facebook">Facebook</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" class="checkbox" id="platform-instagram" checked data-od-id="platform-instagram">
+                  <label class="checkbox-label" for="platform-instagram">Instagram</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" class="checkbox" id="platform-leboncoin" data-od-id="platform-leboncoin">
+                  <label class="checkbox-label" for="platform-leboncoin">Leboncoin (annonce animaux)</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Actions -->
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" data-od-id="publish-btn">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 19l7 2-7-18-7 18 7-2zm0 0v-8"/>
+              </svg>
+              Publier l'annonce
+            </button>
+            <button type="button" class="btn" data-od-id="save-draft-btn">
+              Enregistrer le brouillon
+            </button>
+          </div>
+        </form>
+      </div>
+      
+      <!-- Preview column -->
+      <aside class="preview-column" data-od-id="preview-panel">
+        <div class="preview-header">
+          <h3 class="preview-title">Aperçu des publications</h3>
+          <p class="preview-subtitle">Voici comment votre annonce apparaîtra sur chaque plateforme</p>
+        </div>
+        
+        <!-- Facebook preview -->
+        <div class="preview-card" data-od-id="preview-facebook">
+          <div class="preview-platform">Facebook</div>
+          <div class="preview-content">🐱 Luna cherche une famille aimante !
+
+Luna est une chatte douce et câline de 3 ans qui a été trouvée errante dans le quartier des Catalans. Elle adore les moments de tendresse et s'entend bien avec les autres chats.
+
+✨ Personnalité : Calme, sociable
+🏡 Foyer idéal : Famille calme, sans jeunes enfants
+
+📞 Refuge Espoir Animal
+04 91 XX XX XX · adoptions@refuge-espoir.fr</div>
+          <div class="preview-photo"></div>
+        </div>
+        
+        <!-- Instagram preview -->
+        <div class="preview-card" data-od-id="preview-instagram">
+          <div class="preview-platform">Instagram</div>
+          <div class="preview-photo"></div>
+          <div class="preview-content" style="margin-top: 12px;">🐱 Adoptez Luna ! Chat européen, 3 ans, stérilisée
+
+Douce, câline et sociable 💙
+Cherche une famille calme
+
+📍 Refuge Espoir Animal, Marseille
+📩 DM ou adoptions@refuge-espoir.fr
+
+#adoption #chat #marseille #refugeanimals #adoptdontshop</div>
+        </div>
+        
+        <!-- Website preview -->
+        <div class="preview-card" data-od-id="preview-website">
+          <div class="preview-platform">Site web</div>
+          <div class="preview-photo"></div>
+          <div class="preview-content" style="margin-top: 12px;"><strong>Luna</strong>
+Chat européen · 3 ans · Femelle stérilisée
+
+Luna est une chatte douce et câline qui a été trouvée errante dans le quartier des Catalans. Elle adore les moments de tendresse et s'entend bien avec les autres chats.
+
+Personnalité : Calme, sociable
+Foyer idéal : Famille calme, sans jeunes enfants
+
+Contact : 04 91 XX XX XX</div>
+        </div>
+      </aside>
+    </main>
+  </div>
+  
+  <script>
+    // Live preview update simulation
+    const form = document.querySelector('form');
+    const inputs = form.querySelectorAll('input, textarea, select');
+    
+    inputs.forEach(input => {
+      input.addEventListener('input', () => {
+        // Real implementation would update preview cards
+        console.log('Preview would update with:', input.value);
+      });
+    });
+    
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      alert('Annonce publiée sur les plateformes sélectionnées !');
+    });
+  </script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 # Anima — code conventions
 
-Product/architecture context lives in [docs/](docs/), [VISION.md](VISION.md), [ROADMAP.md](docs/roadmap/ROADMAP.md), and the ADRs in [docs/tech/decisions/](docs/tech/decisions/). Read those before making product or architecture decisions — this file is dev-workflow only.
+Product/architecture context lives in [docs/](docs/), [docs/VISION.md](docs/VISION.md), [ROADMAP.md](docs/roadmap/ROADMAP.md), and the ADRs in [docs/tech/decisions/](docs/tech/decisions/). Read those before making product or architecture decisions — this file is dev-workflow only.
 
 ## Workspace
 
@@ -35,6 +35,20 @@ Hosted on Vercel — project `anima-shelter`, team `victorias-projects-10f9308b`
 - `CLERK_SECRET_KEY`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, and `CONVEX_DEPLOY_KEY` (exact name required) are already set on Vercel for Production/Preview/Development. On a fresh clone, after linking, `vercel env pull apps/shelter/.env.local` gets you the Clerk keys without re-copying from the dashboard — you still need the Convex setup above for `NEXT_PUBLIC_CONVEX_URL`.
 - For any Vercel CLI y/N confirmation (e.g. `vercel project rm`), pipe `printf 'y\n' |`, not `yes |` — the latter spams a broken echo loop in this CLI version instead of submitting.
 - `vercel-build.sh` passes `--check-build-environment disable` to `convex deploy`. Newer Convex CLI versions refuse to deploy with a Production-type `CONVEX_DEPLOY_KEY` on a non-production Vercel build (`VERCEL_ENV !== "production"`) unless told otherwise — which is every branch except `main` here, since this project deliberately uses one Production deploy key across all Vercel environments (see the `CONVEX_DEPLOY_KEY` bullet above). Without that flag, every `dev`-branch (and any other non-`main`) deploy fails immediately with "Detected a non-production build environment... This is probably unintentional." Don't remove the flag without also changing that deploy-key strategy.
+
+## Issue workflow: branches, PRs, project board
+
+- **`main` and `dev` require a PR — no direct pushes, including from you or an agent** (branch protection enabled 2026-08-05, `enforce_admins` on, 0 required approvals since this is solo). Work on a feature branch, open a PR, and merge it yourself explicitly — **never run `gh pr merge` or push straight to `main`/`dev` without being asked.** This is the actual mechanism that stops an agent from freely merging; it doesn't rely on convention alone.
+- **Project board**: ["Anima"](https://github.com/orgs/vic-corp-code/projects/3) tracks status across all open issues (org-level project, linked to this repo). Status field has 5 options: `Todo` → `In Progress` → `In Review` → `In Dev` → `Done`. **None of these transitions are automatic — not even on issue close** (confirmed 2026-08-07: GitHub's built-in "item closed → Done" project automation only fires when the closing merge lands on the repo's **default branch**, which is `main`, not `dev` — merging into `dev` never triggers it, even though closing keywords in a PR still close the linked issue itself). So every transition, including the final one, must be set explicitly:
+  - `Todo` → `In Progress` when starting work.
+  - `In Progress` → `In Review` when you open a PR.
+  - `In Review` → `In Dev` once the PR merges into `dev` (work is live on the `dev` Vercel deployment, but not yet released/versioned).
+  - `In Dev` → `Done` only once it's actually merged into `main` (production) — that's also the point where versioning/changelog thinking starts, not before.
+  ```
+  gh project item-edit --project-id PVT_kwDOELvlgc4BfecE --id <ITEM_ID> \
+    --field-id PVTSSF_lADOELvlgc4BfecEzhZxEro --single-select-option-id <OPTION_ID>
+  ```
+  Option IDs: Todo `e220bac3`, In Progress `5f26ab9c`, In Review `ab6a37db`, In Dev `a15869a9`, Done `0b8a567b`. Find `<ITEM_ID>` via `gh project item-list 3 --owner vic-corp-code --format json` (match on issue number/URL) — `gh project item-add` also prints it on add.
 
 ## Conventions
 

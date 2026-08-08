@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cagnottes — Refuge Espoir Animal</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --surface: #f5f5f5;
+      --fg: #000000;
+      --muted: #8c8c8c;
+      --border: #dbdbdb;
+      --accent: #032f62;
+      --accent-secondary: #d73a49;
+      --success: #17a34a;
+      --warn: #ea580c;
+      --font-display: Geist, system-ui, -apple-system, Segoe UI, Helvetica Neue, Arial, sans-serif;
+      --font-body: Geist, system-ui, -apple-system, Segoe UI, Helvetica Neue, Arial, sans-serif;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--fg);
+      line-height: 1.5;
+      font-size: 15px;
+    }
+    
+    /* Layout */
+    .app {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      min-height: 100vh;
+    }
+    
+    /* Sidebar */
+    .sidebar {
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 24px 0;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .sidebar-header {
+      padding: 0 20px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .org-name {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--fg);
+    }
+    
+    .org-type {
+      font-size: 13px;
+      color: var(--muted);
+      letter-spacing: 0.01em;
+      margin-top: 4px;
+    }
+    
+    .nav {
+      padding: 24px 0;
+      flex: 1;
+    }
+    
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 20px;
+      color: var(--fg);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 510;
+      letter-spacing: 0.01em;
+      transition: background 0.15s;
+    }
+    
+    .nav-item:hover {
+      background: oklch(from var(--bg) calc(l - 0.03) c h);
+    }
+    
+    .nav-item.active {
+      background: var(--bg);
+      color: var(--accent);
+    }
+    
+    .nav-icon {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      stroke-width: 1.8px;
+      fill: none;
+    }
+    
+    /* Main content */
+    .main {
+      padding: 32px 40px;
+      max-width: 1400px;
+    }
+    
+    .page-header {
+      margin-bottom: 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    
+    .page-header-content {
+      flex: 1;
+    }
+    
+    .page-title {
+      font-size: 28px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      font-family: var(--font-display);
+    }
+    
+    .page-subtitle {
+      font-size: 15px;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+    
+    /* Stats bar */
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+      padding: 20px;
+      background: var(--surface);
+      border-radius: 8px;
+    }
+    
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .stat-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    
+    .stat-value {
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--fg);
+    }
+    
+    /* Fundraiser grid */
+    .fundraiser-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+    
+    .fundraiser-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      transition: all 0.15s;
+    }
+    
+    .fundraiser-card:hover {
+      box-shadow: 0 4px 12px oklch(from var(--fg) l c h / 0.08);
+    }
+    
+    .fundraiser-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .fundraiser-title {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      margin-bottom: 8px;
+    }
+    
+    .fundraiser-desc {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    
+    .fundraiser-body {
+      padding: 20px;
+    }
+    
+    .progress-section {
+      margin-bottom: 16px;
+    }
+    
+    .progress-amounts {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    
+    .amount-raised {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--fg);
+    }
+    
+    .amount-goal {
+      font-size: 14px;
+      color: var(--muted);
+    }
+    
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: var(--surface);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: var(--success);
+      border-radius: 8px;
+      transition: width 0.3s ease;
+    }
+    
+    .fundraiser-meta {
+      display: flex;
+      gap: 20px;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .meta-icon {
+      width: 14px;
+      height: 14px;
+      stroke: currentColor;
+      stroke-width: 1.8px;
+      fill: none;
+    }
+    
+    .fundraiser-footer {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .fundraiser-status {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    
+    .fundraiser-status.active {
+      background: oklch(from var(--success) l c h / 0.12);
+      color: var(--success);
+    }
+    
+    .fundraiser-status.completed {
+      background: oklch(from var(--accent) l c h / 0.12);
+      color: var(--accent);
+    }
+    
+    /* Button */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 510;
+      letter-spacing: 0.02em;
+      text-decoration: none;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--fg);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    
+    .btn:hover {
+      background: oklch(from var(--bg) calc(l - 0.03) c h);
+    }
+    
+    .btn-primary {
+      background: var(--accent);
+      color: #ffffff;
+      border-color: var(--accent);
+    }
+    
+    .btn-primary:hover {
+      background: oklch(from var(--accent) calc(l - 0.08) c h);
+      border-color: oklch(from var(--accent) calc(l - 0.08) c h);
+    }
+    
+    .btn-small {
+      padding: 6px 12px;
+      font-size: 13px;
+    }
+    
+    .btn svg {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+      stroke-width: 1.8px;
+      fill: none;
+    }
+    
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: oklch(from var(--fg) l c h / 0.4);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    
+    .modal.open {
+      display: flex;
+    }
+    
+    .modal-content {
+      background: var(--bg);
+      border-radius: 8px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    
+    .modal-header {
+      padding: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .modal-title {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+    
+    .modal-body {
+      padding: 24px;
+    }
+    
+    .form-field {
+      margin-bottom: 20px;
+    }
+    
+    .field-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      margin-bottom: 8px;
+      color: var(--fg);
+    }
+    
+    .field-hint {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 8px;
+      letter-spacing: 0.01em;
+    }
+    
+    .input,
+    .select,
+    .textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--fg);
+      transition: all 0.15s;
+    }
+    
+    .input:focus,
+    .select:focus,
+    .textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px oklch(from var(--accent) l c h / 0.1);
+    }
+    
+    .textarea {
+      resize: vertical;
+      min-height: 100px;
+      line-height: 1.6;
+    }
+    
+    .select {
+      cursor: pointer;
+    }
+    
+    .modal-footer {
+      padding: 20px 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+    
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+      
+      .sidebar {
+        display: none;
+      }
+      
+      .main {
+        padding: 24px 20px;
+      }
+      
+      .page-header {
+        flex-direction: column;
+        gap: 16px;
+      }
+      
+      .fundraiser-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .page-title {
+        font-size: 24px;
+      }
+      
+      .stats-bar {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar" data-od-id="main-sidebar">
+      <div class="sidebar-header">
+        <div class="org-name">Refuge Espoir Animal</div>
+        <div class="org-type">SPA · Marseille</div>
+      </div>
+      
+      <nav class="nav">
+        <a href="dashboard.html" class="nav-item" data-od-id="nav-dashboard">
+          <svg class="nav-icon" viewBox="0 0 24 24">
+            <rect x="3" y="3" width="7" height="7" rx="1"/>
+            <rect x="14" y="3" width="7" height="7" rx="1"/>
+            <rect x="14" y="14" width="7" height="7" rx="1"/>
+            <rect x="3" y="14" width="7" height="7" rx="1"/>
+          </svg>
+          Tableau de bord
+        </a>
+        
+        <a href="registry.html" class="nav-item" data-od-id="nav-registry">
+          <svg class="nav-icon" viewBox="0 0 24 24">
+            <path d="M12 6v.01M12 12v.01M12 18v.01M12 7a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm0 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm0 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+            <circle cx="12" cy="12" r="9"/>
+          </svg>
+          Registre des animaux
+        </a>
+        
+        <a href="announcements.html" class="nav-item" data-od-id="nav-announcements">
+          <svg class="nav-icon" viewBox="0 0 24 24">
+            <path d="M12 19l7 2-7-18-7 18 7-2zm0 0v-8"/>
+          </svg>
+          Annonces d'adoption
+        </a>
+        
+        <a href="social.html" class="nav-item" data-od-id="nav-social">
+          <svg class="nav-icon" viewBox="0 0 24 24">
+            <rect x="2" y="7" width="20" height="14" rx="2"/>
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+          </svg>
+          Publications sociales
+        </a>
+        
+        <a href="fundraising.html" class="nav-item active" data-od-id="nav-fundraising">
+          <svg class="nav-icon" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 6v6l4 2"/>
+          </svg>
+          Cagnottes
+        </a>
+      </nav>
+    </aside>
+    
+    <!-- Main content -->
+    <main class="main">
+      <header class="page-header" data-od-id="page-header">
+        <div class="page-header-content">
+          <h1 class="page-title">Cagnottes</h1>
+          <p class="page-subtitle">Collectes pour les besoins concrets du refuge</p>
+        </div>
+        <button class="btn btn-primary" data-od-id="create-fundraiser-btn" onclick="openModal()">
+          <svg viewBox="0 0 24 24">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          Nouvelle cagnotte
+        </button>
+      </header>
+      
+      <!-- Stats bar -->
+      <div class="stats-bar" data-od-id="fundraising-stats">
+        <div class="stat-item">
+          <div class="stat-label">Total collecté</div>
+          <div class="stat-value">2 840 €</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">Cagnottes actives</div>
+          <div class="stat-value">4</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">Donateurs ce mois</div>
+          <div class="stat-value">38</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">Objectifs atteints</div>
+          <div class="stat-value">12</div>
+        </div>
+      </div>
+      
+      <!-- Fundraiser grid -->
+      <div class="fundraiser-grid" data-od-id="fundraiser-list">
+        <!-- Fundraiser 1 -->
+        <div class="fundraiser-card" data-od-id="fundraiser-cages">
+          <div class="fundraiser-header">
+            <h3 class="fundraiser-title">5 nouvelles cages pour quarantaine</h3>
+            <p class="fundraiser-desc">Nous avons besoin d'agrandir notre espace de quarantaine pour accueillir les nouveaux arrivants en toute sécurité.</p>
+          </div>
+          <div class="fundraiser-body">
+            <div class="progress-section">
+              <div class="progress-amounts">
+                <span class="amount-raised">520 €</span>
+                <span class="amount-goal">sur 850 €</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 61%;"></div>
+              </div>
+            </div>
+            
+            <div class="fundraiser-meta">
+              <div class="meta-item">
+                <svg class="meta-icon" viewBox="0 0 24 24">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                  <circle cx="12" cy="7" r="4"/>
+                </svg>
+                <span>24 donateurs</span>
+              </div>
+              <div class="meta-item">
+                <svg class="meta-icon" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M12 6v6l4 2"/>
+                </svg>
+                <span>12 jours restants</span>
+              </div>
+            </div>
+            
+            <div class="fundraiser-footer">
+              <span class="fundraiser-status active">En cours</span>
+              <button class="btn btn-small" style="margin-left: auto;">Voir la page</button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Fundraiser 2 -->
+        <div class="fundraiser-card" data-od-id="fundraiser-medical">
+          <div class="fundraiser-header">
+            <h3 class="fundraiser-title">Soins médicaux pour Charlie</h3>
+            <p class="fundraiser-desc">Charlie a besoin d'une intervention chirurgicale urgente pour une dysplasie de la hanche.</p>
+          </div>
+          <div class="fundraiser-body">
+            <div class="progress-section">
+              <div class="progress-amounts">
+                <span class="amount-raised">1 240 €</span>
+                <span class="amount-goal">sur 1 200 €</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 100%;"></div>
+              </div>
+            </div>
+            
+            <div class="fundraiser-meta">
+              <div class="meta-item">
+                <svg class="meta-icon" viewBox="0 0 24 24">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                  <circle cx="12" cy="7" r="4"/>
+                </svg>
+                <span>18 donateurs</span>
+              </div>
+              <div class="meta-item">
+                <svg class="meta-icon" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M12 6v6l4 2"/>
+                </svg>
+                <span>Terminée</span>
+              </div>
+            </div>
+            
+            <div class="fundraiser-footer">
+              <span class="fundraiser-status completed">Objectif atteint</span>
+              <button class="btn btn-small" style="margin-left: auto;">Voir la page</button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Fundraiser 3 -->
+        <div class="fundraiser-card" data-od-id="fundraiser-winter">
+          <div class="fundraiser-header">
+            <h3 class="fundraiser-title">Préparation hiver : couvertures & chauffage</h3>
+            <p class="fundraiser-desc">Aidez-nous à préparer le refuge pour l'hiver : couvertures thermiques, radiateurs d'appoint, et isolation.</p>
+          </div>
+          <div class="fundraiser-body">
+            <div class="progress-section">
+              <div class="progress-amounts">
+                <span class="amount-raised">680 €</span>
+                <span class="amount-goal">sur 1 500 €</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 45%;"></div>
+              </div>
+            </div>
+            
+            <div class="fundraiser-meta">
+              <div class="meta-item">
+                <svg class="meta-icon" viewBox="0 0 24 24">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                  <circle cx="12" cy="7" r="4"/>
+                </svg>
+                <span>32 donateurs</span>
+              </div>
+              <div class="meta-item">
+                <svg class="meta-icon" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M12 6v6l4 2"/>
+                </svg>
+                <span>45 jours restants</span>
+              </div>
+            </div>
+            
+            <div class="fundraiser-footer">
+              <span class="fundraiser-status active">En cours</span>
+              <button class="btn btn-small" style="margin-left: auto;">Voir la page</button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Fundraiser 4 -->
+        <div class="fundraiser-card" data-od-id="fundraiser-food">
+          <div class="fundraiser-header">
+            <h3 class="fundraiser-title">Stock de nourriture mensuel</h3>
+            <p class="fundraiser-desc">Notre stock mensuel de croquettes et pâtées pour nourrir nos 127 pensionnaires.</p>
+          </div>
+          <div class="fundraiser-body">
+            <div class="progress-section">
+              <div class="progress-amounts">
+                <span class="amount-raised">400 €</span>
+                <span class="amount-goal">sur 2 200 €</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 18%;"></div>
+              </div>
+            </div>
+            
+            <div class="fundraiser-meta">
+              <div class="meta-item">
+                <svg class="meta-icon" viewBox="0 0 24 24">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                  <circle cx="12" cy="7" r="4"/>
+                </svg>
+                <span>11 donateurs</span>
+              </div>
+              <div class="meta-item">
+                <svg class="meta-icon" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M12 6v6l4 2"/>
+                </svg>
+                <span>20 jours restants</span>
+              </div>
+            </div>
+            
+            <div class="fundraiser-footer">
+              <span class="fundraiser-status active">En cours</span>
+              <button class="btn btn-small" style="margin-left: auto;">Voir la page</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  
+  <!-- Modal -->
+  <div class="modal" id="createModal" data-od-id="create-fundraiser-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Créer une nouvelle cagnotte</h2>
+      </div>
+      <div class="modal-body">
+        <form data-od-id="fundraiser-form">
+          <div class="form-field">
+            <label class="field-label" for="fundraiser-title">Titre de la cagnotte</label>
+            <input 
+              type="text" 
+              class="input" 
+              id="fundraiser-title" 
+              placeholder="Ex: 5 nouvelles cages pour quarantaine"
+              data-od-id="fundraiser-title-input"
+            />
+          </div>
+          
+          <div class="form-field">
+            <label class="field-label" for="fundraiser-desc">Description du besoin</label>
+            <span class="field-hint">Expliquez précisément à quoi servira l'argent collecté</span>
+            <textarea 
+              class="textarea" 
+              id="fundraiser-desc" 
+              placeholder="Nous avons besoin d'agrandir notre espace de quarantaine pour accueillir les nouveaux arrivants en toute sécurité..."
+              data-od-id="fundraiser-desc-textarea"
+            ></textarea>
+          </div>
+          
+          <div class="form-field">
+            <label class="field-label" for="fundraiser-goal">Objectif financier (€)</label>
+            <input 
+              type="number" 
+              class="input" 
+              id="fundraiser-goal" 
+              placeholder="850"
+              data-od-id="fundraiser-goal-input"
+            />
+          </div>
+          
+          <div class="form-field">
+            <label class="field-label" for="fundraiser-category">Catégorie</label>
+            <select class="select" id="fundraiser-category" data-od-id="fundraiser-category-select">
+              <option value="">Choisir une catégorie...</option>
+              <option value="infrastructure">Infrastructure & équipement</option>
+              <option value="medical">Soins médicaux</option>
+              <option value="food">Nourriture & fournitures</option>
+              <option value="urgent">Besoin urgent</option>
+              <option value="other">Autre</option>
+            </select>
+          </div>
+          
+          <div class="form-field">
+            <label class="field-label" for="fundraiser-platform">Plateforme de collecte</label>
+            <span class="field-hint">Sélectionnez votre plateforme de paiement externe</span>
+            <select class="select" id="fundraiser-platform" data-od-id="fundraiser-platform-select">
+              <option value="">Choisir une plateforme...</option>
+              <option value="leetchi">Leetchi</option>
+              <option value="helloasso">HelloAsso</option>
+              <option value="paypal">PayPal</option>
+              <option value="tipeee">Tipeee</option>
+            </select>
+          </div>
+          
+          <div class="form-field">
+            <label class="field-label" for="fundraiser-url">URL de la cagnotte</label>
+            <input 
+              type="url" 
+              class="input" 
+              id="fundraiser-url" 
+              placeholder="https://www.leetchi.com/..."
+              data-od-id="fundraiser-url-input"
+            />
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" onclick="closeModal()">Annuler</button>
+        <button class="btn btn-primary" onclick="createFundraiser()">Créer la cagnotte</button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    function openModal() {
+      document.getElementById('createModal').classList.add('open');
+    }
+    
+    function closeModal() {
+      document.getElementById('createModal').classList.remove('open');
+    }
+    
+    function createFundraiser() {
+      const title = document.getElementById('fundraiser-title').value;
+      const goal = document.getElementById('fundraiser-goal').value;
+      
+      if (!title || !goal) {
+        alert('Veuillez remplir au moins le titre et l\'objectif');
+        return;
+      }
+      
+      alert('Cagnotte créée avec succès !');
+      closeModal();
+    }
+    
+    // Close modal on background click
+    document.getElementById('createModal').addEventListener('click', (e) => {
+      if (e.target.id === 'createModal') {
+        closeModal();
+      }
+    });
+  </script>
+</body>
+</html>

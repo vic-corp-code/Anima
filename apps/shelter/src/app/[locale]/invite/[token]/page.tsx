@@ -6,7 +6,16 @@ import { useConvexAuth, useMutation, useQuery } from "convex/react";
 import { useTranslations } from "next-intl";
 import { api } from "@anima/backend/convex/_generated/api";
 import { useRouter, Link } from "@/i18n/navigation";
-import { Button, Card, CardContent, CardHeader, CardTitle } from "@anima/ui";
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Skeleton,
+} from "@anima/ui";
 
 export default function InvitePage() {
   const t = useTranslations("invite");
@@ -18,58 +27,84 @@ export default function InvitePage() {
   const invite = useQuery(api.invites.getByToken, { token });
   const acceptInvite = useMutation(api.invites.accept);
   const [accepting, setAccepting] = useState(false);
+  const [error, setError] = useState(false);
 
   const handleAccept = async () => {
     setAccepting(true);
+    setError(false);
     try {
       const organizationId = await acceptInvite({ token });
       router.push(`/organizations/${organizationId}`);
+    } catch {
+      setError(true);
     } finally {
       setAccepting(false);
     }
   };
 
   if (invite === undefined) {
-    return <div className="container mx-auto p-4">{t("loading")}</div>;
+    return (
+      <main className="flex flex-1 items-center justify-center p-4" aria-busy="true">
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <Skeleton className="h-5 w-32" />
+            <Skeleton className="h-3.5 w-48" />
+          </CardHeader>
+          <CardContent>
+            <Skeleton className="h-9 w-full" />
+          </CardContent>
+        </Card>
+      </main>
+    );
   }
 
   if (invite === null) {
     return (
-      <div className="container mx-auto p-4">
-        <Card>
-          <CardContent className="py-12 text-center text-muted-foreground">
-            {t("invalid")}
-          </CardContent>
+      <main className="flex flex-1 items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle>{t("title")}</CardTitle>
+            <CardDescription>{t("invalid")}</CardDescription>
+          </CardHeader>
         </Card>
-      </div>
+      </main>
     );
   }
 
   return (
-    <div className="container mx-auto max-w-md p-4">
-      <Card>
+    <main className="flex flex-1 items-center justify-center p-4">
+      <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>{t("title")}</CardTitle>
+          <CardDescription>
+            {t("invitedTo")} <strong className="font-medium text-card-foreground">{invite.organizationName}</strong>{" "}
+            {t("asRole")}{" "}
+            <Badge variant="secondary" className="align-middle">
+              {t(`role.${invite.role}`)}
+            </Badge>
+          </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <p>
-            {t("invitedTo")} <strong>{invite.organizationName}</strong>{" "}
-            {t("asRole")} {t(`role.${invite.role}`)}
-          </p>
+        <CardContent className="flex flex-col gap-3">
+          {error && (
+            <p role="alert" className="text-sm text-destructive">
+              {t("acceptError")}
+            </p>
+          )}
           {isAuthenticated ? (
             <Button onClick={handleAccept} disabled={accepting} className="w-full">
               {accepting ? t("accepting") : t("accept")}
             </Button>
           ) : (
-            <Link
-              href={`/sign-in?redirect_url=${encodeURIComponent(`/invite/${token}`)}`}
-              className="block w-full rounded bg-black px-4 py-2 text-center text-white dark:bg-zinc-50 dark:text-black"
-            >
-              {t("signInToAccept")}
-            </Link>
+            <Button asChild className="w-full">
+              <Link
+                href={`/sign-in?redirect_url=${encodeURIComponent(`/invite/${token}`)}`}
+              >
+                {t("signInToAccept")}
+              </Link>
+            </Button>
           )}
         </CardContent>
       </Card>
-    </div>
+    </main>
   );
 }

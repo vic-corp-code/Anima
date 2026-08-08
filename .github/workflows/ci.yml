@@ -19,7 +19,7 @@ jobs:
 
       - name: Get Bun cache hash
         id: bun-cache-hash
-        run: echo "hash=$(hashFiles('bun.lockb'))" >> $GITHUB_OUTPUT
+        run: echo "hash=${{ hashFiles('bun.lock') }}" >> $GITHUB_OUTPUT
 
       - name: Cache Turbo
         uses: actions/cache@v4
@@ -31,6 +31,12 @@ jobs:
             ${{ runner.os }}-turbo-
 
       - run: bun install --frozen-lockfile
+
+      - name: Convex codegen
+        working-directory: packages/backend
+        run: npx convex codegen --typecheck disable
+        env:
+          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
 
       - run: bun run typecheck
 

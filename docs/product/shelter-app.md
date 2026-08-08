@@ -52,7 +52,7 @@ The association manager: usually a volunteer, time-poor, moderately tech-comfort
 ### F7. Org site editor (phase 2, extends the hub org page)
 - Customize the org's public page on the connection hub (see connect-hub.md F3): section order (about, animals, cagnottes, news), a theme (colors/accent, from a small preset list), and custom blocks.
 - Still data-driven, not a duplicate content system — animals/cagnottes/news populate automatically from the registry; the editor controls presentation and adds context around it, not a second place to enter animal data.
-- Custom block types start minimal (free text / about-us) and grow over time based on what pilot orgs actually ask for (see OPEN_QUESTIONS).
+- Custom block types start minimal (free text / about-us) and grow over time based on what pilot orgs actually ask for (see the [site-editor-block-types decision issue](https://github.com/vic-corp-code/Anima/issues?q=is%3Aissue+label%3Adecision+block+types)).
 - No new app: editing lives here (shelter workspace), rendering lives on the hub — keeps this an extension of the existing org page, not a fourth product.
 
 ### F8. Missions (phase 4, bridges to volunteer platform)

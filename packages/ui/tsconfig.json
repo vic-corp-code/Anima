@@ -6,7 +6,8 @@
     "outDir": "dist",
     "rootDir": "src",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@anima/ui/*": ["./src/*"]
     }
   },
   "include": ["src"]

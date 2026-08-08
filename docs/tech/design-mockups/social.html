@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Publications sociales — Refuge Espoir Animal</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --surface: #f5f5f5;
+      --fg: #000000;
+      --muted: #8c8c8c;
+      --border: #dbdbdb;
+      --accent: #032f62;
+      --accent-secondary: #d73a49;
+      --success: #17a34a;
+      --warn: #ea580c;
+      --font-display: Geist, system-ui, -apple-system, Segoe UI, Helvetica Neue, Arial, sans-serif;
+      --font-body: Geist, system-ui, -apple-system, Segoe UI, Helvetica Neue, Arial, sans-serif;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--fg);
+      line-height: 1.5;
+      font-size: 15px;
+    }
+    
+    /* Layout */
+    .app {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      min-height: 100vh;
+    }
+    
+    /* Sidebar */
+    .sidebar {
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 24px 0;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .sidebar-header {
+      padding: 0 20px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .org-name {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--fg);
+    }
+    
+    .org-type {
+      font-size: 13px;
+      color: var(--muted);
+      letter-spacing: 0.01em;
+      margin-top: 4px;
+    }
+    
+    .nav {
+      padding: 24px 0;
+      flex: 1;
+    }
+    
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 20px;
+      color: var(--fg);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 510;
+      letter-spacing: 0.01em;
+      transition: background 0.15s;
+    }
+    
+    .nav-item:hover {
+      background: oklch(from var(--bg) calc(l - 0.03) c h);
+    }
+    
+    .nav-item.active {
+      background: var(--bg);
+      color: var(--accent);
+    }
+    
+    .nav-icon {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      stroke-width: 1.8px;
+      fill: none;
+    }
+    
+    /* Main content */
+    .main {
+      display: grid;
+      grid-template-columns: 300px 1fr 380px;
+      min-height: 100vh;
+    }
+    
+    .templates-column {
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 24px 20px;
+      overflow-y: auto;
+    }
+    
+    .editor-column {
+      padding: 32px 40px;
+      max-width: 800px;
+    }
+    
+    .preview-column {
+      background: var(--surface);
+      border-left: 1px solid var(--border);
+      padding: 32px 24px;
+      overflow-y: auto;
+    }
+    
+    /* Templates sidebar */
+    .templates-header {
+      margin-bottom: 20px;
+    }
+    
+    .templates-title {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    
+    .template-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .template-item {
+      padding: 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    
+    .template-item:hover {
+      background: oklch(from var(--bg) calc(l - 0.02) c h);
+    }
+    
+    .template-item.active {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px oklch(from var(--accent) l c h / 0.1);
+    }
+    
+    .template-name {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    
+    .template-desc {
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 0.01em;
+    }
+    
+    /* Editor */
+    .page-header {
+      margin-bottom: 24px;
+    }
+    
+    .page-title {
+      font-size: 28px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      font-family: var(--font-display);
+    }
+    
+    .page-subtitle {
+      font-size: 15px;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+    
+    .form-section {
+      margin-bottom: 32px;
+    }
+    
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      margin-bottom: 16px;
+    }
+    
+    .form-field {
+      margin-bottom: 20px;
+    }
+    
+    .field-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      margin-bottom: 8px;
+      color: var(--fg);
+    }
+    
+    .field-hint {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 8px;
+      letter-spacing: 0.01em;
+    }
+    
+    .input,
+    .select,
+    .textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--fg);
+      transition: all 0.15s;
+    }
+    
+    .input:focus,
+    .select:focus,
+    .textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px oklch(from var(--accent) l c h / 0.1);
+    }
+    
+    .textarea {
+      resize: vertical;
+      min-height: 140px;
+      line-height: 1.6;
+    }
+    
+    .select {
+      cursor: pointer;
+    }
+    
+    /* Data pills */
+    .data-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    
+    .data-pill {
+      padding: 6px 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 510;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    
+    .data-pill:hover {
+      background: var(--accent);
+      color: #ffffff;
+      border-color: var(--accent);
+    }
+    
+    /* Button */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 510;
+      letter-spacing: 0.02em;
+      text-decoration: none;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--fg);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    
+    .btn:hover {
+      background: oklch(from var(--bg) calc(l - 0.03) c h);
+    }
+    
+    .btn-primary {
+      background: var(--accent);
+      color: #ffffff;
+      border-color: var(--accent);
+    }
+    
+    .btn-primary:hover {
+      background: oklch(from var(--accent) calc(l - 0.08) c h);
+      border-color: oklch(from var(--accent) calc(l - 0.08) c h);
+    }
+    
+    .btn svg {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+      stroke-width: 1.8px;
+      fill: none;
+    }
+    
+    .form-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+    
+    /* Preview */
+    .preview-header {
+      margin-bottom: 24px;
+    }
+    
+    .preview-title {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      margin-bottom: 8px;
+    }
+    
+    .preview-subtitle {
+      font-size: 13px;
+      color: var(--muted);
+      letter-spacing: 0.01em;
+    }
+    
+    .preview-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+    }
+    
+    .preview-platform {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    
+    .preview-content {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--fg);
+      white-space: pre-wrap;
+      min-height: 200px;
+    }
+    
+    .preview-char-count {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--muted);
+    }
+    
+    .preview-char-count.warn {
+      color: var(--warn);
+    }
+    
+    /* Responsive */
+    @media (max-width: 1400px) {
+      .main {
+        grid-template-columns: 1fr 380px;
+      }
+      
+      .templates-column {
+        display: none;
+      }
+    }
+    
+    @media (max-width: 1024px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+      
+      .sidebar {
+        display: none;
+      }
+      
+      .main {
+        grid-template-columns: 1fr;
+      }
+      
+      .preview-column {
+        display: none;
+      }
+      
+      .editor-column {
+        padding: 24px 20px;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .page-title {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar" data-od-id="main-sidebar">
+      <div class="sidebar-header">
+        <div class="org-name">Refuge Espoir Animal</div>
+        <div class="org-type">SPA · Marseille</div>
+      </div>
+      
+      <nav class="nav">
+        <a href="dashboard.html" class="nav-item" data-od-id="nav-dashboard">
+          <svg class="nav-icon" viewBox="0 0 24 24">
+            <rect x="3" y="3" width="7" height="7" rx="1"/>
+            <rect x="14" y="3" width="7" height="7" rx="1"/>
+            <rect x="14" y="14" width="7" height="7" rx="1"/>
+            <rect x="3" y="14" width="7" height="7" rx="1"/>
+          </svg>
+          Tableau de bord
+        </a>
+        
+        <a href="registry.html" class="nav-item" data-od-id="nav-registry">
+          <svg class="nav-icon" viewBox="0 0 24 24">
+            <path d="M12 6v.01M12 12v.01M12 18v.01M12 7a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm0 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm0 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+            <circle cx="12" cy="12" r="9"/>
+          </svg>
+          Registre des animaux
+        </a>
+        
+        <a href="announcements.html" class="nav-item" data-od-id="nav-announcements">
+          <svg class="nav-icon" viewBox="0 0 24 24">
+            <path d="M12 19l7 2-7-18-7 18 7-2zm0 0v-8"/>
+          </svg>
+          Annonces d'adoption
+        </a>
+        
+        <a href="social.html" class="nav-item active" data-od-id="nav-social">
+          <svg class="nav-icon" viewBox="0 0 24 24">
+            <rect x="2" y="7" width="20" height="14" rx="2"/>
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+          </svg>
+          Publications sociales
+        </a>
+        
+        <a href="fundraising.html" class="nav-item" data-od-id="nav-fundraising">
+          <svg class="nav-icon" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 6v6l4 2"/>
+          </svg>
+          Cagnottes
+        </a>
+      </nav>
+    </aside>
+    
+    <!-- Main content -->
+    <main class="main">
+      <!-- Templates column -->
+      <aside class="templates-column" data-od-id="templates-sidebar">
+        <div class="templates-header">
+          <h3 class="templates-title">Modèles</h3>
+        </div>
+        
+        <div class="template-list">
+          <div class="template-item active" data-od-id="template-adoption-success">
+            <div class="template-name">Adoption réussie</div>
+            <div class="template-desc">Célébrer une adoption</div>
+          </div>
+          
+          <div class="template-item" data-od-id="template-new-arrival">
+            <div class="template-name">Nouvel arrivant</div>
+            <div class="template-desc">Présenter un animal</div>
+          </div>
+          
+          <div class="template-item" data-od-id="template-urgent-need">
+            <div class="template-name">Besoin urgent</div>
+            <div class="template-desc">Transport, famille d'accueil</div>
+          </div>
+          
+          <div class="template-item" data-od-id="template-fundraiser">
+            <div class="template-name">Lancement cagnotte</div>
+            <div class="template-desc">Annoncer une collecte</div>
+          </div>
+          
+          <div class="template-item" data-od-id="template-volunteer">
+            <div class="template-name">Appel bénévoles</div>
+            <div class="template-desc">Recruter de l'aide</div>
+          </div>
+          
+          <div class="template-item" data-od-id="template-news">
+            <div class="template-name">Actualité refuge</div>
+            <div class="template-desc">Nouvelles générales</div>
+          </div>
+        </div>
+      </aside>
+      
+      <!-- Editor column -->
+      <div class="editor-column">
+        <header class="page-header" data-od-id="page-header">
+          <h1 class="page-title">Composer une publication</h1>
+          <p class="page-subtitle">Utilisez un modèle et insérez les données de votre registre</p>
+        </header>
+        
+        <form data-od-id="social-form">
+          <!-- Data source -->
+          <div class="form-section">
+            <h2 class="section-title">Source de données</h2>
+            
+            <div class="form-field">
+              <label class="field-label" for="data-type">Type de contenu</label>
+              <select class="select" id="data-type" data-od-id="data-type-select">
+                <option value="animal">Animal</option>
+                <option value="news">Actualité</option>
+                <option value="need">Besoin</option>
+                <option value="event">Événement</option>
+              </select>
+            </div>
+            
+            <div class="form-field">
+              <label class="field-label" for="data-item">Sélectionner l'élément</label>
+              <select class="select" id="data-item" data-od-id="data-item-select">
+                <option value="luna">Luna — Chat européen, 3 ans, adoptée le 5 août</option>
+                <option value="rex">Rex — Berger allemand, 5 ans, en adoption</option>
+                <option value="charlie">Charlie — Labrador, 2 ans, soins médicaux</option>
+              </select>
+            </div>
+            
+            <div class="form-field">
+              <label class="field-label">Données disponibles</label>
+              <span class="field-hint">Cliquez pour insérer dans votre texte</span>
+              <div class="data-pills">
+                <span class="data-pill" data-od-id="pill-name">{{nom}}</span>
+                <span class="data-pill" data-od-id="pill-breed">{{race}}</span>
+                <span class="data-pill" data-od-id="pill-age">{{âge}}</span>
+                <span class="data-pill" data-od-id="pill-sex">{{sexe}}</span>
+                <span class="data-pill" data-od-id="pill-date">{{date}}</span>
+                <span class="data-pill" data-od-id="pill-adopter">{{adoptant}}</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Content -->
+          <div class="form-section">
+            <h2 class="section-title">Contenu de la publication</h2>
+            
+            <div class="form-field">
+              <label class="field-label" for="post-content">Texte de la publication</label>
+              <span class="field-hint">Modifiez le texte généré ou écrivez votre propre message</span>
+              <textarea 
+                class="textarea" 
+                id="post-content" 
+                data-od-id="post-content-textarea"
+              >🎉 Belle nouvelle ! Luna a trouvé sa famille !
+
+Après 2 mois au refuge, cette adorable chatte européenne de 3 ans a conquis le cœur de Sophie et Thomas. Luna va pouvoir profiter d'un foyer calme et aimant où elle s'épanouira pleinement.
+
+Merci à tous ceux qui ont partagé son annonce ! 💙
+
+#adoption #chatsadopter #refugeanimals #marseille #bonnenouvelle</textarea>
+            </div>
+            
+            <div class="form-field">
+              <label class="field-label" for="platform">Plateforme cible</label>
+              <select class="select" id="platform" data-od-id="platform-select">
+                <option value="facebook">Facebook</option>
+                <option value="instagram">Instagram</option>
+                <option value="twitter">Twitter / X</option>
+              </select>
+            </div>
+          </div>
+          
+          <!-- Actions -->
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" data-od-id="publish-btn">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 19l7 2-7-18-7 18 7-2zm0 0v-8"/>
+              </svg>
+              Publier maintenant
+            </button>
+            <button type="button" class="btn" data-od-id="schedule-btn">
+              Programmer
+            </button>
+            <button type="button" class="btn" data-od-id="copy-btn">
+              Copier le texte
+            </button>
+          </div>
+        </form>
+      </div>
+      
+      <!-- Preview column -->
+      <aside class="preview-column" data-od-id="preview-panel">
+        <div class="preview-header">
+          <h3 class="preview-title">Aperçu</h3>
+          <p class="preview-subtitle">Votre publication telle qu'elle apparaîtra</p>
+        </div>
+        
+        <div class="preview-card" data-od-id="preview-social">
+          <div class="preview-platform">Facebook</div>
+          <div class="preview-content">🎉 Belle nouvelle ! Luna a trouvé sa famille !
+
+Après 2 mois au refuge, cette adorable chatte européenne de 3 ans a conquis le cœur de Sophie et Thomas. Luna va pouvoir profiter d'un foyer calme et aimant où elle s'épanouira pleinement.
+
+Merci à tous ceux qui ont partagé son annonce ! 💙
+
+#adoption #chatsadopter #refugeanimals #marseille #bonnenouvelle</div>
+          <div class="preview-char-count">324 caractères</div>
+        </div>
+      </aside>
+    </main>
+  </div>
+  
+  <script>
+    // Template switching
+    const templateItems = document.querySelectorAll('.template-item');
+    const postContent = document.getElementById('post-content');
+    
+    const templates = {
+      'template-adoption-success': `🎉 Belle nouvelle ! {{nom}} a trouvé sa famille !
+
+Après 2 mois au refuge, cette adorable {{race}} de {{âge}} a conquis le cœur de {{adoptant}}. {{nom}} va pouvoir profiter d'un foyer calme et aimant où elle s'épanouira pleinement.
+
+Merci à tous ceux qui ont partagé son annonce ! 💙
+
+#adoption #chatsadopter #refugeanimals #marseille #bonnenouvelle`,
+      
+      'template-new-arrival': `🐾 Nouveau pensionnaire au refuge !
+
+Voici {{nom}}, {{race}} de {{âge}}, qui vient d'arriver chez nous. {{nom}} cherche une famille aimante pour une nouvelle vie.
+
+Vous craquez ? Contactez-nous pour en savoir plus !
+
+📞 04 91 XX XX XX
+📧 adoptions@refuge-espoir.fr
+
+#nouveauarrivant #adoption #{{race}}`,
+      
+      'template-urgent-need': `🚨 BESOIN URGENT
+
+Nous recherchons d'urgence : {{besoin}}
+
+Date : {{date}}
+Détails : {{détails}}
+
+Si vous pouvez nous aider, merci de nous contacter au plus vite !
+
+📞 04 91 XX XX XX
+
+#urgence #aide #refugeanimals #marseille`,
+      
+      'template-fundraiser': `💙 Nouvelle cagnotte en ligne !
+
+Objectif : {{objectif}}
+Montant : {{montant}}
+
+Chaque don compte pour {{détails}}
+
+Lien dans la bio ou DM pour plus d'infos.
+
+Merci pour votre soutien ! 🙏
+
+#cagnotte #soutien #refugeanimals`,
+      
+      'template-volunteer': `🙋 Appel à bénévoles !
+
+Nous recherchons des personnes motivées pour nous aider avec : {{tâches}}
+
+Disponibilité souhaitée : {{disponibilité}}
+
+Contactez-nous si vous souhaitez rejoindre l'aventure !
+
+📧 benevoles@refuge-espoir.fr
+
+#benevoles #engagement #refugeanimals #marseille`,
+      
+      'template-news': `📢 Actualités du refuge
+
+{{titre}}
+
+{{détails}}
+
+Suivez-nous pour plus de nouvelles !
+
+#refugeanimals #marseille #actualités`
+    };
+    
+    templateItems.forEach(item => {
+      item.addEventListener('click', () => {
+        templateItems.forEach(t => t.classList.remove('active'));
+        item.classList.add('active');
+        
+        const templateId = item.dataset.odId;
+        if (templates[templateId]) {
+          postContent.value = templates[templateId];
+        }
+      });
+    });
+    
+    // Data pill insertion
+    const dataPills = document.querySelectorAll('.data-pill');
+    dataPills.forEach(pill => {
+      pill.addEventListener('click', () => {
+        const cursorPos = postContent.selectionStart;
+        const textBefore = postContent.value.substring(0, cursorPos);
+        const textAfter = postContent.value.substring(cursorPos);
+        postContent.value = textBefore + pill.textContent + textAfter;
+        postContent.focus();
+      });
+    });
+    
+    // Live character count
+    postContent.addEventListener('input', () => {
+      const charCount = postContent.value.length;
+      const charCountEl = document.querySelector('.preview-char-count');
+      charCountEl.textContent = `${charCount} caractères`;
+      
+      if (charCount > 280) {
+        charCountEl.classList.add('warn');
+      } else {
+        charCountEl.classList.remove('warn');
+      }
+      
+      document.querySelector('.preview-content').textContent = postContent.value;
+    });
+    
+    // Platform switching
+    const platformSelect = document.getElementById('platform');
+    platformSelect.addEventListener('change', () => {
+      document.querySelector('.preview-platform').textContent = platformSelect.options[platformSelect.selectedIndex].text;
+    });
+    
+    // Form submission
+    document.querySelector('form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      alert('Publication envoyée !');
+    });
+    
+    document.getElementById('copy-btn').addEventListener('click', () => {
+      navigator.clipboard.writeText(postContent.value);
+      alert('Texte copié dans le presse-papier !');
+    });
+  </script>
+</body>
+</html>

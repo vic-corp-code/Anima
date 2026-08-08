@@ -3,8 +3,33 @@
 import { useState } from "react";
 import { useMutation } from "convex/react";
 import { useTranslations } from "next-intl";
+import { z } from "zod";
 import { api } from "@anima/backend/convex/_generated/api";
 import { useRouter } from "@/i18n/navigation";
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  Input,
+  RadioGroup,
+  RadioGroupItem,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  useForm,
+  zodResolver,
+} from "@anima/ui";
 
 // Must match the `type` union in packages/backend/convex/schema.ts.
 const ORG_TYPES = ["spa", "shelter", "association", "informal_group"] as const;
@@ -14,23 +39,35 @@ export default function NewOrganizationPage() {
   const router = useRouter();
   const createOrganization = useMutation(api.organizations.create);
 
-  const [name, setName] = useState("");
-  const [type, setType] = useState<(typeof ORG_TYPES)[number]>("shelter");
-  const [address, setAddress] = useState("");
+  const formSchema = z.object({
+    name: z.string().trim().min(1, t("nameRequired")),
+    type: z.enum(ORG_TYPES),
+    // ADR-004: France-first launch. Spain stays disabled in the picker, so the
+    // mutation's `country: v.literal("FR")` contract holds at the form level.
+    country: z.literal("FR"),
+    address: z.string().trim().min(1, t("addressRequired")),
+  });
+
+  type FormValues = z.infer<typeof formSchema>;
+
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      type: "shelter",
+      country: "FR",
+      address: "",
+    },
+  });
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(false);
 
-  async function handleSubmit(event: React.FormEvent) {
-    event.preventDefault();
+  async function handleSubmit(values: FormValues) {
     setIsSubmitting(true);
     setError(false);
     try {
-      const organizationId = await createOrganization({
-        name,
-        type,
-        country: "FR",
-        address,
-      });
+      const organizationId = await createOrganization(values);
       router.push(`/organizations/${organizationId}`);
     } catch {
       setError(true);
@@ -39,76 +76,117 @@ export default function NewOrganizationPage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-6 bg-zinc-50 font-sans dark:bg-black">
-      <form
-        onSubmit={handleSubmit}
-        className="flex w-full max-w-sm flex-col gap-4"
-      >
-        <h1 className="text-2xl font-semibold text-black dark:text-zinc-50">
-          {t("title")}
-        </h1>
+    <div className="flex flex-1 flex-col items-center justify-center gap-6 bg-background p-8 font-sans">
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle>{t("title")}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(handleSubmit)}
+              noValidate
+              className="flex flex-col gap-5"
+            >
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t("nameLabel")}</FormLabel>
+                    <FormControl>
+                      <Input {...field} autoFocus />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-        <label className="flex flex-col gap-1">
-          {t("nameLabel")}
-          <input
-            required
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            className="rounded border px-3 py-2"
-          />
-        </label>
+              <FormField
+                control={form.control}
+                name="type"
+                render={({ field }) => (
+                  <FormItem className="space-y-3">
+                    <FormLabel>{t("typeLabel")}</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        value={field.value}
+                        onValueChange={field.onChange}
+                        className="gap-2"
+                      >
+                        {ORG_TYPES.map((orgType) => (
+                          <FormItem
+                            key={orgType}
+                            className="flex items-center gap-2 space-y-0"
+                          >
+                            <FormControl>
+                              <RadioGroupItem value={orgType} />
+                            </FormControl>
+                            <FormLabel className="font-normal">
+                              {t(`type.${orgType}`)}
+                            </FormLabel>
+                          </FormItem>
+                        ))}
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-        <label className="flex flex-col gap-1">
-          {t("typeLabel")}
-          <select
-            value={type}
-            onChange={(event) =>
-              setType(event.target.value as (typeof ORG_TYPES)[number])
-            }
-            className="rounded border px-3 py-2"
-          >
-            {ORG_TYPES.map((orgType) => (
-              <option key={orgType} value={orgType}>
-                {t(`type.${orgType}`)}
-              </option>
-            ))}
-          </select>
-        </label>
+              <FormField
+                control={form.control}
+                name="country"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t("countryLabel")}</FormLabel>
+                    <Select
+                      value={field.value}
+                      onValueChange={field.onChange}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="w-full">
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="FR">{t("country.FR")}</SelectItem>
+                        <SelectItem value="ES" disabled>
+                          {t("country.ES")}
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>{t("countryHint")}</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-        <label className="flex flex-col gap-1">
-          {t("countryLabel")}
-          <select
-            value="FR"
-            onChange={() => {}}
-            className="rounded border px-3 py-2"
-          >
-            <option value="FR">{t("country.FR")}</option>
-            <option value="ES" disabled>
-              {t("country.ES")}
-            </option>
-          </select>
-        </label>
+              <FormField
+                control={form.control}
+                name="address"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t("addressLabel")}</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-        <label className="flex flex-col gap-1">
-          {t("addressLabel")}
-          <input
-            required
-            value={address}
-            onChange={(event) => setAddress(event.target.value)}
-            className="rounded border px-3 py-2"
-          />
-        </label>
+              {error && (
+                <p className="text-sm text-destructive">{t("error")}</p>
+              )}
 
-        {error && <p className="text-red-600">{t("error")}</p>}
-
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="rounded bg-black px-4 py-2 text-white disabled:opacity-50 dark:bg-zinc-50 dark:text-black"
-        >
-          {isSubmitting ? t("submitting") : t("submit")}
-        </button>
-      </form>
+              <Button type="submit" disabled={isSubmitting} className="w-full">
+                {isSubmitting ? t("submitting") : t("submit")}
+              </Button>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
     </div>
   );
 }

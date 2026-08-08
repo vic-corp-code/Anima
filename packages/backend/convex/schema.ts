@@ -117,9 +117,11 @@ export default defineSchema({
       v.literal("draft"),
       v.literal("published"),
       v.literal("closed"),
+      v.literal("archived"),
     ),
     publishedAt: v.optional(v.number()),
     closedAt: v.optional(v.number()),
+    archivedAt: v.optional(v.number()),
   })
     .index("by_organization", ["organizationId"])
     .index("by_animal", ["animalId"]),
@@ -133,7 +135,8 @@ export default defineSchema({
     externalUrl: v.string(),
     photoUrl: v.optional(v.string()),
     deadline: v.optional(v.string()),
-    status: v.union(v.literal("active"), v.literal("closed")),
+    status: v.union(v.literal("active"), v.literal("closed"), v.literal("archived")),
+    archivedAt: v.optional(v.number()),
   }).index("by_organization", ["organizationId"]),
 
   newsPosts: defineTable({
@@ -175,6 +178,7 @@ export default defineSchema({
     notes: v.optional(v.string()),
     // Optional: reference to related records (adoptions, transfers, etc.)
     relatedId: v.optional(v.id("animals")),
+    isManual: v.optional(v.boolean()),
   })
     .index("by_animal", ["animalId"])
     .index("by_organization", ["organizationId"]),

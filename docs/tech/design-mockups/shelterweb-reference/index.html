@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paws &amp; Hearts — Explore the shelter</title>
+  <link rel="stylesheet" href="../assets/site.css">
+  <style>
+    /* ---------- page-specific: index (launcher) ---------- */
+
+    /* hero */
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-6);
+      max-width: 760px;
+    }
+    .hero-eyebrow { color: var(--meta); }
+    .hero-lead { color: var(--fg-2); max-width: 60ch; font-size: var(--text-lg); line-height: 1.55; }
+    .hero-meta {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      padding-top: var(--space-3);
+      border-top: 1px solid var(--border-soft);
+    }
+
+    /* page-index grid */
+    .page-index-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-6);
+    }
+    .page-card {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+      background: var(--surface);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-lg);
+      padding: var(--space-8);
+      text-decoration: none;
+      color: inherit;
+      transition: transform var(--motion-base) var(--ease-standard),
+                  box-shadow var(--motion-base) var(--ease-standard),
+                  border-color var(--motion-base) var(--ease-standard);
+    }
+    .page-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--elev-raised);
+      border-color: var(--border);
+    }
+    .page-card-num {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--muted);
+    }
+    .page-card-title {
+      font-family: var(--font-display);
+      font-size: var(--text-xl);
+      line-height: 1.12;
+      letter-spacing: -0.015em;
+      color: var(--fg);
+    }
+    .page-card-desc {
+      color: var(--fg-2);
+      font-size: var(--text-sm);
+      line-height: 1.55;
+      max-width: 44ch;
+    }
+    .page-card .ph {
+      aspect-ratio: 5 / 4;
+      border-radius: var(--radius-md);
+      order: -1;
+    }
+    .page-card-cta { margin-top: auto; padding-top: var(--space-2); }
+
+    /* design notes */
+    .notes-strip { background: var(--surface-warm); }
+    .notes-principles {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-8);
+      margin-top: var(--space-8);
+      padding-top: var(--space-8);
+      border-top: 1px solid color-mix(in oklab, var(--fg) 10%, transparent);
+    }
+    .principle-label {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--meta);
+      margin-bottom: var(--space-3);
+    }
+    .principle-body {
+      font-size: var(--text-sm);
+      color: var(--fg-2);
+      line-height: 1.6;
+      max-width: 34ch;
+    }
+
+    /* closing CTA */
+    .closing {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-6);
+      max-width: 620px;
+    }
+    .closing-line {
+      font-family: var(--font-display);
+      font-size: var(--text-2xl);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: var(--fg);
+    }
+    .closing-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-6);
+    }
+
+    /* ---------- responsive ---------- */
+    @media (max-width: 860px) {
+      .page-index-grid { grid-template-columns: 1fr; }
+      .notes-principles { grid-template-columns: 1fr; gap: var(--space-6); }
+    }
+    @media (max-width: 720px) {
+      .closing-line { font-size: var(--text-xl); }
+      .closing-actions { flex-direction: column; align-items: flex-start; gap: var(--space-4); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- 1) SVG SPRITE -->
+<svg width="0" height="0" aria-hidden="true" style="position:absolute">
+  <symbol id="g-dog" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M14 16v14c0 11 8 20 18 20s18-9 18-20V16l-9 6H23z"/><circle cx="25" cy="32" r="1.6" fill="currentColor" stroke="none"/><circle cx="39" cy="32" r="1.6" fill="currentColor" stroke="none"/><path d="M32 38v4M28 44c1.6 1.6 6.4 1.6 8 0"/>
+  </symbol>
+  <symbol id="g-cat" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M16 14l4 12M48 14l-4 12M16 14c-1 8 0 14 0 16 0 10 7 18 16 18s16-8 16-18c0-2 1-8 0-16l-8 12H24z"/><circle cx="25" cy="33" r="1.6" fill="currentColor" stroke="none"/><circle cx="39" cy="33" r="1.6" fill="currentColor" stroke="none"/><path d="M30 39h4M32 39v3M20 36h6M38 36h6"/>
+  </symbol>
+  <symbol id="g-rabbit" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M24 26c-3-6-4-13-2-16s6 2 7 9M40 26c3-6 4-13 2-16s-6 2-7 9"/><path d="M32 26c-8 0-14 6-14 13s6 11 14 11 14-4 14-11-6-13-14-13z"/><circle cx="26" cy="38" r="1.6" fill="currentColor" stroke="none"/><circle cx="38" cy="38" r="1.6" fill="currentColor" stroke="none"/><path d="M30 44h4"/>
+  </symbol>
+  <symbol id="g-paw" viewBox="0 0 24 24" fill="currentColor">
+    <ellipse cx="7" cy="8" rx="2.1" ry="2.8"/><ellipse cx="12" cy="6.4" rx="2.1" ry="2.9"/><ellipse cx="17" cy="8" rx="2.1" ry="2.8"/><path d="M12 11.4c2.9 0 5.4 2.2 5.4 4.6 0 2-1.6 3.2-3.4 3.2-.9 0-1.4-.4-2-.4s-1.1.4-2 .4c-1.8 0-3.4-1.2-3.4-3.2 0-2.4 2.5-4.6 5.4-4.6z"/>
+  </symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 20.2 4.6 13a4.6 4.6 0 0 1 6.5-6.5l.9.9.9-.9A4.6 4.6 0 1 1 19.4 13z"/>
+  </symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5 12h14M13 6l6 6-6 6"/>
+  </symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 12.5 9 17.5 20 6.5"/>
+  </symbol>
+</svg>
+
+<!-- 2) HEADER -->
+<header class="site-header" id="top" data-od-id="site-header">
+  <div class="container header-inner">
+    <a href="index.html" class="brand" data-od-id="brand-logo">
+      <span class="brand-mark"><svg width="20" height="20" aria-hidden="true"><use href="#g-paw"/></svg></span>
+      <span>
+        <span class="brand-name">Paws &amp; Hearts</span>
+        <span class="brand-sub">Shelter · Est. 1998</span>
+      </span>
+    </a>
+    <nav aria-label="Main">
+      <ul class="site-nav">
+        <li><a href="animal-shelter.html">Animals</a></li>
+        <li><a href="adopt-process.html">Adopt</a></li>
+        <li><a href="happy-tails.html">Happy tails</a></li>
+        <li><a href="animal-shelter.html#visit">Visit</a></li>
+      </ul>
+    </nav>
+    <div class="header-cta">
+      <a class="btn btn-secondary" href="adopt-process.html#start">Start adoption</a>
+    </div>
+    <button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="mobileNav" aria-label="Open menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <nav class="mobile-nav" id="mobileNav" data-open="false" aria-label="Main, compact">
+      <ul>
+        <li><a href="animal-shelter.html">Animals</a></li>
+        <li><a href="adopt-process.html">Adopt</a></li>
+        <li><a href="happy-tails.html">Happy tails</a></li>
+        <li><a href="animal-shelter.html#visit">Visit</a></li>
+        <li><a href="adopt-process.html#start">Start adoption</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- 1) HERO -->
+  <section class="band reveal" data-od-id="hero">
+    <div class="container">
+      <div class="hero-grid">
+        <p class="eyebrow hero-eyebrow" data-od-id="hero-eyebrow">The shelter, online</p>
+        <h1 data-od-id="hero-title">Explore the rest of Paws &amp; Hearts</h1>
+        <p class="hero-lead" data-od-id="hero-lead">
+          This page is a quiet index — four companion pages built on the same
+          design system as the main site. Browse the shelter, meet an individual
+          animal, walk through how adoption works, or read stories from the
+          families who said yes.
+        </p>
+        <p>
+          <a class="btn-quiet" href="animal-shelter.html" data-od-id="hero-cta-main">
+            See the main site
+            <svg width="16" height="16" aria-hidden="true"><use href="#i-arrow"/></svg>
+          </a>
+        </p>
+        <p class="hero-meta">Same design system · four pages</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2) PAGE-INDEX GRID -->
+  <section class="band reveal" data-od-id="page-index">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Pages</p>
+          <h2 data-od-id="page-index-title">Where to next</h2>
+        </div>
+        <p class="muted-note">Four pages share one palette, one type pairing, and the same warm paper.</p>
+      </div>
+
+      <div class="page-index-grid">
+
+        <!-- 01 — animal-shelter.html -->
+        <a class="page-card" href="animal-shelter.html" data-od-id="page-card-animals">
+          <span class="page-card-num">01</span>
+          <span class="ph" style="--tint: var(--accent)">
+            <svg width="80" height="80" aria-hidden="true"><use href="#g-paw"/></svg>
+          </span>
+          <span class="page-card-title">The shelter, at a glance</span>
+          <span class="page-card-desc">
+            Available animals, longest-waiting residents, news, and how to visit — the main landing page.
+          </span>
+          <span class="page-card-cta">
+            <span class="btn-quiet">
+              Open page
+              <svg width="16" height="16" aria-hidden="true"><use href="#i-arrow"/></svg>
+            </span>
+          </span>
+        </a>
+
+        <!-- 02 — animal-profile.html -->
+        <a class="page-card" href="animal-profile.html" data-od-id="page-card-profile">
+          <span class="page-card-num">02</span>
+          <span class="ph" style="--tint: var(--meta)">
+            <svg width="80" height="80" aria-hidden="true"><use href="#g-dog"/></svg>
+          </span>
+          <span class="page-card-title">Meet Duke</span>
+          <span class="page-card-desc">
+            A single animal's full story: personality, care needs, and how to start an adoption enquiry.
+          </span>
+          <span class="page-card-cta">
+            <span class="btn-quiet">
+              Open page
+              <svg width="16" height="16" aria-hidden="true"><use href="#i-arrow"/></svg>
+            </span>
+          </span>
+        </a>
+
+        <!-- 03 — adopt-process.html -->
+        <a class="page-card" href="adopt-process.html" data-od-id="page-card-adopt">
+          <span class="page-card-num">03</span>
+          <span class="ph" style="--tint: var(--success)">
+            <svg width="80" height="80" aria-hidden="true"><use href="#g-paw"/></svg>
+          </span>
+          <span class="page-card-title">How adoption works</span>
+          <span class="page-card-desc">
+            The four steps from browsing to bringing an animal home, with fees and frequently asked questions.
+          </span>
+          <span class="page-card-cta">
+            <span class="btn-quiet">
+              Open page
+              <svg width="16" height="16" aria-hidden="true"><use href="#i-arrow"/></svg>
+            </span>
+          </span>
+        </a>
+
+        <!-- 04 — happy-tails.html -->
+        <a class="page-card" href="happy-tails.html" data-od-id="page-card-tails">
+          <span class="page-card-num">04</span>
+          <span class="ph" style="--tint: var(--warn)">
+            <svg width="80" height="80" aria-hidden="true"><use href="#g-cat"/></svg>
+          </span>
+          <span class="page-card-title">Happy tails</span>
+          <span class="page-card-desc">
+            Stories from the families who said yes — adopted animals, in their own words.
+          </span>
+          <span class="page-card-cta">
+            <span class="btn-quiet">
+              Open page
+              <svg width="16" height="16" aria-hidden="true"><use href="#i-arrow"/></svg>
+            </span>
+          </span>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 3) DESIGN NOTES -->
+  <section class="band notes-strip reveal" data-od-id="design-notes">
+    <div class="container">
+      <p class="eyebrow">Built on one system</p>
+      <h2 data-od-id="design-notes-title">One palette, one type pairing, every page</h2>
+      <p class="hero-lead" style="margin-top: var(--space-4);">
+        Warm paper backgrounds, Georgia for display and Inter for body, and a
+        single earthen accent — the same tokens re-used page to page so the
+        shelter reads as one place, not four websites.
+      </p>
+
+      <div class="notes-principles">
+        <div data-od-id="principle-warm">
+          <p class="principle-label">Warm, not clinical</p>
+          <p class="principle-body">
+            Paper-toned surfaces and soft borders instead of stark white — the
+            shelter feels lived-in, not institutional.
+          </p>
+        </div>
+        <div data-od-id="principle-hierarchy">
+          <p class="principle-label">Calm hierarchy</p>
+          <p class="principle-body">
+            Serif display for headlines, a restrained scale, and generous space
+            let each page breathe before it asks anything of you.
+          </p>
+        </div>
+        <div data-od-id="principle-honest">
+          <p class="principle-label">Honest placeholders</p>
+          <p class="principle-body">
+            Where a real photo or figure belongs, the glyph tile says so plainly
+            — no invented numbers, no stock imagery.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4) CLOSING CTA -->
+  <section class="band reveal" data-od-id="closing">
+    <div class="container">
+      <div class="closing">
+        <p class="closing-line" data-od-id="closing-line">Start with the animals.</p>
+        <div class="closing-actions">
+          <a class="btn btn-primary" href="animal-shelter.html#animals" data-od-id="closing-cta-primary">
+            Browse available animals
+          </a>
+          <a class="btn-quiet" href="happy-tails.html" data-od-id="closing-cta-quiet">
+            Or read happy tails
+            <svg width="16" height="16" aria-hidden="true"><use href="#i-arrow"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- 3) FOOTER -->
+<footer class="site-footer" data-od-id="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="index.html" class="brand" style="color:var(--bg)">
+          <span class="brand-mark" style="background:color-mix(in oklab, var(--bg) 16%, var(--fg)); color:var(--surface-warm)">
+            <svg width="20" height="20" aria-hidden="true"><use href="#g-paw"/></svg>
+          </span>
+          <span>
+            <span class="brand-name">Paws &amp; Hearts</span>
+            <span class="brand-sub" style="color:color-mix(in oklab, var(--bg) 58%, var(--fg))">Shelter · Est. 1998</span>
+          </span>
+        </a>
+        <h3 style="margin-top:var(--space-8)">Monthly note from the kennels</h3>
+        <form class="newsletter" id="newsletterForm" novalidate>
+          <label for="newsletterEmail" hidden>Email address</label>
+          <input id="newsletterEmail" type="email" placeholder="you@example.com" autocomplete="email">
+          <button class="btn" type="submit">Subscribe</button>
+        </form>
+        <p class="form-msg" id="newsletterMsg" role="status"></p>
+      </div>
+      <div>
+        <h3>Adopt</h3>
+        <ul class="footer-links">
+          <li><a href="animal-shelter.html#animals">Available animals</a></li>
+          <li><a href="animal-shelter.html#waiting">Longest waiting</a></li>
+          <li><a href="happy-tails.html">Happy tails</a></li>
+          <li><a href="adopt-process.html">How adoption works</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>The shelter</h3>
+        <ul class="footer-links">
+          <li><a href="animal-shelter.html#help">Volunteer &amp; foster</a></li>
+          <li><a href="animal-shelter.html#help">Donate</a></li>
+          <li><a href="animal-shelter.html#visit">Opening hours</a></li>
+          <li><a href="animal-shelter.html#visit">Lost &amp; found</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-note">
+      <span>© 2026 Paws &amp; Hearts Animal Shelter · Registered 501(c)(3) nonprofit, EIN 00-0000000</span>
+      <span>Privacy · Terms · Accessibility</span>
+    </div>
+  </div>
+</footer>
+
+<script src="../assets/site.js"></script>
+</body>
+</html>

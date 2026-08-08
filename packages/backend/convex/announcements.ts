@@ -1,6 +1,6 @@
 import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
-import { assertOrgAccess } from "./access";
+import { internalMutation, internalQuery, mutation, query } from "./_generated/server";
+import { assertOrgAccess, assertAdminAccess } from "./access";
 
 const SPECIES_LABEL = { dog: "chien", cat: "chat" } as const;
 
@@ -53,8 +53,8 @@ export const update = mutation({
 
     await assertOrgAccess(ctx, announcement.organizationId);
 
-    if (announcement.status === "closed") {
-      throw new Error("Cannot edit a closed announcement");
+    if (announcement.status === "closed" || announcement.status === "archived") {
+      throw new Error("Cannot edit a closed or archived announcement");
     }
 
     const updates: Record<string, string> = {};
@@ -106,12 +106,37 @@ export const close = mutation({
   },
 });
 
+export const archive = mutation({
+  args: { announcementId: v.id("announcements") },
+  handler: async (ctx, { announcementId }) => {
+    const announcement = await ctx.db.get(announcementId);
+    if (!announcement) throw new Error("Announcement not found");
+
+    await assertAdminAccess(ctx, announcement.organizationId);
+
+    if (announcement.status === "archived") {
+      throw new Error("Announcement is already archived");
+    }
+
+    await ctx.db.patch(announcementId, {
+      status: "archived",
+      archivedAt: Date.now(),
+    });
+    return announcementId;
+  },
+});
+
 // List announcements for an organization, optionally filtered by status.
 export const list = query({
   args: {
     organizationId: v.id("organizations"),
     status: v.optional(
-      v.union(v.literal("draft"), v.literal("published"), v.literal("closed")),
+      v.union(
+        v.literal("draft"),
+        v.literal("published"),
+        v.literal("closed"),
+        v.literal("archived"),
+      ),
     ),
   },
   handler: async (ctx, { organizationId, status }) => {
@@ -123,6 +148,9 @@ export const list = query({
 
     if (status) {
       query = query.filter((q) => q.eq(q.field("status"), status));
+    } else {
+      // Archived is a soft-delete — hide it from the default (unfiltered) view.
+      query = query.filter((q) => q.neq(q.field("status"), "archived"));
     }
 
     return await query.collect();
@@ -155,5 +183,92 @@ export const get = query({
 
     const animal = await ctx.db.get(announcement.animalId);
     return { ...announcement, animal };
+  },
+});
+
+// --- Internal functions (no auth — used by the AI agent) ---
+
+export const listInternal = internalQuery({
+  args: { organizationId: v.id("organizations") },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("announcements")
+      .withIndex("by_organization", (q) => q.eq("organizationId", args.organizationId))
+      .take(20);
+  },
+});
+
+export const getInternal = internalQuery({
+  args: { announcementId: v.id("announcements") },
+  handler: async (ctx, args) => {
+    return await ctx.db.get(args.announcementId);
+  },
+});
+
+export const createInternal = internalMutation({
+  args: { animalId: v.id("animals") },
+  handler: async (ctx, { animalId }) => {
+    const animal = await ctx.db.get(animalId);
+    if (!animal) throw new Error("Animal not found");
+    return await ctx.db.insert("announcements", {
+      organizationId: animal.organizationId,
+      animalId,
+      title: draftTitle(animal.name),
+      description: draftDescription(animal),
+      status: "draft",
+    });
+  },
+});
+
+export const updateInternal = internalMutation({
+  args: {
+    announcementId: v.id("announcements"),
+    title: v.optional(v.string()),
+    description: v.optional(v.string()),
+  },
+  handler: async (ctx, { announcementId, title, description }) => {
+    const announcement = await ctx.db.get(announcementId);
+    if (!announcement) throw new Error("Announcement not found");
+    if (announcement.status === "closed" || announcement.status === "archived") {
+      throw new Error("Cannot edit a closed or archived announcement");
+    }
+    const updates: Record<string, string> = {};
+    if (title !== undefined) updates.title = title;
+    if (description !== undefined) updates.description = description;
+    await ctx.db.patch(announcementId, updates);
+    return announcementId;
+  },
+});
+
+export const publishInternal = internalMutation({
+  args: { announcementId: v.id("announcements") },
+  handler: async (ctx, { announcementId }) => {
+    const announcement = await ctx.db.get(announcementId);
+    if (!announcement) throw new Error("Announcement not found");
+    if (announcement.status !== "draft") throw new Error("Only a draft can be published");
+    await ctx.db.patch(announcementId, { status: "published", publishedAt: Date.now() });
+    return announcementId;
+  },
+});
+
+export const closeInternal = internalMutation({
+  args: { announcementId: v.id("announcements") },
+  handler: async (ctx, { announcementId }) => {
+    const announcement = await ctx.db.get(announcementId);
+    if (!announcement) throw new Error("Announcement not found");
+    if (announcement.status !== "published") throw new Error("Only a published announcement can be closed");
+    await ctx.db.patch(announcementId, { status: "closed", closedAt: Date.now() });
+    return announcementId;
+  },
+});
+
+export const archiveInternal = internalMutation({
+  args: { announcementId: v.id("announcements") },
+  handler: async (ctx, { announcementId }) => {
+    const announcement = await ctx.db.get(announcementId);
+    if (!announcement) throw new Error("Announcement not found");
+    if (announcement.status === "archived") throw new Error("Already archived");
+    await ctx.db.patch(announcementId, { status: "archived", archivedAt: Date.now() });
+    return announcementId;
   },
 });

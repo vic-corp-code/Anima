@@ -1,28 +1,44 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import Image from "next/image";
 import { useParams } from "next/navigation";
-import { useConvexAuth, useQuery } from "convex/react";
+import { useConvexAuth, useQuery_experimental as useQuery } from "convex/react";
 import { useTranslations } from "next-intl";
+import { CircleX } from "lucide-react";
 import { api } from "@anima/backend/convex/_generated/api";
 import { Id } from "@anima/backend/convex/_generated/dataModel";
-import { useRouter } from "@/i18n/navigation";
-import { Button } from "@anima/ui";
-import { Card, CardContent, CardHeader, CardTitle } from "@anima/ui";
-import { Input } from "@anima/ui";
-import type { AnimalStatus } from "@anima/domain";
+import { Link, useRouter } from "@/i18n/navigation";
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  Input,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Skeleton,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@anima/ui";
+import { STATUS_BADGE } from "@/lib/animals/status-badge";
+import type { AnimalSpecies, AnimalStatus } from "@anima/domain";
 
-const STATUS_OPTIONS = [
-  { value: "in_care", color: "bg-yellow-100 text-yellow-800" },
-  { value: "adoptable", color: "bg-green-100 text-green-800" },
-  { value: "adoption_pending", color: "bg-blue-100 text-blue-800" },
-  { value: "adopted", color: "bg-purple-100 text-purple-800" },
-  { value: "fostered", color: "bg-orange-100 text-orange-800" },
-  { value: "transferred", color: "bg-yellow-100 text-yellow-800" },
-  { value: "deceased", color: "bg-gray-100 text-gray-800" },
-] as const;
+const SPECIES_OPTIONS: AnimalSpecies[] = ["dog", "cat"];
 
-const SPECIES_OPTIONS = ["dog", "cat"] as const;
+const STATUS_OPTIONS = Object.keys(STATUS_BADGE) as AnimalStatus[];
+
+const SKELETON_ROWS = Array.from({ length: 6 }, (_, index) => index);
 
 export default function AnimalsListPage() {
   const t = useTranslations("animals");
@@ -30,162 +46,242 @@ export default function AnimalsListPage() {
   const params = useParams();
   const organizationId = params.organizationId as Id<"organizations">;
   const { isAuthenticated } = useConvexAuth();
-  const [statusFilter, setStatusFilter] = useState<string | null>(null);
-  const [speciesFilter, setSpeciesFilter] = useState<string | null>(null);
+  const [statusFilter, setStatusFilter] = useState<AnimalStatus | null>(null);
+  const [speciesFilter, setSpeciesFilter] = useState<AnimalSpecies | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const animals = useQuery(
-    api.animals.list,
-    !isAuthenticated
-      ? "skip"
-      : statusFilter
-      ? { organizationId, status: statusFilter as AnimalStatus }
-      : { organizationId }
-  );
+  const animalsQuery = useQuery({
+    query: api.animals.list,
+    args: !isAuthenticated ? "skip" : { organizationId },
+  });
 
-  const filteredAnimals = animals?.filter((animal) => {
-    if (speciesFilter && animal.species !== speciesFilter) return false;
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      return (
-        animal.name.toLowerCase().includes(query) ||
-        animal.breed?.toLowerCase().includes(query) ||
-        animal.healthNotes?.toLowerCase().includes(query)
-      );
-    }
-    return true;
-  }) ?? [];
+  const animals = animalsQuery.status === "success" ? animalsQuery.data : undefined;
 
-  const getStatusColor = (status: string) => {
-    return STATUS_OPTIONS.find((s) => s.value === status)?.color || "bg-gray-100 text-gray-800";
-  };
+  const filteredAnimals = useMemo(() => {
+    if (!animals) return [];
+    const query = searchQuery.trim().toLowerCase();
+    return animals.filter((animal) => {
+      if (statusFilter && animal.status !== statusFilter) return false;
+      if (speciesFilter && animal.species !== speciesFilter) return false;
+      if (query) {
+        return (
+          animal.name.toLowerCase().includes(query) ||
+          animal.breed?.toLowerCase().includes(query) ||
+          animal.healthNotes?.toLowerCase().includes(query)
+        );
+      }
+      return true;
+    });
+  }, [animals, statusFilter, speciesFilter, searchQuery]);
 
   return (
     <div className="container mx-auto p-4">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold">{t("list.title")}</h1>
-        <p className="text-muted-foreground">{t("list.subtitle")}</p>
+      <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold">{t("list.title")}</h1>
+          <p className="text-muted-foreground">{t("list.subtitle")}</p>
+        </div>
+        <Button
+          onClick={() => router.push(`/organizations/${organizationId}/animals/new`)}
+        >
+          {t("list.addAnimal")}
+        </Button>
       </div>
 
-      {/* Filters */}
       <Card className="mb-6">
         <CardContent className="pt-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            {/* Search */}
-            <div>
-              <label className="block text-sm font-medium mb-1">{t("list.searchLabel")}</label>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div className="lg:col-span-2">
+              <label className="mb-1 block text-sm font-medium">
+                {t("list.searchLabel")}
+              </label>
               <Input
                 placeholder={t("list.searchPlaceholder")}
                 value={searchQuery}
-                onChange={(e) => setSearchQuery((e.target as HTMLInputElement).value)}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
 
-            {/* Status filter */}
             <div>
-              <label className="block text-sm font-medium mb-1">{t("list.statusFilterLabel")}</label>
-              <select
-                value={statusFilter ?? ""}
-                onChange={(e) => setStatusFilter((e.target as HTMLSelectElement).value || null)}
-                className="w-full rounded border px-3 py-2"
+              <label className="mb-1 block text-sm font-medium">
+                {t("list.statusFilterLabel")}
+              </label>
+              <Select
+                value={statusFilter ?? "all"}
+                onValueChange={(value) =>
+                  setStatusFilter(value === "all" ? null : (value as AnimalStatus))
+                }
               >
-                <option value="">{t("list.allStatuses")}</option>
-                {STATUS_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {t(`status.${option.value}`)}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">{t("list.allStatuses")}</SelectItem>
+                  {STATUS_OPTIONS.map((status) => (
+                    <SelectItem key={status} value={status}>
+                      {t(`status.${status}`)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
-            {/* Species filter */}
             <div>
-              <label className="block text-sm font-medium mb-1">{t("list.speciesFilterLabel")}</label>
-              <select
-                value={speciesFilter ?? ""}
-                onChange={(e) => setSpeciesFilter((e.target as HTMLSelectElement).value || null)}
-                className="w-full rounded border px-3 py-2"
+              <label className="mb-1 block text-sm font-medium">
+                {t("list.speciesFilterLabel")}
+              </label>
+              <Select
+                value={speciesFilter ?? "all"}
+                onValueChange={(value) =>
+                  setSpeciesFilter(
+                    value === "all" ? null : (value as AnimalSpecies)
+                  )
+                }
               >
-                <option value="">{t("list.allSpecies")}</option>
-                {SPECIES_OPTIONS.map((option) => (
-                  <option key={option} value={option}>
-                    {t(`list.speciesFilterOption.${option}`)}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Add animal button */}
-            <div className="flex items-end">
-              <Button
-                className="w-full"
-                onClick={() => router.push(`/organizations/${organizationId}/animals/new`)}
-              >
-                {t("list.addAnimal")}
-              </Button>
+                <SelectTrigger className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">{t("list.allSpecies")}</SelectItem>
+                  {SPECIES_OPTIONS.map((species) => (
+                    <SelectItem key={species} value={species}>
+                      {t(`list.speciesFilterOption.${species}`)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Animals list */}
-      {animals === undefined ? (
-        <p className="text-muted-foreground">{t("loading")}</p>
-      ) : filteredAnimals.length === 0 ? (
+      {animalsQuery.status === "error" ? (
+        <Alert variant="destructive">
+          <CircleX className="size-4" aria-hidden="true" />
+          <AlertTitle>{t("list.errorTitle")}</AlertTitle>
+          <AlertDescription>{t("list.errorDescription")}</AlertDescription>
+        </Alert>
+      ) : (
         <Card>
-          <CardContent className="py-12 text-center text-muted-foreground">
-            {animals.length === 0 ? t("list.emptyNone") : t("list.emptyFiltered")}
+          <CardContent className="p-0">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-14" />
+                  <TableHead>{t("list.colName")}</TableHead>
+                  <TableHead className="hidden md:table-cell">
+                    {t("list.colSpecies")}
+                  </TableHead>
+                  <TableHead className="hidden md:table-cell">
+                    {t("list.colSex")}
+                  </TableHead>
+                  <TableHead>{t("list.colStatus")}</TableHead>
+                  <TableHead className="hidden md:table-cell">
+                    {t("list.colSterilized")}
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {animalsQuery.status === "pending" || !animals ? (
+                  SKELETON_ROWS.map((index) => (
+                    <TableRow key={index}>
+                      <TableCell>
+                        <Skeleton className="size-10 rounded-md" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-3.5 w-32" />
+                      </TableCell>
+                      <TableCell className="hidden md:table-cell">
+                        <Skeleton className="h-3.5 w-16" />
+                      </TableCell>
+                      <TableCell className="hidden md:table-cell">
+                        <Skeleton className="h-3.5 w-14" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-5 w-20 rounded-full" />
+                      </TableCell>
+                      <TableCell className="hidden md:table-cell">
+                        <Skeleton className="h-3.5 w-10" />
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : filteredAnimals.length === 0 ? (
+                  <TableRow>
+                    <TableCell
+                      colSpan={6}
+                      className="py-12 text-center text-sm text-muted-foreground"
+                    >
+                      {animals.length === 0
+                        ? t("list.emptyNone")
+                        : t("list.emptyFiltered")}
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredAnimals.map((animal) => {
+                    const badge = STATUS_BADGE[animal.status];
+                    return (
+                      <TableRow
+                        key={animal._id}
+                        className="cursor-pointer"
+                        onClick={() =>
+                          router.push(
+                            `/organizations/${organizationId}/animals/${animal._id}`
+                          )
+                        }
+                      >
+                        <TableCell>
+                          {animal.photoUrls[0] ? (
+                            <div className="relative size-10 overflow-hidden rounded-md">
+                              <Image
+                                src={animal.photoUrls[0]}
+                                alt={t("show.gallery.alt", {
+                                  name: animal.name,
+                                  index: 1,
+                                })}
+                                fill
+                                className="object-cover"
+                              />
+                            </div>
+                          ) : (
+                            <div className="size-10 rounded-md bg-muted" />
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          <Link
+                            className="font-medium hover:underline"
+                            href={`/organizations/${organizationId}/animals/${animal._id}`}
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            {animal.name}
+                          </Link>
+                          {animal.breed && (
+                            <div className="text-xs text-muted-foreground">
+                              {animal.breed}
+                            </div>
+                          )}
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell">
+                          {t(`species.${animal.species}`)}
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell">
+                          {t(`sex.${animal.sex}`)}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={badge.variant} className={badge.className}>
+                            {t(`status.${animal.status}`)}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell">
+                          {animal.sterilized ? t("yes") : t("no")}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
+                )}
+              </TableBody>
+            </Table>
           </CardContent>
         </Card>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredAnimals.map((animal) => (
-            <Card
-              key={animal._id}
-              className="hover:shadow-lg transition-shadow cursor-pointer"
-              onClick={() => router.push(`/organizations/${organizationId}/animals/${animal._id}`)}
-            >
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <CardTitle className="text-lg">{animal.name}</CardTitle>
-                    <p className="text-sm text-muted-foreground">
-                      {t(`species.${animal.species}`)}
-                      {animal.breed && ` • ${animal.breed}`}
-                    </p>
-                  </div>
-                  <span className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(animal.status)}`}>
-                    {t(`status.${animal.status}`)}
-                  </span>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">{t("sexLabel")}</span>
-                    <span>{t(`sex.${animal.sex}`)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">{t("sterilizedLabel")}</span>
-                    <span>{animal.sterilized ? t("yes") : t("no")}</span>
-                  </div>
-                  {animal.estimatedAge && (
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">{t("estimatedAgeLabel")}</span>
-                      <span>{animal.estimatedAge}</span>
-                    </div>
-                  )}
-                  {animal.arrivalDate && (
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">{t("list.arrivalLabel")}</span>
-                      <span>{new Date(animal.arrivalDate).toLocaleDateString("fr-FR")}</span>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
       )}
     </div>
   );

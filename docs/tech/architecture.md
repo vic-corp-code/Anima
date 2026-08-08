@@ -5,7 +5,7 @@ Decisions are recorded as ADRs in [decisions/](decisions/); this doc is the asse
 ## Guiding constraints
 
 - **One developer, part-time.** Minimize operational surface: no servers to patch, no clusters, no self-managed databases. Boring where possible.
-- **Three apps, one domain model.** The hub is mostly a public read-view of shelter + volunteer data → a single shared backend, not three services (see ADR-003).
+- **Three products, one domain model.** BO-Shelter (admin), Hub (public marketplace aggregating *all* client shelters, leboncoin-style), and ShelterWeb (a *single* shelter's own standalone public site, own domain, optional per shelter — decided as its own app, [#91](https://github.com/vic-corp-code/Anima/issues/91)) → a single shared backend, not separate services (see ADR-003).
 - **TypeScript end-to-end** (ADR-002): one language, shared types from database schema to UI props.
 - **FR/ES from day one** (ADR-004): i18n wiring is foundation work, not a retrofit.
 
@@ -14,9 +14,9 @@ Decisions are recorded as ADRs in [decisions/](decisions/); this doc is the asse
 ```
 anima/
 ├── apps/
-│   ├── shelter/          # Shelter workspace (Next.js) — app.anima.tld
-│   ├── volunteers/       # Volunteer platform (Next.js) — volunteers.anima.tld
-│   └── hub/              # Public hub (Next.js, SEO-critical) — anima.tld
+│   ├── shelter/          # BO-Shelter: back-office admin (Next.js) — app.anima.tld
+│   ├── hub/              # Hub: public marketplace — shelters, adopters, volunteers (Next.js, SEO-critical) — anima.tld
+│   └── shelterweb/        # ShelterWeb: one shelter's own standalone public site, own domain — NOT YET SCAFFOLDED, no phase assigned (optional product, #91)
 ├── packages/
 │   ├── backend/          # Convex functions + schema (THE shared backend)
 │   ├── ui/               # Shared design system (cards, forms, layout)
@@ -29,7 +29,8 @@ anima/
 ```
 
 Notes:
-- **Apps may merge.** `volunteers` and `hub` could ship as one Next.js app with two surfaces if separation proves heavy for one person. Keep the *package* boundaries clean (domain, backend, ui) so the app boundary stays cheap to change. Decide at phase 3, not now.
+- **Decided (2026-08-05, #12): volunteers live inside `apps/hub`, not a separate app.** Adopters and volunteers both interact with shelters through the same public marketplace. Keep the *package* boundaries clean (domain, backend, ui) regardless, so app boundaries stay cheap to change if this needs revisiting.
+- **ShelterWeb is a third, distinct, optional product** — one shelter's own standalone public website (own domain), separate from Hub's aggregate-of-all-shelters view, applied for and managed from the BO. Decided as its own app (#91), not custom-domain routing on `apps/hub`. Not yet scaffolded, no phase assigned — doesn't block the Hub/volunteer core loop.
 - `packages/domain` holds logic that must not depend on Convex or React (e.g., the announcement card model rendered both on web and into social images). Keeps the exit door open (see Convex lock-in, ADR-003).
 
 ## Stack summary

@@ -12,37 +12,25 @@ Foundations  →   Shelter MVP      →   Public Hub       →   Volunteers     
 
 **Sequencing rationale:** shelter workspace first because everything derives from its data. Hub second because it makes phase-1 data publicly valuable immediately (shelters get reach — the retention hook) and needs no second user population. Volunteers third, once there are organizations to volunteer for. Connection (missions ↔ volunteers) only when both sides exist.
 
+**The task-level checklist for each phase now lives in GitHub, not here** — one [milestone](https://github.com/vic-corp-code/Anima/milestones) per phase, one issue per bullet. This file keeps the *why* (goals, sequencing, exit gates); GitHub tracks the *what's done*.
+
 ---
 
 ## Phase 0 — Foundations & de-risking (~2–4 weekends)
 
 Goal: a running skeleton and answers to the questions that could invalidate the stack.
 
-- [ ] Monorepo scaffold: bun workspaces + Turborepo, `apps/shelter` + `packages/{backend,ui,i18n,domain,config}` (hub/volunteers apps created in their phases). Quick spike confirming bun plays well with Convex + Next.js tooling; fall back to pnpm if it fights either (ADR-001).
-- [ ] Convex project + first schema slice (organizations, users, memberships).
-- [ ] Wire Clerk auth (ADR-007): login/signup, org membership synced to Convex.
-- [ ] i18n wiring (next-intl or chosen lib), FR + ES catalogs, lint rule against hardcoded strings.
-- [x] **Spike: geo** — store lat/lng, radius query via Convex geospatial component. *Convex validation gate #1 (ADR-003).* Done 2026-07-15, see `architecture.md`'s Geography section.
-- [x] **Spike: SSR/SEO** — server-render a page from Convex data with ISR. *Gate #2.* Done 2026-07-15: SSR confirmed working; ISR currently blocked by shared middleware — see `architecture.md`'s SEO section.
-- [x] **Check: Convex EU data residency.** *Gate #3.* Done 2026-07-15: dev deployment moved to `eu` region — see `architecture.md`'s GDPR section. **All three Convex validation gates are now green.**
-- [ ] Basic design tokens in `packages/ui` (the three apps must feel like one product later).
-- [ ] Repo hygiene: CI (typecheck/lint/test), preview deployments, README, CLAUDE.md for the repo.
+**Status: done.** Monorepo scaffold, Convex schema + Clerk auth, i18n (FR/ES), the three Convex validation gates (geo, SSR/SEO, EU residency), design tokens, and repo hygiene (CI, CLAUDE.md) are all shipped — see the [Phase 0 milestone](https://github.com/vic-corp-code/Anima/milestone/1) (closed) for the itemized, dated record.
 
-**Exit gate:** logged-in user creates an organization, in FR and ES, on a deployed preview; all three Convex gates green (else switch to Supabase now — see ADR-003).
+**Exit gate:** logged-in user creates an organization, in FR and ES, on a deployed preview; all three Convex gates green (else switch to Supabase now — see ADR-003). *Met.*
 
 ## Phase 1 — Shelter workspace MVP (~2–3 months part-time)
 
 Goal: one real association replaces its spreadsheet.
 
-- [x] Animal registry: CRUD, photos (Convex file storage + resizing), status lifecycle, event timeline, mobile-friendly list with filters. Done 2026-07-29 — full CRUD including edit/delete UI, status lifecycle + event timeline, search/status/species filters.
-- [x] Members & roles (admin/editor). Done 2026-07-22 — **shipped as shareable invite links, not email** (transactional email infra doesn't exist yet; revisit if/when it's built).
-- [x] Adoption announcements: auto-draft from animal record, compact card format (the reusable component), publish/close lifecycle. Done 2026-07-29.
-- [x] Cagnottes: create with external link (ADR-005), manual progress, list. Done 2026-07-29.
-- [x] Minimal news posts. Done 2026-07-29 — title/text/photos, optional links to animals and a cagnotte, no lifecycle (per the MVP-cut note).
-- [x] Manual org verification flow (declare RNA/SIRET/ES-registry, admin marks verified). Done 2026-07-29 — self-attested, no external API check, org's own admin declares + toggles (per shelter-app.md F1's MVP cut).
-- [ ] Transactional email (invites, inquiry relay groundwork). **Not blocking Phase 1** — invites already ship as shareable links (see Members & roles above); only revisit this if/when a real need for outbound email (e.g. phase-2 inquiry relay) makes it worth building.
+**Status: feature-complete.** Animal registry, members & roles, announcements, cagnottes, news posts, manual org verification, the conversational AI intake agent with full CRUD tools, org dashboard navigation, and archive lifecycles are all shipped — see the [Phase 1 milestone](https://github.com/vic-corp-code/Anima/milestone/2) (closed) for the itemized, dated record. Transactional email and pilot recruitment remain open (not blocking) — see the milestone's 2 open issues.
 
-**Recruit 1–3 pilot associations in France** (Spain is gated at account creation until enabled, see ADR-004) — **deferred for now (2026-07-29)**, moved out of the active checklist. Rationale: the workspace doesn't feel pilot-ready yet even with every feature above now checked off (2026-07-29) — this was a deliberate call, not a checklist gate: revisit only after a real polish/reliability pass for a non-technical volunteer's actual first-week experience (error handling, remaining hardcoded-French debt on the animal pages, general "does this survive contact with a real user" testing), not automatically just because the boxes above are ticked.
+**Recruit 1–3 pilot associations in France** (Spain is gated at account creation until enabled, see ADR-004) — deferred for now (2026-07-30). Rationale: all Phase 1 features are checked off; the workspace is feature-complete but needs a real-world reliability pass before onboarding non-technical users — see issues labeled [`bug`](https://github.com/vic-corp-code/Anima/issues?q=is%3Aissue+label%3Abug) for remaining open items (none blocking, but fixing them first will improve the pilot experience).
 
 **Exit gate:** ≥1 pilot org manages its real animals in Anima for 4 consecutive weeks; "arrival → announcement live" under 10 min. *(Gate itself unchanged — only the timing of when to start recruiting toward it has moved.)*
 
@@ -50,24 +38,27 @@ Goal: one real association replaces its spreadsheet.
 
 Goal: pilot orgs' animals and cagnottes are public, filterable, and Google-indexable.
 
-- [ ] `apps/hub`: animals directory with filters (species, place/radius, org type + secondary), animal pages, org pages, cagnottes directory.
-- [ ] Org site editor in the shelter workspace: theme + section order + free-text custom blocks for org pages (shelter-app.md F7, connect-hub.md F3).
-- [ ] Adoption inquiry → email relay to org (no adopter account yet).
-- [ ] SEO: SSR/ISR, clean URLs, sitemaps, OpenGraph images (reuses card→image rendering).
-- [ ] **Social composer v1 (generate & copy, ADR-006):** per-network captions + rendered post/story images from animals/news/cagnottes.
-- [ ] Privacy-friendly analytics; measure inquiry sources and cagnotte click-throughs.
+Split into two independent tracks: **2b has no dependency on 2a** and can be built first, in parallel, or during Phase 1's pilot-recruitment wait — it only reads Phase-1 data (animals/news/cagnottes) and shares no code with the hub beyond the existing card components.
 
-**Exit gate:** first adoption inquiry arrives via the hub; pilot orgs use the composer ≥ weekly; animal pages indexed by Google.
+### Phase 2a — Hub core
+
+In progress — see the [Phase 2a milestone](https://github.com/vic-corp-code/Anima/milestone/3): animals directory with filters, org site editor, adoption inquiry email relay, SEO (SSR/ISR + sitemaps), verified-org default filter + reporting, and privacy-friendly analytics.
+
+**Exit gate (2a):** first adoption inquiry arrives via the hub; animal pages indexed by Google.
+
+### Phase 2b — Social composer v1
+
+See the [Phase 2b milestone](https://github.com/vic-corp-code/Anima/milestone/4): per-network captions + rendered post/story images from animals/news/cagnottes (generate & copy, ADR-006).
+
+**Exit gate (2b):** pilot orgs use the composer ≥ weekly.
 
 ## Phase 3 — Volunteer platform (~2 months)
 
 Goal: individuals can declare structured capabilities and find orgs.
 
-- [ ] `apps/volunteers` (or a hub section — decide now, see architecture note): signup, profile, visibility controls.
-- [ ] Structured capabilities: **transport + foster + availability** types first; on-site & skills after.
-- [ ] Volunteer directory for verified orgs (search by capability, area).
-- [ ] Safety basics: area-only location, report/block, 18+, GDPR export/delete.
-- [ ] Volunteer-facing browse of orgs (missions arrive in phase 4).
+**App boundary decided (2026-08-05, #12): built inside `apps/hub`, not a separate app** — Hub is the single public marketplace reuniting shelters, adopters, and volunteers.
+
+See the [Phase 3 milestone](https://github.com/vic-corp-code/Anima/milestone/5): signup + profile CRUD, visibility controls, structured capabilities (transport/foster/availability first), volunteer directory, safety basics, and org browsing.
 
 **Exit gate:** ≥20 profiles with ≥1 structured capability; a pilot org finds and contacts a volunteer.
 
@@ -75,31 +66,20 @@ Goal: individuals can declare structured capabilities and find orgs.
 
 Goal: the loop closes — a real need is fulfilled through the platform.
 
-- [ ] Missions in shelter workspace: create (type, urgency, location/route, window), manage.
-- [ ] Missions board on hub with filters; mission → application flow (sent/seen/accepted/declined/completed with both-sides confirmation).
-- [ ] Saved searches + email alerts for volunteers (the urgent-transport killer feature).
-- [ ] Mission history on profiles (reputation tier 2 — objective counts only).
-- [ ] Notifications hardening (email digests, urgent immediate sends).
+See the [Phase 4 milestone](https://github.com/vic-corp-code/Anima/milestone/6): missions in the shelter workspace, missions board + application flow on the hub, saved searches/email alerts, mission history, and notification hardening.
 
 **Exit gate:** first mission posted, matched, completed, and confirmed by both sides. 🎉 (north-star moment)
 
 ## Phase 5 — Trust, matching & growth (ongoing)
 
-Direction, not commitments — re-plan with real usage data:
-
-- Rule-based proactive matching (route overlap, radius, species, urgency tier).
-- Reputation tier 3 (structured endorsements — design carefully, see OPEN_QUESTIONS).
-- HelloAsso API read-integration for automatic cagnotte progress.
-- Direct social publishing (Meta App Review — its own sub-project).
-- Adopter accounts & tracked inquiries; adoption paperwork aids (certificat d'engagement FR).
-- Machine-translated content variants (labeled), third locale.
-- Mobile app evaluation; I-CAD / registry integrations; multi-org features.
+Direction, not commitments — re-plan with real usage data. See the [Phase 5 milestone](https://github.com/vic-corp-code/Anima/milestone/7): proactive matching, reputation tier 3, HelloAsso integration, direct social publishing, adopter accounts, machine translation, and mobile/registry-integration evaluation.
 
 ---
 
 ## Standing rules
 
-1. **Don't start phase N+1 before phase N's exit gate.** Gates are user-behavior facts, not feature checklists.
-2. **Pilot feedback outranks this roadmap.** Re-cut phases 3+ after phase 2 learnings.
-3. **Anything cut goes to OPEN_QUESTIONS or a phase-5 bullet** — never silently dropped.
-4. Revisit [OPEN_QUESTIONS.md](../../OPEN_QUESTIONS.md) at each phase boundary; several decisions have "decide by" phases.
+1. **Don't start phase N+1 before phase N's exit gate.** Gates are user-behavior facts, not feature checklists — Phase 0's three-spike gate is the deliberate exception, since de-risking is inherently checklist-shaped.
+2. **Pilot feedback outranks this roadmap from the moment Phase 1's pilot begins** — re-cut Phase 2 scope with Phase 1 learnings, and phases 4+ with Phase 2/3 learnings.
+3. **Anything cut goes to a GitHub issue labeled `decision`** — never silently dropped.
+4. Revisit issues labeled [`decision`](https://github.com/vic-corp-code/Anima/issues?q=is%3Aissue+label%3Adecision) at each phase boundary; several have "decide by" phases noted in the issue body and are attached to that phase's milestone.
+5. **Before treating a phase's checklist as complete, every open `decision` issue attached to that phase's milestone must be resolved (closed with the decision recorded) or explicitly re-milestoned** — not left stale.

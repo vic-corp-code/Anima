@@ -4,10 +4,21 @@ import { useState } from "react";
 import { useParams } from "next/navigation";
 import { useConvexAuth, useMutation, useQuery } from "convex/react";
 import { useTranslations } from "next-intl";
+import { ChevronLeft } from "lucide-react";
 import { api } from "@anima/backend/convex/_generated/api";
 import { Id } from "@anima/backend/convex/_generated/dataModel";
 import { useRouter } from "@/i18n/navigation";
-import { Button, Card, CardContent, CardHeader, CardTitle, Input } from "@anima/ui";
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Input,
+  Skeleton,
+  Textarea,
+} from "@anima/ui";
 
 export default function NewsPostDetailPage() {
   const t = useTranslations("news");
@@ -33,7 +44,18 @@ export default function NewsPostDetailPage() {
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
   if (post === undefined) {
-    return <div className="container mx-auto p-4">{t("loading")}</div>;
+    return (
+      <div className="container mx-auto p-4">
+        <Card>
+          <CardContent className="space-y-3 pt-6">
+            <Skeleton className="h-6 w-1/3" />
+            <Skeleton className="h-3 w-2/3" />
+            <Skeleton className="h-3 w-full" />
+            <Skeleton className="h-3 w-4/5" />
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   if (post === null) {
@@ -87,7 +109,7 @@ export default function NewsPostDetailPage() {
           onClick={() => router.push(`/organizations/${organizationId}/news`)}
           className="mb-4"
         >
-          ← {t("backToList")}
+          <ChevronLeft className="size-4" aria-hidden="true" /> {t("backToList")}
         </Button>
         <h1 className="text-2xl font-bold">{post.title}</h1>
       </div>
@@ -98,58 +120,54 @@ export default function NewsPostDetailPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1">{t("titleLabel")}</label>
+            <label className="mb-1 block text-sm font-medium">{t("titleLabel")}</label>
             <Input value={title} onChange={(e) => setTitleEdit((e.target as HTMLInputElement).value)} />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">{t("textLabel")}</label>
-            <textarea
+            <label className="mb-1 block text-sm font-medium">{t("textLabel")}</label>
+            <Textarea
               value={text}
               onChange={(e) => setTextEdit(e.target.value)}
               rows={6}
-              className="w-full rounded border px-3 py-2"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">{t("photoUrlsLabel")}</label>
-            <textarea
+            <label className="mb-1 block text-sm font-medium">{t("photoUrlsLabel")}</label>
+            <Textarea
               value={photoUrlsText}
               onChange={(e) => setPhotoUrlsEdit(e.target.value)}
               rows={2}
-              className="w-full rounded border px-3 py-2"
             />
           </div>
 
           {post.linkedAnimals.length > 0 && (
             <div>
-              <span className="block text-sm font-medium mb-1">{t("linkedAnimalsLabel")}</span>
+              <span className="mb-1 block text-sm font-medium">{t("linkedAnimalsLabel")}</span>
               <div className="flex flex-wrap gap-2">
                 {post.linkedAnimals.map((animal) => (
-                  <span key={animal._id} className="px-2 py-1 rounded bg-gray-100 text-sm">
+                  <Badge key={animal._id} variant="secondary">
                     {animal.name}
-                  </span>
+                  </Badge>
                 ))}
               </div>
             </div>
           )}
           {post.linkedCagnotte && (
             <div>
-              <span className="block text-sm font-medium mb-1">{t("linkedCagnotteLabel")}</span>
-              <span className="px-2 py-1 rounded bg-gray-100 text-sm">
-                {post.linkedCagnotte.title}
-              </span>
+              <span className="mb-1 block text-sm font-medium">{t("linkedCagnotteLabel")}</span>
+              <Badge variant="secondary">{post.linkedCagnotte.title}</Badge>
             </div>
           )}
 
-          {saveError && <p className="text-sm text-red-600">{saveError}</p>}
-          {deleteError && <p className="text-sm text-red-600">{deleteError}</p>}
+          {saveError && <p className="text-sm text-destructive">{saveError}</p>}
+          {deleteError && <p className="text-sm text-destructive">{deleteError}</p>}
           <div className="flex gap-2">
             <Button onClick={handleSave} disabled={isSaving}>
               {isSaving ? t("saving") : t("save")}
             </Button>
             <Button
               variant="outline"
-              className="text-red-600 hover:bg-red-50"
+              className="text-destructive hover:bg-destructive/10"
               onClick={handleDelete}
               disabled={isDeleting}
             >

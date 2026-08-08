@@ -5,7 +5,7 @@
 
 ## Context
 
-Three apps share one identity system (see `overview.md`): a person can be both an organization member (with per-org roles) and a volunteer. `ADR-003` left the choice between Convex Auth (native to the backend) and Clerk (a dedicated auth vendor) as a phase-0 spike, tracked in `OPEN_QUESTIONS.md`.
+Three apps share one identity system (see `overview.md`): a person can be both an organization member (with per-org roles) and a volunteer. `ADR-003` left the choice between Convex Auth (native to the backend) and Clerk (a dedicated auth vendor) as a phase-0 spike, tracked as a GitHub issue labeled `decision`.
 
 ## Decision
 
@@ -20,5 +20,5 @@ Three apps share one identity system (see `overview.md`): a person can be both a
 ## Consequences
 
 - One more third-party vendor and its cost curve to watch at scale (acceptable at side-project scale; revisit if pricing becomes a problem — same posture as Convex in `ADR-003`).
-- Verify Clerk's EU data residency / RGPD posture alongside the Convex EU-residency check already gating phase 0 (`OPEN_QUESTIONS.md`).
+- Verify Clerk's EU data residency / RGPD posture alongside the Convex EU-residency check already gating phase 0 (see the RGPD-baseline decision issue).
 - Org/role modeling in Convex schema should lean on Clerk's organization primitives where they line up with Anima's admin/editor roles, rather than reinventing them.

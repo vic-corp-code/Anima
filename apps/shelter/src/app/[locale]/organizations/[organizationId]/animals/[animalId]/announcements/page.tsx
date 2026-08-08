@@ -46,7 +46,7 @@ export default function AnimalAnnouncementsPage() {
         <Button onClick={handleCreateDraft}>{t("createDraft")}</Button>
       </div>
 
-      {createError && <p className="text-sm text-red-600 mb-4">{createError}</p>}
+      {createError && <p className="text-sm text-destructive mb-4">{createError}</p>}
 
       {announcements === undefined ? (
         <p className="text-muted-foreground">{t("loading")}</p>
