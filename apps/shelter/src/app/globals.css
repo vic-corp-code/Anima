@@ -214,7 +214,7 @@
   --destructive-foreground: #1a130d;
 
   --border: #4d4036;
-  --input: #33291f; /* was --surface (decision 6, reversed — #202), now == --border-soft */
+  --input: var(--border-soft); /* reversed from --surface (decision 6 — #202) */
   --ring: #d9925c;
 
   /* Chart palette dark values: same five hue families, lightened with the
