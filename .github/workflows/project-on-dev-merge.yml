@@ -26,7 +26,7 @@ jobs:
           PR_TITLE: ${{ github.event.pull_request.title }}
           PR_BODY: ${{ github.event.pull_request.body }}
         run: |
-          set -uo pipefail
+          set -euo pipefail
           refs=$(printf '%s\n%s\n' "$PR_TITLE" "$PR_BODY" \
             | grep -oiE '(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved)[[:space:]:]*#[0-9]+' \
             | grep -oE '#[0-9]+' | tr -d '#' | sort -u || true)
