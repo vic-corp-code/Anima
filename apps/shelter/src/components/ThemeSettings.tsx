@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { Moon, Palette, Sun } from "lucide-react";
@@ -16,7 +16,12 @@ import {
   RadioGroupItem,
   Switch,
 } from "@anima/ui";
-import { ACCENTS, applyAccent, getSavedAccent } from "@/lib/accents";
+import {
+  ACCENTS,
+  applyAccent,
+  getSavedAccent,
+  subscribeAccent,
+} from "@/lib/accents";
 
 // Single settings surface for the BO's visual preferences: dark mode (the
 // next-themes toggle, as before) plus the BO-wide accent picker (issue #191).
@@ -26,17 +31,21 @@ export function ThemeSettings() {
   const t = useTranslations("theme");
   const { theme, setTheme } = useTheme();
   const isDark = theme === "dark";
-  // SSR renders "brand" (no localStorage on the server); the saved accent is
-  // read after hydration to avoid a data-state mismatch — same mounted-pattern
-  // next-themes uses for `theme`. Re-applying on mount also guarantees the
-  // accent (incl. the foreground tokens) is set even if the boot script was
-  // skipped, e.g. when localStorage is only available after hydration.
-  const [accent, setAccent] = useState("brand");
+  // External-store read: server snapshot is "brand" (no localStorage on the
+  // server, and it keeps SSR/hydration data-state consistent), the client
+  // snapshot is the saved accent. applyAccent notifies the store after
+  // writing, so picking a swatch re-renders the RadioGroup without any
+  // setState-in-effect. The effect only syncs the DOM (documentElement vars)
+  // to the current accent — including on mount, guaranteeing the accent is
+  // applied even if the boot script was skipped.
+  const accent = useSyncExternalStore(
+    subscribeAccent,
+    getSavedAccent,
+    () => "brand",
+  );
   useEffect(() => {
-    const saved = getSavedAccent();
-    setAccent(saved);
-    applyAccent(saved);
-  }, []);
+    applyAccent(accent);
+  }, [accent]);
 
   return (
     <Popover>
@@ -86,10 +95,7 @@ export function ThemeSettings() {
           </span>
           <RadioGroup
             value={accent}
-            onValueChange={(id) => {
-              setAccent(id);
-              applyAccent(id);
-            }}
+            onValueChange={(id) => applyAccent(id)}
             className="grid-cols-5"
           >
             {ACCENTS.map((a) => (

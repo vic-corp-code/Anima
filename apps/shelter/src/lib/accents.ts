@@ -56,6 +56,22 @@ const ACCENT_BY_ID: Record<string, string> = Object.fromEntries(
   ACCENTS.map((a) => [a.id, a.accent]),
 );
 
+// Minimal external-store wiring for useSyncExternalStore (ThemeSettings):
+// applyAccent notifies listeners after writing, so the RadioGroup stays in
+// sync with localStorage without setState-in-effect (react-hooks rule).
+const accentListeners = new Set<() => void>();
+
+export function subscribeAccent(listener: () => void): () => void {
+  accentListeners.add(listener);
+  return () => {
+    accentListeners.delete(listener);
+  };
+}
+
+function notifyAccent(): void {
+  for (const listener of accentListeners) listener();
+}
+
 export function getSavedAccent(): string {
   try {
     const saved = localStorage.getItem(ACCENT_STORAGE_KEY);
@@ -85,6 +101,7 @@ export function applyAccent(id: string): void {
     // localStorage unavailable (private mode etc.) — the override still
     // applies for this session.
   }
+  notifyAccent();
 }
 
 // Inlined into the SSR HTML before hydration ([locale]/layout.tsx) so the
