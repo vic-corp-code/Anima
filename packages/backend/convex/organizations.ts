@@ -88,7 +88,7 @@ export const create = mutation({
     if (!user) {
       const userId = await ctx.db.insert("users", {
         clerkId: identity.subject,
-        name: identity.name ?? identity.email ?? identity.subject,
+        name: identity.name ?? identity.email ?? "",
         email: identity.email ?? "",
       });
       user = await ctx.db.get(userId);

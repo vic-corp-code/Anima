@@ -439,6 +439,7 @@
       "colRole": "Rol",
       "emptyNone": "No hay miembros. ¡Empieza invitando a alguien!",
       "emptyFiltered": "Ningún miembro coincide con los filtros.",
+      "unknownMember": "Miembro",
       "errorTitle": "No se pudieron cargar los miembros",
       "errorDescription": "Comprueba tu conexión e inténtalo de nuevo."
     },
