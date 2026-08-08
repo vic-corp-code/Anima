@@ -1,0 +1,3 @@
+# .worktreeinclude (repo root)
+.env
+.env.local
