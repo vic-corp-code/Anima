@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useParams } from "next/navigation";
 import { useConvexAuth, useMutation, useQuery } from "convex/react";
 import { useLocale, useTranslations } from "next-intl";
+import { ChevronLeft } from "lucide-react";
 import { api } from "@anima/backend/convex/_generated/api";
 import { Id } from "@anima/backend/convex/_generated/dataModel";
 import { useRouter } from "@/i18n/navigation";
@@ -16,6 +17,7 @@ import {
   CardHeader,
   CardTitle,
   Input,
+  Skeleton,
   Textarea,
 } from "@anima/ui";
 import type { VariantProps } from "class-variance-authority";
@@ -64,7 +66,20 @@ export default function AnnouncementDetailPage() {
   const [transitionError, setTransitionError] = useState<string | null>(null);
 
   if (announcement === undefined) {
-    return <div className="container mx-auto p-4">{t("loading")}</div>;
+    return (
+      <div className="container mx-auto p-4">
+        <div className="mb-6 space-y-3">
+          <Skeleton className="h-8 w-24" />
+          <Skeleton className="h-8 w-64" />
+        </div>
+        <Card>
+          <CardContent className="space-y-4 pt-6">
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-24 w-full" />
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   if (announcement === null) {
@@ -133,7 +148,7 @@ export default function AnnouncementDetailPage() {
           }
           className="mb-4"
         >
-          ← {t("backToAnimal")}
+          <ChevronLeft className="size-4" aria-hidden="true" /> {t("backToAnimal")}
         </Button>
         <div className="flex items-center gap-3">
           <h1 className="text-2xl font-bold">{announcement.title}</h1>

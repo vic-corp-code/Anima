@@ -19,8 +19,14 @@ import {
   Button,
   Card,
   CardContent,
+  Checkbox,
   Input,
   NewsPostCard,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
   Skeleton,
   Textarea,
 } from "@anima/ui";
@@ -145,11 +151,9 @@ export default function NewsListPage() {
                   <div className="flex flex-wrap gap-3">
                     {animals.map((animal) => (
                       <label key={animal._id} className="flex items-center gap-1 text-sm">
-                        <input
-                          type="checkbox"
+                        <Checkbox
                           checked={linkedAnimalIds.includes(animal._id)}
-                          onChange={() => toggleAnimal(animal._id)}
-                          className="rounded"
+                          onCheckedChange={() => toggleAnimal(animal._id)}
                         />
                         {animal.name}
                       </label>
@@ -160,18 +164,22 @@ export default function NewsListPage() {
               {cagnottes && cagnottes.length > 0 && (
                 <div>
                   <label className="mb-1 block text-sm font-medium">{t("linkedCagnotteLabel")}</label>
-                  <select
+                  <Select
                     value={linkedCagnotteId}
-                    onChange={(e) => setLinkedCagnotteId(e.target.value as Id<"cagnottes"> | "")}
-                    className="w-full rounded border px-3 py-2"
+                    onValueChange={(value) => setLinkedCagnotteId(value as Id<"cagnottes"> | "")}
                   >
-                    <option value="">{t("noCagnotte")}</option>
-                    {cagnottes.map((cagnotte) => (
-                      <option key={cagnotte._id} value={cagnotte._id}>
-                        {cagnotte.title}
-                      </option>
-                    ))}
-                  </select>
+                    <SelectTrigger className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">{t("noCagnotte")}</SelectItem>
+                      {cagnottes.map((cagnotte) => (
+                        <SelectItem key={cagnotte._id} value={cagnotte._id}>
+                          {cagnotte.title}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               )}
               {createError && <p className="text-sm text-destructive">{createError}</p>}
