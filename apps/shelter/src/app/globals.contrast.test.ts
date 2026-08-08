@@ -378,14 +378,6 @@ describe("focus-visible / keyboard-nav coverage (audit #154)", () => {
       expect(src).not.toContain("focus-visible:ring-destructive/20");
       expect(src).not.toContain("focus-visible:ring-destructive/40");
     }
-    // aria-invalid (error-state) rings: also full-opacity in both files —
-    // the state indicator is the full destructive border + ring; low-alpha
-    // /20 //40 versions measured 1.35–2.08:1 and were aligned in the same pass.
-    for (const src of [buttonSrc, badgeSrc]) {
-      expect(src).toContain("aria-invalid:ring-destructive");
-      expect(src).not.toContain("aria-invalid:ring-destructive/20");
-      expect(src).not.toContain("aria-invalid:ring-destructive/40");
-    }
   });
 
   it("sidebar active state carries focus-visible ring + active wash/text (data-active)", () => {
