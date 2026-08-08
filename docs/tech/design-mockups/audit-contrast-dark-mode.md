@@ -54,7 +54,8 @@ The dark theme passed as shipped — confirming the issue's premise that the kit
 **This follow-up (review-driven, PR #198):**
 - **Badge focus rings → full opacity.** The review re-check of the bespoke pieces caught that `badge.tsx` still carried the exact `/50` regression #189 fixed on Button — `focus-visible:ring-ring/50` composites to **2.03–2.08:1**, and the badge destructive variant's `ring-destructive/20` / dark `/40` measure **1.35 / 2.08:1**. All badge focus rings now render full-opacity tokens (`ring-ring`, `ring-destructive`), same as Button.
 - **Button destructive variant focus ring → full opacity.** Same class of gap in the same bespoke file: `ring-destructive/20` (light **1.35:1**) / `/40` (dark **2.08:1**) → full `ring-destructive`.
-- The test suite now **asserts** the halo is measured (see non-issues) and pins all Button/Badge rings to full opacity — the audit's "no gap" claims are enforceable, not asserted by presence alone.
+- **`aria-invalid` (error-state) rings aligned full-opacity in both bespoke files.** Badge's base `aria-invalid` ring was bumped with the focus pass; Button base's stayed at `/20`+dark `/40` — flagged as an inconsistency in review, so Button's was aligned to full `ring-destructive` too. The error-state indicator is the full destructive border + ring (5.77 / 6.38:1); low-alpha versions measured 1.35–2.08:1. The `focus-visible:border-destructive/40` border on the destructive variant is intentional and kept: the full-opacity ring carries the 3:1 indicator, the border is inner reinforcement on the same edge.
+- The test suite now **asserts** the halo is measured (see non-issues) and pins all Button/Badge rings — focus and error-state — to full opacity, so the audit's "no gap" claims are enforceable, not asserted by presence alone.
 
 ## Focus-visible / keyboard coverage (bespoke pieces)
 
