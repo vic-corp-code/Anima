@@ -8,7 +8,7 @@ import { Toaster } from "@anima/ui";
 import { clerkAppearance } from "@/components/clerk-appearance";
 import { routing } from "@/i18n/routing";
 import { ThemeProvider } from "@/components/theme-provider";
-import { ACCENT_BOOT_SCRIPT } from "@/lib/accents";
+import { AccentBootScript } from "@/components/AccentBootScript";
 import { ConvexClientProvider } from "../ConvexClientProvider";
 import "../globals.css";
 
@@ -58,7 +58,7 @@ export default async function LocaleLayout({
         >
           <body className="min-h-full flex flex-col">
             {/* Applies the saved accent before hydration (see lib/accents.ts) */}
-            <script dangerouslySetInnerHTML={{ __html: ACCENT_BOOT_SCRIPT }} />
+            <AccentBootScript />
             <ThemeProvider
               attribute="data-theme"
               defaultTheme="light"

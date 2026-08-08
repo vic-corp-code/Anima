@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { Moon, Palette, Sun } from "lucide-react";
@@ -31,21 +31,28 @@ export function ThemeSettings() {
   const t = useTranslations("theme");
   const { theme, setTheme } = useTheme();
   const isDark = theme === "dark";
+  // next-themes has no theme on the server, so the sun/moon icon and the
+  // label would mismatch between SSR and client (hydration failure, #210).
+  // Render a same-size placeholder until mounted.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
   // External-store read: server snapshot is "brand" (no localStorage on the
   // server, and it keeps SSR/hydration data-state consistent), the client
-  // snapshot is the saved accent. applyAccent notifies the store after
-  // writing, so picking a swatch re-renders the RadioGroup without any
-  // setState-in-effect. The effect only syncs the DOM (documentElement vars)
-  // to the current accent — including on mount, guaranteeing the accent is
-  // applied even if the boot script was skipped.
+  // snapshot is the saved accent. Apply the STORED accent directly on mount
+  // (getSavedAccent), not the store value: the hydration pass carries the
+  // server snapshot "brand" and an effect keyed on the store would persist
+  // that brand over the real saved accent before the client snapshot ever
+  // surfaces (boot script applies it, mount then wipes it — #210). Picks
+  // from the RadioGroup apply via applyAccent directly, which notifies the
+  // store and re-renders the selection.
   const accent = useSyncExternalStore(
     subscribeAccent,
     getSavedAccent,
     () => "brand",
   );
   useEffect(() => {
-    applyAccent(accent);
-  }, [accent]);
+    applyAccent(getSavedAccent());
+  }, []);
 
   return (
     <Popover>
@@ -56,12 +63,18 @@ export function ThemeSettings() {
           className="w-full justify-start gap-2"
           aria-label={t("toggle")}
         >
-          {isDark ? (
-            <Sun className="size-4" aria-hidden="true" />
+          {mounted ? (
+            <>
+              {isDark ? (
+                <Sun className="size-4" aria-hidden="true" />
+              ) : (
+                <Moon className="size-4" aria-hidden="true" />
+              )}
+              <span>{t(isDark ? "light" : "dark")}</span>
+            </>
           ) : (
-            <Moon className="size-4" aria-hidden="true" />
+            <span className="size-4" aria-hidden="true" />
           )}
-          <span>{t(isDark ? "light" : "dark")}</span>
         </Button>
       </PopoverTrigger>
       <PopoverContent
