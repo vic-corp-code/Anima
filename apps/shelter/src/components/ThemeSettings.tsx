@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { Moon, Palette, Sun } from "lucide-react";
@@ -31,11 +31,11 @@ export function ThemeSettings() {
   const t = useTranslations("theme");
   const { theme, setTheme } = useTheme();
   const isDark = theme === "dark";
-  // next-themes has no theme on the server, so the sun/moon icon and the
-  // label would mismatch between SSR and client (hydration failure, #210).
-  // Render a same-size placeholder until mounted.
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  // Icon + label are toggled via the `dark:` variant ([data-theme=dark],
+  // see globals.css custom-variant) instead of JS state: next-themes has no
+  // theme on the server, so a state-driven render would mismatch between SSR
+  // and client (hydration failure, #210). The attribute is present in the
+  // SSR HTML, so both sides agree. (Also avoids setState-in-effect lint.)
   // External-store read: server snapshot is "brand" (no localStorage on the
   // server, and it keeps SSR/hydration data-state consistent), the client
   // snapshot is the saved accent. Apply the STORED accent directly on mount
@@ -63,18 +63,10 @@ export function ThemeSettings() {
           className="w-full justify-start gap-2"
           aria-label={t("toggle")}
         >
-          {mounted ? (
-            <>
-              {isDark ? (
-                <Sun className="size-4" aria-hidden="true" />
-              ) : (
-                <Moon className="size-4" aria-hidden="true" />
-              )}
-              <span>{t(isDark ? "light" : "dark")}</span>
-            </>
-          ) : (
-            <span className="size-4" aria-hidden="true" />
-          )}
+          <Sun className="hidden size-4 dark:block" aria-hidden="true" />
+          <Moon className="size-4 dark:hidden" aria-hidden="true" />
+          <span className="dark:hidden">{t("dark")}</span>
+          <span className="hidden dark:block">{t("light")}</span>
         </Button>
       </PopoverTrigger>
       <PopoverContent
