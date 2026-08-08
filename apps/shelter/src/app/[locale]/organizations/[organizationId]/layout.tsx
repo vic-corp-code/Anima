@@ -3,13 +3,10 @@
 import { useState } from "react";
 import { useParams, useSelectedLayoutSegment } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useTheme } from "next-themes";
 import {
   Home,
-  Moon,
   PawPrint,
   Megaphone,
-  Sun,
   Wallet,
   Newspaper,
   Users,
@@ -35,6 +32,7 @@ import {
   useSidebar,
 } from "@anima/ui";
 import { OrgChat } from "@/components/chat/OrgChat";
+import { ThemeSettings } from "@/components/ThemeSettings";
 import { Link } from "@/i18n/navigation";
 
 // Single source of truth for the org nav: adding a real feature later is
@@ -99,32 +97,9 @@ function OrganizationSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <ThemeToggle />
+        <ThemeSettings />
       </SidebarFooter>
     </Sidebar>
-  );
-}
-
-function ThemeToggle() {
-  const t = useTranslations("theme");
-  const { theme, setTheme } = useTheme();
-  const isDark = theme === "dark";
-
-  return (
-    <Button
-      variant="ghost"
-      size="sm"
-      onClick={() => setTheme(isDark ? "light" : "dark")}
-      className="w-full justify-start gap-2"
-      aria-label={t("toggle")}
-    >
-      {isDark ? (
-        <Sun className="size-4" aria-hidden="true" />
-      ) : (
-        <Moon className="size-4" aria-hidden="true" />
-      )}
-      <span>{t(isDark ? "light" : "dark")}</span>
-    </Button>
   );
 }
 

@@ -581,6 +581,22 @@
   "theme": {
     "toggle": "Cambiar de tema",
     "light": "Claro",
-    "dark": "Oscuro"
+    "dark": "Oscuro",
+    "appearance": "Apariencia",
+    "appearanceDescription": "Preferencias visuales de la aplicación",
+    "darkMode": "Modo oscuro",
+    "accent": "Color de acento",
+    "accentNames": {
+      "brand": "Predeterminado",
+      "ocean": "Océano",
+      "forest": "Bosque",
+      "sunset": "Atardecer",
+      "plum": "Ciruela",
+      "amber": "Ámbar",
+      "rose": "Rosa",
+      "sky": "Cielo",
+      "teal": "Verde azulado",
+      "slate": "Pizarra"
+    }
   }
 }
