@@ -136,6 +136,7 @@ export default function OrganizationLayout({
   const params = useParams();
   const organizationId = params.organizationId as Id<"organizations">;
   const [chatOpen, setChatOpen] = useState(false);
+  const t = useTranslations("orgChat");
 
   return (
     <SidebarProvider>
@@ -151,7 +152,7 @@ export default function OrganizationLayout({
       <Button
         className="fixed bottom-20 right-4 md:bottom-6 md:right-6 z-50 h-14 w-14 rounded-full shadow-lg"
         size="icon"
-        aria-label="Chat"
+        aria-label={t("title")}
         onClick={() => setChatOpen(true)}
       >
         <MessageCircle className="size-6" />

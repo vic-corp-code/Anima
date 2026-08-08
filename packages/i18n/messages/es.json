@@ -540,6 +540,10 @@
       "estimatedAge": "Edad estimada",
       "healthNotes": "Notas de salud",
       "characterNotes": "Notas de carácter",
+      "compatibilityKids": "Compatible con niños",
+      "compatibilityCats": "Compatible con gatos",
+      "compatibilityDogs": "Compatible con perros",
+      "story": "Historia",
       "eventType": "Tipo de evento",
       "eventDate": "Fecha del evento",
       "notes": "Notas",
@@ -555,7 +559,9 @@
       "currentAmount": "Cantidad actual",
       "newsPostId": "ID de la noticia",
       "text": "Texto",
-      "photoUrl": "Foto"
+      "photoUrl": "Foto",
+      "linkedAnimalIds": "Animales vinculados",
+      "linkedCagnotteId": "Colecta vinculada"
     }
   },
   "hub": {

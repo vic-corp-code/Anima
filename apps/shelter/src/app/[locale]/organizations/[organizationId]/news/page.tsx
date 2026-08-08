@@ -169,7 +169,7 @@ export default function NewsListPage() {
                     onValueChange={(value) => setLinkedCagnotteId(value as Id<"cagnottes"> | "")}
                   >
                     <SelectTrigger className="w-full">
-                      <SelectValue />
+                      <SelectValue placeholder={t("noCagnotte")} />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="">{t("noCagnotte")}</SelectItem>

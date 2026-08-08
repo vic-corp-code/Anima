@@ -276,7 +276,9 @@ function ToolProposal({
   const input = "input" in tool && tool.input ? (tool.input as Record<string, unknown>) : null;
 
   const toolName = tool.toolCallId.split(":")[0];
-  const displayName = t(`toolNames.${toolName}`, { defaultMessage: toolName });
+  const displayName = t.has(`toolNames.${toolName}`)
+    ? t(`toolNames.${toolName}`)
+    : toolName;
 
   async function handleApprove() {
     if (!approvalId) return;
@@ -322,7 +324,9 @@ function ToolProposal({
           <div className="mb-2 grid grid-cols-2 gap-x-3 gap-y-1.5">
             {Object.entries(input).map(([key, value]) => {
               if (value === undefined || value === null || value === "") return null;
-              const label = t(`toolFields.${key}`, { defaultMessage: key });
+              const label = t.has(`toolFields.${key}`)
+                ? t(`toolFields.${key}`)
+                : key;
               return (
                 <div key={key} className="min-w-0">
                   <span className="text-xs text-muted-foreground">{label}: </span>
