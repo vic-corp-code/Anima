@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useParams } from "next/navigation";
 import { useConvexAuth, useMutation, useQuery } from "convex/react";
 import { useTranslations } from "next-intl";
+import { ChevronLeft } from "lucide-react";
 import { api } from "@anima/backend/convex/_generated/api";
 import { Id } from "@anima/backend/convex/_generated/dataModel";
 import { useRouter } from "@/i18n/navigation";
@@ -150,7 +151,7 @@ export default function CagnotteDetailPage() {
           onClick={() => router.push(`/organizations/${organizationId}/cagnottes`)}
           className="mb-4"
         >
-          ← {t("backToList")}
+          <ChevronLeft className="size-4" aria-hidden="true" /> {t("backToList")}
         </Button>
         <div className="flex items-center gap-3">
           <h1 className="text-2xl font-bold">{cagnotte.title}</h1>

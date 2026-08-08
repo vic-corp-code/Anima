@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useParams } from "next/navigation";
 import { useConvexAuth, useMutation, useQuery } from "convex/react";
 import { useTranslations } from "next-intl";
+import { ChevronLeft } from "lucide-react";
 import { api } from "@anima/backend/convex/_generated/api";
 import { Id } from "@anima/backend/convex/_generated/dataModel";
 import { useRouter } from "@/i18n/navigation";
@@ -108,7 +109,7 @@ export default function NewsPostDetailPage() {
           onClick={() => router.push(`/organizations/${organizationId}/news`)}
           className="mb-4"
         >
-          ← {t("backToList")}
+          <ChevronLeft className="size-4" aria-hidden="true" /> {t("backToList")}
         </Button>
         <h1 className="text-2xl font-bold">{post.title}</h1>
       </div>
@@ -166,7 +167,7 @@ export default function NewsPostDetailPage() {
             </Button>
             <Button
               variant="outline"
-              className="text-red-600 hover:bg-red-50"
+              className="text-destructive hover:bg-destructive/10"
               onClick={handleDelete}
               disabled={isDeleting}
             >

@@ -226,7 +226,8 @@ export default function AnimalDetailPage() {
           onClick={() => router.back()}
           className="mb-4"
         >
-          ← {t("show.back")}
+          <ChevronLeft className="size-4" aria-hidden="true" />
+          {t("show.back")}
         </Button>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>

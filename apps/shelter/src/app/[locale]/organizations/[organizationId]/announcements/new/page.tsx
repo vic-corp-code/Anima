@@ -3,6 +3,7 @@
 import { useParams } from "next/navigation";
 import { useConvexAuth, useQuery } from "convex/react";
 import { useTranslations } from "next-intl";
+import { ChevronLeft } from "lucide-react";
 import { api } from "@anima/backend/convex/_generated/api";
 import { Id } from "@anima/backend/convex/_generated/dataModel";
 import { useRouter } from "@/i18n/navigation";
@@ -37,7 +38,8 @@ export default function NewAnnouncementPage() {
           }
           className="mb-4"
         >
-          &larr; {t("new.backToList")}
+          <ChevronLeft className="size-4" aria-hidden="true" />
+          {t("new.backToList")}
         </Button>
         <h1 className="text-2xl font-bold">{t("new.title")}</h1>
         <p className="text-muted-foreground">{t("new.subtitle")}</p>
