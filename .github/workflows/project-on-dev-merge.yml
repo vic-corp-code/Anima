@@ -6,7 +6,7 @@ on:
     branches: [dev]
 
 permissions:
-  projects: write
+  repository-projects: write
   contents: read
 
 jobs:
