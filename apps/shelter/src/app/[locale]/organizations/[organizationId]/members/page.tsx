@@ -317,7 +317,9 @@ export default function MembersPage() {
                           </Avatar>
                         </TableCell>
                         <TableCell>
-                          <div className="font-medium">{member.name}</div>
+                          <div className="font-medium">
+                            {member.name || t("list.unknownMember")}
+                          </div>
                           <div className="text-xs text-muted-foreground">
                             {member.email}
                           </div>
