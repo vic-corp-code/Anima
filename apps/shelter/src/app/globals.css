@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@source "../../../../packages/ui/src";
 
 /* Tailwind's default `dark:` variant keys off prefers-color-scheme, but this
    kit toggles an explicit [data-theme="dark"] attribute on <html> (see
@@ -66,11 +67,13 @@
   /* ---- borders / input / ring ----
      Kit runs a two-tier border system (--border / --border-soft) that shadcn's
      single --border slot can't carry — --border-soft is kept as a permanent
-     extra token below (decision 4). --input intentionally uses --surface, not
-     --border-soft (decision 6 — resolves the ambiguity flagged in
-     audit-token-structure.md §5 point 7; wants a visual double-check later). */
+     extra token below (decision 4). Decision 6 mapped --input to --surface;
+     the visual double-check it asked for (debug milestone, #202) showed the
+     result is invisible inputs (border == card bg) and an invisible switch
+     track (bg-input). Reversed to --border-soft, the token it originally
+     couldn't choose between. */
   --border: #ded2c3; /* kit --border */
-  --input: #fffdf8; /* kit --surface, per decision 6 */
+  --input: var(--border-soft); /* was --surface (decision 6, reversed — #202) */
   --ring: #9b5b32; /* kit --accent, plain-color fallback (decision 3) */
 
   /* ---- chart palette (#169) ----
@@ -211,7 +214,7 @@
   --destructive-foreground: #1a130d;
 
   --border: #4d4036;
-  --input: #1f1913; /* kit --surface, per decision 6 */
+  --input: #33291f; /* was --surface (decision 6, reversed — #202), now == --border-soft */
   --ring: #d9925c;
 
   /* Chart palette dark values: same five hue families, lightened with the

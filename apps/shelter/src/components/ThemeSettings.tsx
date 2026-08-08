@@ -107,7 +107,7 @@ export function ThemeSettings() {
                 }}
                 aria-label={t(`accentNames.${a.id}`)}
                 title={t(`accentNames.${a.id}`)}
-                className="size-7 rounded-full border-0 shadow-none data-checked:ring-2 data-checked:ring-ring data-checked:ring-offset-2 data-checked:ring-offset-popover [&_[data-slot=radio-group-indicator]]:hidden"
+                className="size-7 rounded-full border-0 shadow-none data-[state=checked]:ring-2 data-[state=checked]:ring-ring data-[state=checked]:ring-offset-2 data-[state=checked]:ring-offset-popover [&_[data-slot=radio-group-indicator]]:hidden"
               />
             ))}
           </RadioGroup>
