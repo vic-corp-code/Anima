@@ -89,7 +89,7 @@ export default function AnimalsListPage() {
       </div>
 
       <Card className="mb-6">
-        <CardContent className="pt-6">
+        <CardContent className="px-2.5 pt-6">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
             <div className="lg:col-span-2">
               <label className="mb-1 block text-sm font-medium">
