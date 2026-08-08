@@ -439,6 +439,7 @@
       "colRole": "Rol",
       "emptyNone": "No hay miembros. ¡Empieza invitando a alguien!",
       "emptyFiltered": "Ningún miembro coincide con los filtros.",
+      "unknownMember": "Miembro",
       "errorTitle": "No se pudieron cargar los miembros",
       "errorDescription": "Comprueba tu conexión e inténtalo de nuevo."
     },
@@ -581,6 +582,22 @@
   "theme": {
     "toggle": "Cambiar de tema",
     "light": "Claro",
-    "dark": "Oscuro"
+    "dark": "Oscuro",
+    "appearance": "Apariencia",
+    "appearanceDescription": "Preferencias visuales de la aplicación",
+    "darkMode": "Modo oscuro",
+    "accent": "Color de acento",
+    "accentNames": {
+      "brand": "Predeterminado",
+      "ocean": "Océano",
+      "forest": "Bosque",
+      "sunset": "Atardecer",
+      "plum": "Ciruela",
+      "amber": "Ámbar",
+      "rose": "Rosa",
+      "sky": "Cielo",
+      "teal": "Verde azulado",
+      "slate": "Pizarra"
+    }
   }
 }

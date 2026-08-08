@@ -125,7 +125,7 @@ export function VerificationCard({
   };
 
   return (
-    <Card className="w-full max-w-md">
+    <Card>
       <CardHeader>
         <CardTitle>{t("verificationTitle")}</CardTitle>
         <CardAction>

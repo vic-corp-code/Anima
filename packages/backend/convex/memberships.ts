@@ -17,10 +17,14 @@ export const listForOrg = query({
     const members = await Promise.all(
       memberships.map(async (m) => {
         const user = await ctx.db.get(m.userId);
+        // Guard legacy rows where the Clerk subject ("user_...") was stored
+        // as the display name — never expose raw IDs in the UI (#204).
+        const storedName = user?.name ?? "";
+        const name = storedName && !storedName.startsWith("user_") ? storedName : "";
         return {
           membershipId: m._id,
           userId: m.userId,
-          name: user?.name ?? "",
+          name,
           email: user?.email ?? "",
           role: m.role,
         };

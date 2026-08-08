@@ -85,8 +85,8 @@ export default async function OrganizationPage({
         <p className="text-muted-foreground">{t("subtitle")}</p>
       </div>
 
-      <div className="mb-6 flex flex-wrap items-start gap-4">
-        <Card className="max-w-md">
+      <div className="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <Card>
           <CardHeader>
             <CardTitle>{t("orgInfoTitle")}</CardTitle>
           </CardHeader>

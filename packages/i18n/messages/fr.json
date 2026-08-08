@@ -439,6 +439,7 @@
       "colRole": "Rôle",
       "emptyNone": "Aucun membre. Commencez par inviter quelqu'un !",
       "emptyFiltered": "Aucun membre ne correspond aux filtres.",
+      "unknownMember": "Membre",
       "errorTitle": "Impossible de charger les membres",
       "errorDescription": "Vérifiez votre connexion et réessayez."
     },
@@ -581,6 +582,22 @@
   "theme": {
     "toggle": "Changer de thème",
     "light": "Clair",
-    "dark": "Sombre"
+    "dark": "Sombre",
+    "appearance": "Apparence",
+    "appearanceDescription": "Préférences visuelles de l'application",
+    "darkMode": "Mode sombre",
+    "accent": "Couleur d'accent",
+    "accentNames": {
+      "brand": "Défaut",
+      "ocean": "Océan",
+      "forest": "Forêt",
+      "sunset": "Coucher de soleil",
+      "plum": "Prune",
+      "amber": "Ambre",
+      "rose": "Rose",
+      "sky": "Ciel",
+      "teal": "Sarcelle",
+      "slate": "Ardoise"
+    }
   }
 }
